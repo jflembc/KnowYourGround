@@ -1535,7 +1535,7 @@ function renderElevatorWidget() {
   container.innerHTML = '';
   // Show a row for each crop profile
   if(crops.length === 0) {
-    container.innerHTML = '<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);">Add crop profiles to enter prices</div>';
+    container.innerHTML = '<div style="font-family:monospace;font-size:9px;color:var(--muted);">Add crop profiles to enter prices</div>';
     return;
   }
   crops.forEach(c => {
