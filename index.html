@@ -33,21 +33,42 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--soil);color:var(--i
 .spinner{width:32px;height:32px;border:2px solid var(--border);border-top-color:var(--wheat);border-radius:50%;animation:spin 0.8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* HEADER */
-#appHeader{background:var(--soil);border-bottom:2px solid var(--wheat);padding:0 20px;display:flex;align-items:stretch;position:sticky;top:0;z-index:50;}
-.header-brand{display:flex;align-items:center;gap:10px;padding:12px 20px 12px 0;border-right:1px solid var(--border);margin-right:16px;flex-shrink:0;}
-.header-brand h1{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:var(--wheat);letter-spacing:-0.5px;}
-.header-brand .tagline{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
-.nav-tabs{display:flex;align-items:stretch;flex:1;overflow-x:auto;}
-.nav-tab{background:transparent;border:none;border-bottom:3px solid transparent;color:var(--muted);font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;padding:0 12px;cursor:pointer;transition:all 0.15s;white-space:nowrap;}
-.nav-tab:hover{color:var(--wheat-light);}
-.nav-tab.active{color:var(--wheat);border-bottom-color:var(--wheat);}
-.header-right{display:flex;align-items:center;gap:8px;padding:10px 0;margin-left:auto;}
-.header-right select{background:var(--soil-light);border:1px solid var(--border);border-radius:3px;color:var(--paper);font-family:'IBM Plex Sans',sans-serif;font-size:13px;padding:6px 10px;cursor:pointer;outline:none;}
-.user-pill{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;}
+/* APP SHELL — sidebar layout */
+#appShell{display:flex;min-height:100vh;}
 
-/* MAIN */
-#appMain{max-width:1000px;margin:0 auto;padding:24px 16px 80px;}
+/* SIDEBAR */
+#appSidebar{
+  width:220px;flex-shrink:0;background:var(--soil);border-right:2px solid var(--wheat);
+  display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+.sidebar-brand{padding:24px 20px 20px;border-bottom:1px solid var(--border);}
+.sidebar-brand h1{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:var(--wheat);letter-spacing:-0.5px;line-height:1.1;}
+.sidebar-brand .tagline{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
+
+/* FARM SELECTOR in sidebar */
+.sidebar-farm{padding:14px 16px;border-bottom:1px solid var(--border);}
+.sidebar-farm select{width:100%;background:var(--soil-light);border:1px solid var(--border);border-radius:3px;color:var(--paper);font-family:'IBM Plex Sans',sans-serif;font-size:12px;padding:7px 10px;cursor:pointer;outline:none;}
+.sidebar-farm button{width:100%;margin-top:6px;}
+
+/* NAV */
+.nav-tabs{display:flex;flex-direction:column;padding:10px 0;flex:1;}
+.nav-tab{
+  background:transparent;border:none;border-left:3px solid transparent;
+  color:var(--muted);font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:0.3px;text-align:left;padding:11px 20px;cursor:pointer;
+  transition:all 0.15s;white-space:nowrap;display:flex;align-items:center;gap:10px;
+}
+.nav-tab:hover{color:var(--wheat-light);background:rgba(200,146,58,0.06);}
+.nav-tab.active{color:var(--wheat);border-left-color:var(--wheat);background:rgba(200,146,58,0.1);}
+.nav-tab .nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
+
+/* SIDEBAR BOTTOM — user + signout */
+.sidebar-bottom{padding:16px;border-top:1px solid var(--border);margin-top:auto;}
+.user-pill{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* MAIN CONTENT */
+#appContent{flex:1;min-width:0;overflow-x:hidden;}
+#appMain{max-width:960px;margin:0 auto;padding:28px 24px 80px;}
 .sec-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--wheat);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
 .card{background:var(--paper);border-radius:4px;padding:20px;margin-bottom:14px;}
 .card-dark{background:#150D05;border:1px solid var(--border);border-radius:4px;padding:20px;margin-bottom:14px;}
@@ -166,13 +187,31 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
 .empty-state p{font-size:14px;margin-bottom:16px;}
 .legacy-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--wheat-pale);letter-spacing:1px;margin-top:2px;}
 
-@media(max-width:700px){
+/* ELEVATOR PRICE WIDGET */
+.elevator-widget{background:#0A0602;border:1px solid var(--border);border-radius:4px;padding:14px 16px;margin:12px 16px;}
+.elevator-widget .ew-label{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.elevator-widget input{background:#150D05;border:1px solid var(--border);color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:6px 10px;border-radius:3px;width:100%;margin-bottom:6px;}
+.elevator-widget input:focus{border-color:var(--wheat);outline:none;}
+.elevator-crops{display:flex;flex-direction:column;gap:4px;margin-top:6px;}
+.elevator-crop-row{display:flex;align-items:center;gap:6px;}
+.elevator-crop-row .ecr-name{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.elevator-crop-row input{width:80px;flex-shrink:0;background:#150D05;border:1px solid var(--border);color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:12px;padding:4px 8px;border-radius:3px;margin:0;}
+.elevator-crop-row input:focus{border-color:var(--wheat);outline:none;}
+
+@media(max-width:768px){
   .cols-2,.cols-3{grid-template-columns:1fr;}
   .results-grid{grid-template-columns:1fr 1fr;}
   .cost-row{grid-template-columns:1fr 110px 42px;}
   .whatif-grid{grid-template-columns:1fr;}
-  #appHeader{flex-wrap:wrap;padding:10px;gap:8px;}
-  .nav-tab{padding:0 8px;font-size:11px;}
+  #appSidebar{width:100%;height:auto;position:relative;flex-direction:row;flex-wrap:wrap;border-right:none;border-bottom:2px solid var(--wheat);}
+  #appShell{flex-direction:column;}
+  .sidebar-brand{padding:14px 16px;border-bottom:none;border-right:1px solid var(--border);}
+  .nav-tabs{flex-direction:row;flex-wrap:wrap;padding:8px;gap:2px;flex:1;}
+  .nav-tab{border-left:none;border-bottom:2px solid transparent;padding:8px 12px;font-size:11px;}
+  .nav-tab.active{border-left:none;border-bottom-color:var(--wheat);}
+  .sidebar-farm{width:100%;padding:10px 16px;border-bottom:1px solid var(--border);}
+  .sidebar-bottom{padding:10px 16px;border-top:none;border-left:1px solid var(--border);}
+  .elevator-widget{margin:8px 16px;}
 }
 </style>
 </head>
@@ -219,29 +258,57 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
 
 <!-- APP -->
 <div id="appWrapper" class="hidden">
-<div id="appHeader">
-  <div class="header-brand">
-    <div>
-      <h1>Know Your Ground</h1>
-      <div class="tagline">Farm financial clarity</div>
-    </div>
-  </div>
-  <nav class="nav-tabs">
-    <button class="nav-tab active" data-tab="overview" onclick="switchTab('overview')">Overview</button>
-    <button class="nav-tab" data-tab="farm" onclick="switchTab('farm')">Farm Costs</button>
-    <button class="nav-tab" data-tab="fields" onclick="switchTab('fields')">Fields</button>
-    <button class="nav-tab" data-tab="crops" onclick="switchTab('crops')">Crop Profiles</button>
-    <button class="nav-tab" data-tab="summary" onclick="switchTab('summary')">Summary</button>
-    <button class="nav-tab" data-tab="whatif" onclick="switchTab('whatif')">What If</button>
-  </nav>
-  <div class="header-right">
-    <select id="farmSelect" onchange="selectFarm(this.value)"></select>
-    <button class="btn btn-ghost btn-sm" onclick="openFarmModal()">+ Farm</button>
-    <span class="user-pill" id="userEmail"></span>
-    <button class="btn btn-danger btn-sm" onclick="doSignOut()">Sign Out</button>
-  </div>
-</div>
+<div id="appShell">
 
+<!-- SIDEBAR -->
+<div id="appSidebar">
+  <div class="sidebar-brand">
+    <h1>Know Your Ground</h1>
+    <div class="tagline">Farm financial clarity</div>
+  </div>
+
+  <div class="sidebar-farm">
+    <select id="farmSelect" onchange="selectFarm(this.value)"></select>
+    <button class="btn btn-ghost btn-sm" onclick="openFarmModal()" style="width:100%;margin-top:6px;justify-content:center;">+ Add Farm</button>
+  </div>
+
+  <nav class="nav-tabs">
+    <button class="nav-tab active" data-tab="overview" onclick="switchTab('overview')">
+      <span class="nav-icon">🌾</span>Overview
+    </button>
+    <button class="nav-tab" data-tab="farm" onclick="switchTab('farm')">
+      <span class="nav-icon">🏡</span>Farm Costs
+    </button>
+    <button class="nav-tab" data-tab="crops" onclick="switchTab('crops')">
+      <span class="nav-icon">🌱</span>Crop Profiles
+    </button>
+    <button class="nav-tab" data-tab="fields" onclick="switchTab('fields')">
+      <span class="nav-icon">📍</span>Fields
+    </button>
+    <button class="nav-tab" data-tab="summary" onclick="switchTab('summary')">
+      <span class="nav-icon">📊</span>Summary
+    </button>
+    <button class="nav-tab" data-tab="whatif" onclick="switchTab('whatif')">
+      <span class="nav-icon">🔀</span>What If
+    </button>
+  </nav>
+
+  <!-- LOCAL ELEVATOR PRICES -->
+  <div class="elevator-widget">
+    <div class="ew-label">Local Elevator Prices</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:8px;">Enter your elevator's cash prices</div>
+    <div class="elevator-crops" id="elevatorCrops"></div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-top:8px;line-height:1.5;" id="elevatorUpdated"></div>
+  </div>
+
+  <div class="sidebar-bottom">
+    <span class="user-pill" id="userEmail"></span>
+    <button class="btn btn-danger btn-sm" onclick="doSignOut()" style="width:100%;justify-content:center;">Sign Out</button>
+  </div>
+</div><!-- /sidebar -->
+
+<!-- MAIN CONTENT -->
+<div id="appContent">
 <div id="appMain">
 
 <!-- ══ OVERVIEW ══ -->
@@ -676,6 +743,8 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
 </div>
 
 </div><!-- /appMain -->
+</div><!-- /appContent -->
+</div><!-- /appShell -->
 </div><!-- /appWrapper -->
 
 <!-- MODALS -->
@@ -858,6 +927,7 @@ async function loadAllData(){
     }))
   }));
   if(farms.length>0)activeFarmId=farms[0].id;
+  renderElevatorWidget();
 }
 
 // ═══ DB HELPERS ═══
@@ -1267,7 +1337,7 @@ function updateCropTotal(){
 async function deleteCurrentCrop(){
   if(!confirm('Delete this crop profile?'))return;
   await dbDeleteCrop(activeCropId);crops=crops.filter(c=>c.id!==activeCropId);
-  activeCropId=null;document.getElementById('cropDetailPanel').classList.add('hidden');renderCropCards();
+  activeCropId=null;document.getElementById('cropDetailPanel').classList.add('hidden');renderCropCards();renderElevatorWidget();
 }
 function openCropModal(editing=false){
   editingCrop=editing;
@@ -1453,6 +1523,50 @@ function exportToCSV(){
   const a=document.createElement('a');a.href=url;
   a.download=`${f.name.replace(/\s+/g,'_')}_KnowYourGround_${f.season||new Date().getFullYear()}.csv`;
   a.click();URL.revokeObjectURL(url);
+}
+
+
+// ═══ ELEVATOR PRICES ═══
+let elevatorPrices = JSON.parse(localStorage.getItem('kyg_elevator')||'{}');
+
+function renderElevatorWidget() {
+  const container = document.getElementById('elevatorCrops');
+  if(!container) return;
+  container.innerHTML = '';
+  // Show a row for each crop profile
+  if(crops.length === 0) {
+    container.innerHTML = '<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);">Add crop profiles to enter prices</div>';
+    return;
+  }
+  crops.forEach(c => {
+    const row = document.createElement('div');
+    row.className = 'elevator-crop-row';
+    const price = elevatorPrices[c.name] || '';
+    row.innerHTML = `
+      <span class="ecr-name">${c.name}</span>
+      <input type="number" placeholder="$/bu" value="${price}" step="0.01"
+             oninput="saveElevatorPrice('${c.name}', this.value)"
+             title="${c.name} cash price at your elevator">
+    `;
+    container.appendChild(row);
+  });
+  const updated = document.getElementById('elevatorUpdated');
+  if(updated) {
+    const ts = localStorage.getItem('kyg_elevator_ts');
+    updated.textContent = ts ? 'Updated: ' + new Date(parseInt(ts)).toLocaleDateString() : '';
+  }
+}
+
+function saveElevatorPrice(cropName, val) {
+  elevatorPrices[cropName] = parseFloat(val) || 0;
+  localStorage.setItem('kyg_elevator', JSON.stringify(elevatorPrices));
+  localStorage.setItem('kyg_elevator_ts', Date.now().toString());
+  const updated = document.getElementById('elevatorUpdated');
+  if(updated) updated.textContent = 'Updated: ' + new Date().toLocaleDateString();
+}
+
+function getElevatorPrice(cropName) {
+  return elevatorPrices[cropName] || 0;
 }
 
 // ═══ UTILS ═══
