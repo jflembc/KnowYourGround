@@ -8,305 +8,189 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
-  --soil: #1E1208;
-  --soil-mid: #2C1A0E;
-  --soil-light: #3D2510;
-  --wheat: #C8923A;
-  --wheat-light: #E8B96A;
-  --wheat-pale: #F5D89A;
-  --sky: #7BA7BC;
-  --field: #4A6741;
-  --field-light: #6DBF6D;
-  --paper: #F5EFE0;
-  --paper-dark: #EDE4CC;
-  --paper-mid: #DDD0B0;
-  --ink: #1A1208;
-  --red: #B84040;
-  --red-light: #E07070;
-  --muted: #8A7A60;
-  --border: #4A3520;
-  --border-light: #C8B890;
+  --soil:#1E1208;--soil-mid:#2C1A0E;--soil-light:#3D2510;
+  --wheat:#C8923A;--wheat-light:#E8B96A;--wheat-pale:#F5D89A;
+  --sky:#7BA7BC;--field:#4A6741;--field-light:#6DBF6D;
+  --paper:#F5EFE0;--paper-dark:#EDE4CC;--paper-mid:#DDD0B0;
+  --ink:#1A1208;--red:#B84040;--red-light:#E07070;
+  --muted:#8A7A60;--border:#4A3520;--border-light:#C8B890;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'IBM Plex Sans', sans-serif; background: var(--soil); color: var(--ink); min-height: 100vh; overflow-x: hidden; }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--soil);color:var(--ink);min-height:100vh;overflow-x:hidden;}
 
-/* ── AUTH SCREEN ── */
-#authScreen {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: var(--soil);
-}
-.auth-card {
-  background: var(--paper);
-  border-radius: 6px;
-  padding: 40px 36px;
-  width: 100%;
-  max-width: 420px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-}
-.auth-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 28px;
-}
-.auth-logo h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 24px;
-  font-weight: 900;
-  color: var(--soil);
-  letter-spacing: -0.5px;
-  line-height: 1.1;
-}
-.auth-logo .sub {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  color: var(--muted);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-.auth-tabs {
-  display: flex;
-  gap: 0;
-  margin-bottom: 24px;
-  border-bottom: 2px solid var(--paper-mid);
-}
-.auth-tab {
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
-  padding: 8px 20px;
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--muted);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.auth-tab.active { color: var(--wheat); border-bottom-color: var(--wheat); }
-.auth-error {
-  background: #FFF0F0;
-  border: 1px solid var(--red);
-  border-radius: 3px;
-  padding: 10px 12px;
-  font-size: 13px;
-  color: var(--red);
-  margin-bottom: 14px;
-  display: none;
-}
-.auth-success {
-  background: #F0FFF0;
-  border: 1px solid var(--field);
-  border-radius: 3px;
-  padding: 10px 12px;
-  font-size: 13px;
-  color: var(--field);
-  margin-bottom: 14px;
-  display: none;
-}
-.auth-footer {
-  margin-top: 16px;
-  text-align: center;
-  font-size: 12px;
-  color: var(--muted);
-}
-.auth-footer a {
-  color: var(--wheat);
-  cursor: pointer;
-  text-decoration: none;
-  font-weight: 600;
-}
+/* AUTH */
+#authScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--soil);}
+.auth-card{background:var(--paper);border-radius:6px;padding:40px 36px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.auth-logo h1{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:var(--soil);letter-spacing:-0.5px;margin-bottom:4px;}
+.auth-logo .sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.auth-tabs{display:flex;margin-bottom:24px;border-bottom:2px solid var(--paper-mid);}
+.auth-tab{background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;padding:8px 20px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;}
+.auth-tab.active{color:var(--wheat);border-bottom-color:var(--wheat);}
+.auth-error{background:#FFF0F0;border:1px solid var(--red);border-radius:3px;padding:10px 12px;font-size:13px;color:var(--red);margin-bottom:14px;display:none;}
+.auth-success{background:#F0FFF0;border:1px solid var(--field);border-radius:3px;padding:10px 12px;font-size:13px;color:var(--field);margin-bottom:14px;display:none;}
 
-/* ── LOADING ── */
-#loadingScreen {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 16px;
-  color: var(--muted);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 2px;
-}
-.spinner {
-  width: 32px; height: 32px;
-  border: 2px solid var(--border);
-  border-top-color: var(--wheat);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+/* LOADING */
+#loadingScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:2px;}
+.spinner{width:32px;height:32px;border:2px solid var(--border);border-top-color:var(--wheat);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-/* ── HEADER ── */
-#appHeader {
-  background: var(--soil);
-  border-bottom: 2px solid var(--wheat);
-  padding: 0 20px;
-  display: flex;
-  align-items: stretch;
-  position: sticky;
-  top: 0;
-  z-index: 50;
-}
-.header-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 20px 12px 0;
-  border-right: 1px solid var(--border);
-  margin-right: 16px;
-  flex-shrink: 0;
-}
-.header-brand h1 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 900; color: var(--wheat); letter-spacing: -0.5px; }
-.header-brand .tagline { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
-.nav-tabs { display: flex; align-items: stretch; flex: 1; }
-.nav-tab { background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--muted); font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; padding: 0 14px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-.nav-tab:hover { color: var(--wheat-light); }
-.nav-tab.active { color: var(--wheat); border-bottom-color: var(--wheat); }
-.header-right { display: flex; align-items: center; gap: 8px; padding: 10px 0; margin-left: auto; }
-.header-right select { background: var(--soil-light); border: 1px solid var(--border); border-radius: 3px; color: var(--paper); font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; padding: 6px 10px; cursor: pointer; outline: none; }
-.user-pill { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1px; }
+/* HEADER */
+#appHeader{background:var(--soil);border-bottom:2px solid var(--wheat);padding:0 20px;display:flex;align-items:stretch;position:sticky;top:0;z-index:50;}
+.header-brand{display:flex;align-items:center;gap:10px;padding:12px 20px 12px 0;border-right:1px solid var(--border);margin-right:16px;flex-shrink:0;}
+.header-brand h1{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:var(--wheat);letter-spacing:-0.5px;}
+.header-brand .tagline{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.nav-tabs{display:flex;align-items:stretch;flex:1;overflow-x:auto;}
+.nav-tab{background:transparent;border:none;border-bottom:3px solid transparent;color:var(--muted);font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;padding:0 12px;cursor:pointer;transition:all 0.15s;white-space:nowrap;}
+.nav-tab:hover{color:var(--wheat-light);}
+.nav-tab.active{color:var(--wheat);border-bottom-color:var(--wheat);}
+.header-right{display:flex;align-items:center;gap:8px;padding:10px 0;margin-left:auto;}
+.header-right select{background:var(--soil-light);border:1px solid var(--border);border-radius:3px;color:var(--paper);font-family:'IBM Plex Sans',sans-serif;font-size:13px;padding:6px 10px;cursor:pointer;outline:none;}
+.user-pill{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;}
 
-/* ── MAIN ── */
-#appMain { max-width: 1000px; margin: 0 auto; padding: 24px 16px 80px; }
+/* MAIN */
+#appMain{max-width:1000px;margin:0 auto;padding:24px 16px 80px;}
+.sec-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--wheat);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.card{background:var(--paper);border-radius:4px;padding:20px;margin-bottom:14px;}
+.card-dark{background:#150D05;border:1px solid var(--border);border-radius:4px;padding:20px;margin-bottom:14px;}
 
-/* ── SECTION LABEL ── */
-.sec-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--wheat); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+/* FORMS */
+.form-group{margin-bottom:12px;}
+label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+input[type=text],input[type=number],input[type=email],input[type=password],input[type=date],select,textarea{width:100%;background:var(--paper-dark);border:1px solid var(--border-light);border-radius:3px;padding:9px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color 0.15s;}
+input[type=number]{font-family:'IBM Plex Mono',monospace;}
+input:focus,select:focus,textarea:focus{border-color:var(--wheat);}
+input[readonly]{opacity:0.55;cursor:not-allowed;}
+.form-row{display:grid;gap:12px;margin-bottom:12px;}
+.cols-2{grid-template-columns:1fr 1fr;}
+.cols-3{grid-template-columns:1fr 1fr 1fr;}
 
-/* ── CARDS ── */
-.card { background: var(--paper); border-radius: 4px; padding: 20px; margin-bottom: 14px; }
-.card-dark { background: #150D05; border: 1px solid var(--border); border-radius: 4px; padding: 20px; margin-bottom: 14px; }
+/* COST ROWS */
+.cost-row{display:grid;grid-template-columns:1fr 150px 42px;gap:8px;align-items:center;margin-bottom:8px;}
+.cost-row-label{font-size:14px;font-weight:500;color:var(--ink);padding:4px 0;}
+.cost-row-label.editable{background:transparent;border:none;border-bottom:1px dashed var(--border-light);border-radius:0;padding:9px 4px;font-size:14px;font-weight:500;}
+.remove-btn{background:transparent;border:1px solid var(--border-light);border-radius:3px;color:var(--red);font-size:18px;cursor:pointer;height:38px;width:42px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;}
+.remove-btn:hover{background:var(--red);color:#fff;border-color:var(--red);}
 
-/* ── FORM ── */
-.form-group { margin-bottom: 12px; }
-label { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
-input[type=text], input[type=number], input[type=email], input[type=password], select, textarea { width: 100%; background: var(--paper-dark); border: 1px solid var(--border-light); border-radius: 3px; padding: 9px 12px; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; color: var(--ink); outline: none; transition: border-color 0.15s; }
-input[type=number] { font-family: 'IBM Plex Mono', monospace; }
-input:focus, select:focus, textarea:focus { border-color: var(--wheat); }
-input[readonly] { opacity: 0.55; cursor: not-allowed; }
-.form-row { display: grid; gap: 12px; margin-bottom: 12px; }
-.cols-2 { grid-template-columns: 1fr 1fr; }
-.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:3px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;letter-spacing:0.3px;white-space:nowrap;}
+.btn-primary{background:var(--wheat);color:var(--soil);}
+.btn-primary:hover{background:var(--wheat-light);}
+.btn-outline{background:transparent;border:1px solid var(--wheat);color:var(--wheat);}
+.btn-outline:hover{background:var(--wheat);color:var(--soil);}
+.btn-ghost{background:transparent;border:1px dashed var(--border);color:var(--muted);font-size:12px;}
+.btn-ghost:hover{border-color:var(--wheat);color:var(--wheat);}
+.btn-danger{background:transparent;border:1px solid var(--red);color:var(--red);font-size:12px;}
+.btn-danger:hover{background:var(--red);color:#fff;}
+.btn-sky{background:transparent;border:1px solid var(--sky);color:var(--sky);}
+.btn-sky:hover{background:var(--sky);color:var(--soil);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn:disabled{opacity:0.5;cursor:not-allowed;}
 
-/* ── COST ROWS ── */
-.cost-row { display: grid; grid-template-columns: 1fr 150px 42px; gap: 8px; align-items: center; margin-bottom: 8px; }
-.cost-row-label { font-size: 14px; font-weight: 500; color: var(--ink); padding: 4px 0; }
-.cost-row-label.editable { background: transparent; border: none; border-bottom: 1px dashed var(--border-light); border-radius: 0; padding: 9px 4px; font-size: 14px; font-weight: 500; }
-.remove-btn { background: transparent; border: 1px solid var(--border-light); border-radius: 3px; color: var(--red); font-size: 18px; cursor: pointer; height: 38px; width: 42px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
-.remove-btn:hover { background: var(--red); color: #fff; border-color: var(--red); }
+/* RESULTS */
+.results-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.result-box{background:#0A0602;border:1px solid var(--border);border-radius:4px;padding:14px;text-align:center;}
+.result-box .r-label{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.result-box .r-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--paper);line-height:1;}
+.result-box .r-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-top:4px;}
+.result-box.is-profit .r-val{color:var(--field-light);}
+.result-box.is-loss .r-val{color:var(--red-light);}
+.result-box.is-wheat .r-val{color:var(--wheat);}
 
-/* ── BUTTONS ── */
-.btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 3px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; letter-spacing: 0.3px; white-space: nowrap; }
-.btn-primary { background: var(--wheat); color: var(--soil); }
-.btn-primary:hover { background: var(--wheat-light); }
-.btn-outline { background: transparent; border: 1px solid var(--wheat); color: var(--wheat); }
-.btn-outline:hover { background: var(--wheat); color: var(--soil); }
-.btn-ghost { background: transparent; border: 1px dashed var(--border); color: var(--muted); font-size: 12px; }
-.btn-ghost:hover { border-color: var(--wheat); color: var(--wheat); }
-.btn-danger { background: transparent; border: 1px solid var(--red); color: var(--red); font-size: 12px; }
-.btn-danger:hover { background: var(--red); color: #fff; }
-.btn-sky { background: transparent; border: 1px solid var(--sky); color: var(--sky); }
-.btn-sky:hover { background: var(--sky); color: var(--soil); }
-.btn-sm { padding: 6px 12px; font-size: 12px; }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+/* TOGGLE */
+.toggle-wrap{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.toggle{position:relative;width:42px;height:22px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:22px;cursor:pointer;transition:0.2s;}
+.toggle-slider:before{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;background:var(--muted);border-radius:50%;transition:0.2s;}
+.toggle input:checked+.toggle-slider{background:var(--wheat);}
+.toggle input:checked+.toggle-slider:before{transform:translateX(20px);background:var(--soil);}
 
-/* ── RESULTS ── */
-.results-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
-.result-box { background: #0A0602; border: 1px solid var(--border); border-radius: 4px; padding: 14px; text-align: center; }
-.result-box .r-label { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-.result-box .r-val { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--paper); line-height: 1; }
-.result-box .r-sub { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--muted); margin-top: 4px; }
-.result-box.is-profit .r-val { color: var(--field-light); }
-.result-box.is-loss .r-val { color: var(--red-light); }
-.result-box.is-wheat .r-val { color: var(--wheat); }
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;z-index:200;padding:16px;}
+.modal{background:var(--paper);border-radius:6px;padding:24px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+.modal h2{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:18px;color:var(--soil);}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
 
-/* ── TOGGLE ── */
-.toggle-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.toggle { position: relative; width: 42px; height: 22px; flex-shrink: 0; }
-.toggle input { opacity: 0; width: 0; height: 0; }
-.toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 22px; cursor: pointer; transition: 0.2s; }
-.toggle-slider:before { content: ''; position: absolute; left: 3px; top: 3px; width: 16px; height: 16px; background: var(--muted); border-radius: 50%; transition: 0.2s; }
-.toggle input:checked + .toggle-slider { background: var(--wheat); }
-.toggle input:checked + .toggle-slider:before { transform: translateX(20px); background: var(--soil); }
+/* FIELD CARDS */
+.fields-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:16px;}
+.field-card{background:var(--paper);border-radius:4px;padding:16px;cursor:pointer;border:2px solid transparent;transition:all 0.15s;}
+.field-card:hover{border-color:var(--wheat);}
+.field-card.active{border-color:var(--wheat);background:#FDF8EE;}
+.field-card .fc-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--soil);margin-bottom:4px;}
+.field-card .fc-meta{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:10px;}
+.field-card .fc-stat{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--field);font-weight:600;}
+.field-card .fc-stat.loss{color:var(--red);}
+.add-field-card{background:transparent;border:2px dashed var(--border);border-radius:4px;padding:16px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;transition:all 0.15s;min-height:100px;}
+.add-field-card:hover{border-color:var(--wheat);color:var(--wheat);}
 
-/* ── MODAL ── */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 16px; }
-.modal { background: var(--paper); border-radius: 6px; padding: 24px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
-.modal h2 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 18px; color: var(--soil); }
-.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+/* CROP CARDS */
+.crop-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:14px;}
+.crop-card{background:var(--paper);border-radius:4px;padding:14px;border:2px solid transparent;cursor:pointer;transition:all 0.15s;}
+.crop-card:hover,.crop-card.active{border-color:var(--wheat);}
+.crop-card .cc-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--soil);margin-bottom:6px;}
+.crop-card .cc-costs{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);line-height:1.8;}
+.fsa-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:1px;background:#1A3A28;color:#6DBF6D;padding:2px 7px;border-radius:2px;margin-top:6px;}
 
-/* ── FIELDS GRID ── */
-.fields-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-bottom: 16px; }
-.field-card { background: var(--paper); border-radius: 4px; padding: 16px; cursor: pointer; border: 2px solid transparent; transition: all 0.15s; }
-.field-card:hover { border-color: var(--wheat); }
-.field-card.active { border-color: var(--wheat); background: #FDF8EE; }
-.field-card .fc-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--soil); margin-bottom: 4px; }
-.field-card .fc-meta { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-bottom: 10px; }
-.field-card .fc-stat { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--field); font-weight: 600; }
-.field-card .fc-stat.loss { color: var(--red); }
-.add-field-card { background: transparent; border: 2px dashed var(--border); border-radius: 4px; padding: 16px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--muted); font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 600; transition: all 0.15s; min-height: 100px; }
-.add-field-card:hover { border-color: var(--wheat); color: var(--wheat); }
+/* SUMMARY TABLE — FIXED TEXT COLOR */
+.summary-table{width:100%;border-collapse:collapse;font-size:13px;}
+.summary-table th{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--wheat);padding:8px 12px;text-align:left;background:#0A0602;border-bottom:1px solid var(--border);}
+.summary-table td{padding:10px 12px;border-bottom:1px solid #2A1A0A;color:var(--paper);font-family:'IBM Plex Sans',sans-serif;}
+.summary-table td.mono{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--paper);}
+.summary-table tr:last-child td{border-bottom:none;}
+.summary-table tr.total-row td{font-weight:700;background:#0F0804;border-top:2px solid var(--border);color:var(--wheat-pale);}
+.summary-table tr.total-row td.mono{color:var(--wheat-pale);}
 
-/* ── CROP CARDS ── */
-.crop-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 14px; }
-.crop-card { background: var(--paper); border-radius: 4px; padding: 14px; border: 2px solid transparent; cursor: pointer; transition: all 0.15s; }
-.crop-card:hover, .crop-card.active { border-color: var(--wheat); }
-.crop-card .cc-name { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--soil); margin-bottom: 6px; }
-.crop-card .cc-costs { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); line-height: 1.8; }
+/* WHAT IF TAB */
+.whatif-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;}
+.whatif-col{background:var(--paper);border-radius:4px;padding:20px;}
+.whatif-col h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--soil);margin-bottom:14px;}
+.whatif-result{background:#0A0602;border:1px solid var(--border);border-radius:4px;padding:12px;margin-top:12px;}
+.whatif-result .wr-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+.whatif-result .wr-val{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--paper);}
+.whatif-result.is-profit .wr-val{color:var(--field-light);}
+.whatif-result.is-loss .wr-val{color:var(--red-light);}
 
-/* ── SUMMARY TABLE ── */
-.summary-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.summary-table th { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--wheat); padding: 8px 12px; text-align: left; background: #0A0602; border-bottom: 1px solid var(--border); }
-.summary-table td { padding: 10px 12px; border-bottom: 1px solid #EDE4CC; }
-.summary-table td.mono { font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
-.summary-table tr:last-child td { border-bottom: none; }
-.summary-table tr.total-row td { font-weight: 700; background: var(--paper-dark); border-top: 2px solid var(--border-light); }
+/* LOAN SECTION */
+.loan-section{background:#FDF8EE;border:1px solid var(--border-light);border-radius:4px;padding:16px;margin-top:12px;}
 
-/* ── SAVING INDICATOR ── */
-.save-indicator { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--field-light); letter-spacing: 1px; opacity: 0; transition: opacity 0.3s; position: fixed; bottom: 20px; right: 20px; background: #0A0602; border: 1px solid var(--border); padding: 6px 12px; border-radius: 3px; }
-.save-indicator.show { opacity: 1; }
+/* MISC */
+.save-indicator{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--field-light);letter-spacing:1px;opacity:0;transition:opacity 0.3s;position:fixed;bottom:20px;right:20px;background:#0A0602;border:1px solid var(--border);padding:6px 12px;border-radius:3px;z-index:100;}
+.save-indicator.show{opacity:1;}
+hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
+.flex-between{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.flex-gap{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.hidden{display:none!important;}
+.badge{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:1px;background:var(--soil-light);color:var(--wheat);padding:3px 8px;border-radius:2px;}
+.section-intro{font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;}
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty-state .es-icon{font-size:44px;margin-bottom:12px;}
+.empty-state p{font-size:14px;margin-bottom:16px;}
+.legacy-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--wheat-pale);letter-spacing:1px;margin-top:2px;}
 
-hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
-.flex-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.flex-gap { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.hidden { display: none !important; }
-.badge { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 1px; background: var(--soil-light); color: var(--wheat); padding: 3px 8px; border-radius: 2px; }
-.section-intro { font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: var(--muted); margin-bottom: 16px; line-height: 1.6; }
-.empty-state { text-align: center; padding: 48px 20px; color: var(--muted); }
-.empty-state .es-icon { font-size: 44px; margin-bottom: 12px; }
-.empty-state p { font-size: 14px; margin-bottom: 16px; }
-
-@media(max-width:700px) {
-  .cols-2,.cols-3 { grid-template-columns: 1fr; }
-  .results-grid { grid-template-columns: 1fr 1fr; }
-  .cost-row { grid-template-columns: 1fr 110px 42px; }
-  #appHeader { flex-wrap: wrap; padding: 10px; gap: 8px; }
-  .nav-tab { padding: 0 10px; font-size: 11px; }
+@media(max-width:700px){
+  .cols-2,.cols-3{grid-template-columns:1fr;}
+  .results-grid{grid-template-columns:1fr 1fr;}
+  .cost-row{grid-template-columns:1fr 110px 42px;}
+  .whatif-grid{grid-template-columns:1fr;}
+  #appHeader{flex-wrap:wrap;padding:10px;gap:8px;}
+  .nav-tab{padding:0 8px;font-size:11px;}
 }
 </style>
 </head>
 <body>
 
-<!-- ═══ LOADING ═══ -->
+<!-- LOADING -->
 <div id="loadingScreen">
   <div class="spinner"></div>
   <span>LOADING</span>
 </div>
 
-<!-- ═══ AUTH ═══ -->
+<!-- AUTH -->
 <div id="authScreen" class="hidden">
   <div class="auth-card">
-    <div class="auth-logo">
-      <div>
-        <h1>Know Your Ground</h1>
-        <div class="sub">Farm financial clarity</div>
-      </div>
+    <div class="auth-logo" style="margin-bottom:28px;">
+      <h1>Know Your Ground</h1>
+      <div class="sub">Farm financial clarity</div>
     </div>
     <div class="auth-tabs">
       <button class="auth-tab active" onclick="showAuthTab('login')">Sign In</button>
@@ -315,52 +199,27 @@ hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
     </div>
     <div class="auth-error" id="authError"></div>
     <div class="auth-success" id="authSuccess"></div>
-
-    <!-- LOGIN -->
     <div id="authLogin">
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
-      </div>
+      <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"></div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px;" onclick="doLogin()" id="loginBtn">Sign In</button>
     </div>
-
-    <!-- SIGNUP -->
     <div id="authSignup" class="hidden">
-      <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" id="signupName" placeholder="John Anderson">
-      </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="signupEmail" placeholder="you@example.com" autocomplete="email">
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="signupPassword" placeholder="Min 6 characters" autocomplete="new-password">
-      </div>
+      <div class="form-group"><label>Full Name</label><input type="text" id="signupName" placeholder="John Anderson"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="signupEmail" placeholder="you@example.com"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="signupPassword" placeholder="Min 6 characters"></div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px;" onclick="doSignup()" id="signupBtn">Create Account</button>
     </div>
-
-    <!-- RESET -->
     <div id="authReset" class="hidden">
       <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Enter your email and we'll send you a reset link.</p>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="resetEmail" placeholder="you@example.com">
-      </div>
+      <div class="form-group"><label>Email</label><input type="email" id="resetEmail" placeholder="you@example.com"></div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="doReset()" id="resetBtn">Send Reset Link</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ APP ═══ -->
+<!-- APP -->
 <div id="appWrapper" class="hidden">
-
 <div id="appHeader">
   <div class="header-brand">
     <div>
@@ -374,6 +233,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
     <button class="nav-tab" data-tab="fields" onclick="switchTab('fields')">Fields</button>
     <button class="nav-tab" data-tab="crops" onclick="switchTab('crops')">Crop Profiles</button>
     <button class="nav-tab" data-tab="summary" onclick="switchTab('summary')">Summary</button>
+    <button class="nav-tab" data-tab="whatif" onclick="switchTab('whatif')">What If</button>
   </nav>
   <div class="header-right">
     <select id="farmSelect" onchange="selectFarm(this.value)"></select>
@@ -385,252 +245,436 @@ hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 
 <div id="appMain">
 
-  <!-- ══ OVERVIEW ══ -->
-  <div id="tab-overview" class="tab-content">
-    <div id="overviewEmpty" class="card-dark empty-state hidden">
-      <div class="es-icon">🌾</div>
-      <p>Create your first farm to get started.</p>
-      <button class="btn btn-primary" onclick="openFarmModal()">+ Create Farm</button>
+<!-- ══ OVERVIEW ══ -->
+<div id="tab-overview" class="tab-content">
+  <div id="overviewEmpty" class="card-dark empty-state hidden">
+    <div class="es-icon">🌾</div>
+    <p>Create your first farm to get started.</p>
+    <button class="btn btn-primary" onclick="openFarmModal()">+ Create Farm</button>
+  </div>
+  <div id="overviewContent" class="hidden">
+    <div class="flex-between">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--wheat);" id="ovFarmName">—</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-top:2px;" id="ovFarmMeta">—</div>
+        <div class="legacy-tag" id="ovLegacy"></div>
+      </div>
+      <div class="flex-gap">
+        <span class="badge" id="ovSeason">2025</span>
+        <button class="btn btn-outline btn-sm" onclick="openFarmModal(true)">Edit Farm</button>
+      </div>
     </div>
-    <div id="overviewContent" class="hidden">
-      <div class="flex-between">
-        <div>
-          <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--wheat);" id="ovFarmName">—</div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-top:2px;" id="ovFarmMeta">—</div>
-        </div>
-        <div class="flex-gap">
-          <span class="badge" id="ovSeason">2025</span>
-          <button class="btn btn-outline btn-sm" onclick="openFarmModal(true)">Edit Farm</button>
+    <div class="results-grid" style="margin-top:14px;">
+      <div class="result-box is-wheat"><div class="r-label">Total Acres</div><div class="r-val" id="ovTotalAcres">—</div><div class="r-sub">all fields</div></div>
+      <div class="result-box"><div class="r-label">Total Input Cost</div><div class="r-val" id="ovTotalCost">—</div><div class="r-sub">farm + fields</div></div>
+      <div class="result-box"><div class="r-label">Cost / Acre</div><div class="r-val" id="ovCostPerAcre">—</div><div class="r-sub">blended all-in</div></div>
+      <div class="result-box" id="ovProfitBox"><div class="r-label">Est. Net Profit</div><div class="r-val" id="ovProfit">—</div><div class="r-sub">all fields + farm</div></div>
+    </div>
+    <div class="card-dark" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;">OFF-FARM INCOME</div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--field-light);font-weight:700;" id="ovOffFarm">$0</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;">TOTAL HOUSEHOLD INCOME</div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--paper);font-weight:700;" id="ovHousehold">—</div>
+      </div>
+    </div>
+    <div class="sec-label" style="margin-top:4px;">Field Performance</div>
+    <div class="fields-grid" id="ovFieldStrip"></div>
+  </div>
+</div>
+
+<!-- ══ FARM COSTS ══ -->
+<div id="tab-farm" class="tab-content hidden">
+  <div id="farmCostsEmpty" class="card-dark empty-state hidden"><div class="es-icon">🏡</div><p>Select or create a farm first.</p></div>
+  <div id="farmCostsContent" class="hidden">
+    <p class="section-intro">Whole-operation costs divided by total acreage to calculate per-acre overhead for each field.</p>
+    <div class="card">
+      <div class="sec-label">Equipment & Fuel</div>
+      <div class="toggle-wrap">
+        <label style="margin:0;text-transform:none;font-size:13px;letter-spacing:0;color:var(--ink);">Combine fuel & depreciation into one line</label>
+        <label class="toggle"><input type="checkbox" id="equipToggle" onchange="toggleEquipMode()"><span class="toggle-slider"></span></label>
+      </div>
+      <div id="equipSeparate">
+        <div class="form-row cols-2">
+          <div class="form-group" style="margin:0"><label>Fuel — Total Farm ($)</label><input type="number" id="fc_fuel" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
+          <div class="form-group" style="margin:0"><label>Equipment Depreciation ($)</label><input type="number" id="fc_depreciation" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
         </div>
       </div>
+      <div id="equipCombined" class="hidden">
+        <div class="form-group"><label>Fuel & Equipment Combined ($)</label><input type="number" id="fc_fuelEquipCombined" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Farm Overhead</div>
+      <div class="form-row cols-2">
+        <div class="form-group" style="margin:0"><label>Family Living Expenses ($)</label><input type="number" id="fc_familyLiving" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
+        <div class="form-group" style="margin:0"><label>Repairs & Maintenance ($)</label><input type="number" id="fc_repairs" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
+      </div>
+      <div class="form-row cols-2">
+        <div class="form-group" style="margin:0"><label>Operating Loans & Interest ($)</label><input type="number" id="fc_loans" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
+        <div class="form-group" style="margin:0"><label>Labor ($)</label><input type="number" id="fc_labor" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Land & Equipment Payments</div>
+      <div class="form-row cols-2">
+        <div class="form-group" style="margin:0"><label>Land Payments / Rent ($)</label><input type="number" id="fc_landPayments" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
+        <div class="form-group" style="margin:0"><label>Equipment Loan Payments ($)</label><input type="number" id="fc_equipPayments" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Additional Farm Costs</div>
+      <div id="farmCustomCosts"></div>
+      <button class="btn btn-ghost" onclick="addFarmCustomCost()" style="margin-top:4px;">+ Add Custom Cost</button>
+    </div>
+    <div class="card">
+      <div class="sec-label">Off-Farm Income</div>
+      <p class="section-intro" style="margin-bottom:12px;">Spouse employment, custom work, rental income, etc.</p>
+      <div id="offFarmIncome"></div>
+      <button class="btn btn-ghost" onclick="addOffFarmIncome()" style="margin-top:4px;">+ Add Income Source</button>
+    </div>
+    <div class="card-dark">
+      <div class="sec-label">Farm Cost Summary</div>
       <div class="results-grid">
-        <div class="result-box is-wheat"><div class="r-label">Total Acres</div><div class="r-val" id="ovTotalAcres">—</div><div class="r-sub">all fields</div></div>
-        <div class="result-box"><div class="r-label">Total Input Cost</div><div class="r-val" id="ovTotalCost">—</div><div class="r-sub">farm + fields</div></div>
-        <div class="result-box"><div class="r-label">Cost / Acre</div><div class="r-val" id="ovCostPerAcre">—</div><div class="r-sub">blended all-in</div></div>
-        <div class="result-box" id="ovProfitBox"><div class="r-label">Est. Net Profit</div><div class="r-val" id="ovProfit">—</div><div class="r-sub">all fields + farm</div></div>
+        <div class="result-box is-wheat"><div class="r-label">Total Farm Costs</div><div class="r-val" id="fc_totalDisplay">$0</div><div class="r-sub">annual overhead</div></div>
+        <div class="result-box"><div class="r-label">Cost / Acre</div><div class="r-val" id="fc_perAcreDisplay">—</div><div class="r-sub">÷ total farm acres</div></div>
+        <div class="result-box is-profit"><div class="r-label">Off-Farm Income</div><div class="r-val" id="fc_offFarmDisplay">$0</div><div class="r-sub">annual</div></div>
+        <div class="result-box"><div class="r-label">Net Overhead / Acre</div><div class="r-val" id="fc_netPerAcreDisplay">—</div><div class="r-sub">after off-farm income</div></div>
       </div>
-      <div class="card-dark" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
-        <div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;">OFF-FARM INCOME</div>
-          <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--field-light);font-weight:700;" id="ovOffFarm">$0</div>
-        </div>
-        <div style="text-align:right;">
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;">TOTAL HOUSEHOLD INCOME</div>
-          <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--paper);font-weight:700;" id="ovHousehold">—</div>
-        </div>
-      </div>
-      <div class="sec-label" style="margin-top:4px;">Field Performance</div>
-      <div class="fields-grid" id="ovFieldStrip"></div>
     </div>
   </div>
+</div>
 
-  <!-- ══ FARM COSTS ══ -->
-  <div id="tab-farm" class="tab-content hidden">
-    <div id="farmCostsEmpty" class="card-dark empty-state hidden"><div class="es-icon">🏡</div><p>Select or create a farm first.</p></div>
-    <div id="farmCostsContent" class="hidden">
-      <p class="section-intro">Whole-operation costs divided by total acreage to calculate per-acre overhead for each field.</p>
-      <div class="card">
-        <div class="sec-label">Equipment & Fuel</div>
-        <div class="toggle-wrap">
-          <label style="margin:0;text-transform:none;font-size:13px;letter-spacing:0;color:var(--ink);">Combine fuel & depreciation into one line</label>
-          <label class="toggle"><input type="checkbox" id="equipToggle" onchange="toggleEquipMode()"><span class="toggle-slider"></span></label>
+<!-- ══ FIELDS ══ -->
+<div id="tab-fields" class="tab-content hidden">
+  <div id="fieldsEmpty" class="card-dark empty-state hidden"><div class="es-icon">🌱</div><p>Select or create a farm first, then add fields.</p></div>
+  <div id="fieldsContent" class="hidden">
+    <div id="fieldNoSelect">
+      <div class="flex-between">
+        <div class="sec-label" style="margin:0;border:none;">Your Fields</div>
+        <button class="btn btn-primary btn-sm" onclick="openFieldModal()">+ Add Field</button>
+      </div>
+      <div class="fields-grid" id="fieldCardsGrid" style="margin-top:12px;"></div>
+    </div>
+    <div id="fieldDetailPanel" class="hidden">
+      <div class="flex-between" style="margin-bottom:16px;">
+        <button class="btn btn-ghost btn-sm" onclick="closeFieldDetail()">← All Fields</button>
+        <div class="flex-gap">
+          <button class="btn btn-outline btn-sm" onclick="openFieldModal(true)">Edit Field</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCurrentField()">Delete</button>
         </div>
-        <div id="equipSeparate">
-          <div class="form-row cols-2">
-            <div class="form-group" style="margin:0"><label>Fuel — Total Farm ($)</label><input type="number" id="fc_fuel" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
-            <div class="form-group" style="margin:0"><label>Equipment Depreciation ($)</label><input type="number" id="fc_depreciation" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
+      </div>
+      <div class="card-dark" style="margin-bottom:14px;">
+        <div class="flex-between flex-wrap" style="gap:10px;">
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:24px;color:var(--wheat);font-weight:700;" id="fdName">—</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;" id="fdMeta">—</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px;" id="fdLegals">—</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--wheat-pale);margin-top:2px;" id="fdPurchased">—</div>
+          </div>
+          <span class="badge" id="fdSeason">—</span>
+        </div>
+      </div>
+
+      <!-- FIELD LOAN SECTION -->
+      <div class="card" id="fdLoanCard">
+        <div class="sec-label">Land Loan</div>
+        <div class="toggle-wrap">
+          <label style="margin:0;text-transform:none;font-size:13px;letter-spacing:0;color:var(--ink);">This field has a loan attached to it</label>
+          <label class="toggle"><input type="checkbox" id="fd_hasLoan" onchange="toggleFieldLoan()"><span class="toggle-slider"></span></label>
+        </div>
+        <div id="fdLoanDetails" class="hidden">
+          <div class="toggle-wrap" style="margin-bottom:14px;">
+            <label style="margin:0;text-transform:none;font-size:13px;letter-spacing:0;color:var(--ink);">Include loan payment in farm-level costs (vs. field-level only)</label>
+            <label class="toggle"><input type="checkbox" id="fd_loanScopeFarm" onchange="saveFieldData()"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="loan-section">
+            <div class="form-row cols-3">
+              <div class="form-group" style="margin:0"><label>Loan Amount ($)</label><input type="number" id="fd_loanAmount" placeholder="250000" step="100" oninput="saveFieldData()"></div>
+              <div class="form-group" style="margin:0"><label>Interest Rate (%)</label><input type="number" id="fd_loanRate" placeholder="5.25" step="0.01" oninput="calcLoanPayment()"></div>
+              <div class="form-group" style="margin:0"><label>Maturity Date</label><input type="text" id="fd_loanMaturity" placeholder="2035-01-01" oninput="saveFieldData()"></div>
+            </div>
+            <div class="form-row cols-2">
+              <div class="form-group" style="margin:0"><label>Annual Payment ($)</label><input type="number" id="fd_loanPayment" placeholder="0.00" step="0.01" oninput="saveFieldData()"></div>
+              <div class="form-group" style="margin:0"><label>Payment / Acre (calculated)</label><input type="text" id="fd_loanPerAcre" readonly></div>
+            </div>
           </div>
         </div>
-        <div id="equipCombined" class="hidden">
-          <div class="form-group"><label>Fuel & Equipment Combined ($)</label><input type="number" id="fc_fuelEquipCombined" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
-        </div>
       </div>
+
+      <!-- MARKET PRICE -->
+      <div style="display:flex;align-items:center;gap:12px;background:#0A0602;border:1px solid var(--border);border-radius:4px;padding:14px 16px;margin-bottom:14px;flex-wrap:wrap;">
+        <label style="margin:0;white-space:nowrap;color:var(--wheat);">Market Price / Bu or Unit</label>
+        <input type="number" id="fd_marketPrice" placeholder="5.80" step="0.01" style="max-width:140px;background:#150D05;border-color:var(--border);color:var(--paper);" oninput="saveFieldData()">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--sky);flex:1;text-align:right;" id="fd_insight">Enter market price to see margin</div>
+      </div>
+
+      <!-- CROP INPUT COSTS -->
       <div class="card">
-        <div class="sec-label">Farm Overhead</div>
+        <div class="flex-between">
+          <div class="sec-label" style="margin:0;border:none;">Crop Input Costs ($/Acre)</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);" id="fdCropSource">—</div>
+        </div>
+        <p class="section-intro" style="margin-bottom:12px;">Auto-filled from crop profile. Edit per-field as needed.</p>
         <div class="form-row cols-2">
-          <div class="form-group" style="margin:0"><label>Family Living Expenses ($)</label><input type="number" id="fc_familyLiving" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
-          <div class="form-group" style="margin:0"><label>Repairs & Maintenance ($)</label><input type="number" id="fc_repairs" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
+          <div class="form-group" style="margin:0"><label>Seed ($/Acre)</label><input type="number" id="fd_seed" placeholder="0.00" step="0.01" oninput="saveFieldData()"></div>
+          <div class="form-group" style="margin:0"><label>Fertilizer ($/Acre)</label><input type="number" id="fd_fertilizer" placeholder="0.00" step="0.01" oninput="saveFieldData()"></div>
         </div>
         <div class="form-row cols-2">
-          <div class="form-group" style="margin:0"><label>Operating Loans & Interest ($)</label><input type="number" id="fc_loans" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
-          <div class="form-group" style="margin:0"><label>Labor ($)</label><input type="number" id="fc_labor" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
+          <div class="form-group" style="margin:0"><label>Chemicals ($/Acre)</label><input type="number" id="fd_chemicals" placeholder="0.00" step="0.01" oninput="saveFieldData()"></div>
+          <div class="form-group" style="margin:0"><label>Crop Insurance ($/Acre)</label><input type="number" id="fd_cropInsurance" placeholder="0.00" step="0.01" oninput="saveFieldData()"></div>
         </div>
-      </div>
-      <div class="card">
-        <div class="sec-label">Land & Equipment Payments</div>
         <div class="form-row cols-2">
-          <div class="form-group" style="margin:0"><label>Land Payments / Rent ($)</label><input type="number" id="fc_landPayments" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
-          <div class="form-group" style="margin:0"><label>Equipment Loan Payments ($)</label><input type="number" id="fc_equipPayments" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
+          <div class="form-group" style="margin:0"><label>Irrigation ($/Acre)</label><input type="number" id="fd_irrigation" placeholder="0.00" step="0.01" oninput="saveFieldData()"></div>
+          <div class="form-group" style="margin:0"><label>Other Field Costs ($/Acre)</label><input type="number" id="fd_other" placeholder="0.00" step="0.01" oninput="saveFieldData()"></div>
+        </div>
+        <hr>
+        <div class="sec-label" style="margin-bottom:10px;">Custom Field Cost Lines</div>
+        <div id="fieldCustomCosts"></div>
+        <button class="btn btn-ghost" onclick="addFieldCustomCost()" style="margin-top:4px;">+ Add Custom Cost</button>
+        <div style="display:flex;justify-content:flex-end;align-items:center;gap:12px;padding-top:12px;border-top:1px solid var(--border-light);margin-top:12px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;">FIELD COST / ACRE</span>
+          <strong style="font-family:'IBM Plex Mono',monospace;font-size:16px;color:var(--ink);" id="fd_fieldCostPerAcre">$0.00</strong>
         </div>
       </div>
+
+      <!-- YIELD -->
       <div class="card">
-        <div class="sec-label">Additional Farm Costs</div>
-        <div id="farmCustomCosts"></div>
-        <button class="btn btn-ghost" onclick="addFarmCustomCost()" style="margin-top:4px;">+ Add Custom Cost</button>
+        <div class="sec-label">Expected Yield</div>
+        <div class="form-row cols-2">
+          <div class="form-group" style="margin:0"><label>Est. Yield / Acre (Bu)</label><input type="number" id="fd_yield" placeholder="45" oninput="saveFieldData()"></div>
+          <div class="form-group" style="margin:0"><label>Field Acres</label><input type="number" id="fd_acres_display" readonly></div>
+        </div>
       </div>
-      <div class="card">
-        <div class="sec-label">Off-Farm Income</div>
-        <p class="section-intro" style="margin-bottom:12px;">Spouse employment, custom work, rental income, etc.</p>
-        <div id="offFarmIncome"></div>
-        <button class="btn btn-ghost" onclick="addOffFarmIncome()" style="margin-top:4px;">+ Add Income Source</button>
+
+      <!-- FIELD RESULTS -->
+      <div class="sec-label">Field Summary</div>
+      <div class="results-grid">
+        <div class="result-box"><div class="r-label">All-In Cost/Acre</div><div class="r-val" id="fd_allInCost">—</div><div class="r-sub">field + farm overhead</div></div>
+        <div class="result-box is-wheat"><div class="r-label">Break-Even / Bu</div><div class="r-val" id="fd_breakEven">—</div><div class="r-sub">all-in ÷ yield</div></div>
+        <div class="result-box" id="fd_profitBox"><div class="r-label">Profit / Acre</div><div class="r-val" id="fd_profitPerAcre">—</div><div class="r-sub" id="fd_profitSub">at market price</div></div>
+        <div class="result-box" id="fd_totalBox"><div class="r-label">Total Field P&L</div><div class="r-val" id="fd_totalPL">—</div><div class="r-sub" id="fd_totalSub">—</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CROP PROFILES ══ -->
+<div id="tab-crops" class="tab-content hidden">
+  <p class="section-intro">Set up cost profiles for each crop. Costs auto-populate when you create a field.</p>
+  <div class="flex-between">
+    <div class="sec-label" style="margin:0;border:none;">Crop Profiles</div>
+    <button class="btn btn-primary btn-sm" onclick="openCropModal()">+ Add Crop Profile</button>
+  </div>
+  <div class="crop-cards" id="cropCardsGrid" style="margin-top:12px;"></div>
+  <div id="cropDetailPanel" class="hidden">
+    <div class="card">
+      <div class="flex-between" style="margin-bottom:14px;">
+        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;" id="cpName">—</div>
+        <div class="flex-gap">
+          <button class="btn btn-outline btn-sm" onclick="openCropModal(true)">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCurrentCrop()">Delete</button>
+        </div>
+      </div>
+      <div class="form-row cols-2">
+        <div class="form-group" style="margin:0"><label>Seed ($/Acre)</label><input type="number" id="cp_seed" placeholder="0.00" step="0.01" oninput="saveCropData()"></div>
+        <div class="form-group" style="margin:0"><label>Fertilizer ($/Acre)</label><input type="number" id="cp_fertilizer" placeholder="0.00" step="0.01" oninput="saveCropData()"></div>
+      </div>
+      <div class="form-row cols-2">
+        <div class="form-group" style="margin:0"><label>Chemicals ($/Acre)</label><input type="number" id="cp_chemicals" placeholder="0.00" step="0.01" oninput="saveCropData()"></div>
+        <div class="form-group" style="margin:0"><label>Crop Insurance ($/Acre)</label><input type="number" id="cp_cropInsurance" placeholder="0.00" step="0.01" oninput="saveCropData()"></div>
+      </div>
+      <div class="form-row cols-2">
+        <div class="form-group" style="margin:0"><label>Irrigation ($/Acre)</label><input type="number" id="cp_irrigation" placeholder="0.00" step="0.01" oninput="saveCropData()"></div>
+        <div class="form-group" style="margin:0"><label>Other ($/Acre)</label><input type="number" id="cp_other" placeholder="0.00" step="0.01" oninput="saveCropData()"></div>
+      </div>
+      <div class="form-row cols-2">
+        <div class="form-group" style="margin:0"><label>Typical Yield / Acre (Bu)</label><input type="number" id="cp_yield" placeholder="45" step="1" oninput="saveCropData()"></div>
+        <div class="form-group" style="margin:0"><label>Total Profile Cost / Acre</label><input type="text" id="cp_totalDisplay" readonly></div>
+      </div>
+
+      <!-- FSA COVERAGE -->
+      <hr>
+      <div class="sec-label" style="margin-bottom:12px;">USDA FSA Coverage</div>
+      <div class="toggle-wrap">
+        <label style="margin:0;text-transform:none;font-size:13px;letter-spacing:0;color:var(--ink);">This crop has FSA (Farm Service Agency) coverage</label>
+        <label class="toggle"><input type="checkbox" id="cp_fsaCoverage" onchange="toggleFSA()"><span class="toggle-slider"></span></label>
+      </div>
+      <div id="fsaDetails" class="hidden">
+        <div class="form-group">
+          <label>Coverage Type</label>
+          <select id="cp_fsaType" onchange="toggleFSAType()">
+            <option value="">— Select Coverage Type —</option>
+            <option value="ARC">ARC — Agricultural Risk Coverage</option>
+            <option value="PLC">PLC — Price Loss Coverage</option>
+          </select>
+        </div>
+        <!-- ARC options -->
+        <div id="arcOptions" class="hidden">
+          <div class="form-group">
+            <label>ARC Program</label>
+            <select id="cp_arcType" onchange="saveCropData()">
+              <option value="ARC-CO">ARC-CO — County Average Yields (most common)</option>
+              <option value="ARC-IC">ARC-IC — Individual Farm (rarely used)</option>
+            </select>
+          </div>
+          <p class="section-intro" style="margin-top:8px;">ARC provides revenue-based protection. Payments triggered when county (or farm) revenue falls below 86% of the benchmark revenue.</p>
+        </div>
+        <!-- PLC info -->
+        <div id="plcOptions" class="hidden">
+          <p class="section-intro" style="margin-top:8px;">PLC provides price-based protection. Payments triggered when the effective price falls below the reference price set by Congress. Works best for crops with strong reference prices relative to market.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SUMMARY ══ -->
+<div id="tab-summary" class="tab-content hidden">
+  <div id="summaryEmpty" class="card-dark empty-state hidden"><div class="es-icon">📊</div><p>Add fields and costs to see your summary.</p></div>
+  <div id="summaryContent" class="hidden">
+    <div class="flex-gap" style="margin-bottom:16px;">
+      <button class="btn btn-primary btn-sm" id="sumBtnFarm" onclick="setSummaryLevel('farm')">Farm View</button>
+      <button class="btn btn-outline btn-sm" id="sumBtnField" onclick="setSummaryLevel('field')">Field View</button>
+      <div style="margin-left:auto;"><button class="btn btn-sky btn-sm" onclick="exportToCSV()">⬇ Export for Bank</button></div>
+    </div>
+    <div id="sumFarmView">
+      <div class="sec-label">Farm-Level Summary</div>
+      <div class="results-grid" style="margin-bottom:14px;">
+        <div class="result-box is-wheat"><div class="r-label">Total Acres</div><div class="r-val" id="sum_acres">—</div></div>
+        <div class="result-box"><div class="r-label">Total Revenue</div><div class="r-val" id="sum_revenue">—</div></div>
+        <div class="result-box"><div class="r-label">Total Costs</div><div class="r-val" id="sum_costs">—</div></div>
+        <div class="result-box" id="sum_plBox"><div class="r-label">Net P&L</div><div class="r-val" id="sum_pl">—</div></div>
       </div>
       <div class="card-dark">
-        <div class="sec-label">Farm Cost Summary</div>
-        <div class="results-grid">
-          <div class="result-box is-wheat"><div class="r-label">Total Farm Costs</div><div class="r-val" id="fc_totalDisplay">$0</div><div class="r-sub">annual overhead</div></div>
-          <div class="result-box"><div class="r-label">Cost / Acre</div><div class="r-val" id="fc_perAcreDisplay">—</div><div class="r-sub">÷ total farm acres</div></div>
-          <div class="result-box is-profit"><div class="r-label">Off-Farm Income</div><div class="r-val" id="fc_offFarmDisplay">$0</div><div class="r-sub">annual</div></div>
-          <div class="result-box"><div class="r-label">Net Overhead / Acre</div><div class="r-val" id="fc_netPerAcreDisplay">—</div><div class="r-sub">after off-farm income</div></div>
-        </div>
+        <table class="summary-table"><thead><tr><th>Category</th><th>Total ($)</th><th>Per Acre ($)</th><th>% of Cost</th></tr></thead><tbody id="sumFarmBody"></tbody></table>
+      </div>
+    </div>
+    <div id="sumFieldView" class="hidden">
+      <div class="sec-label">Field-Level Summary</div>
+      <div class="card-dark">
+        <table class="summary-table"><thead><tr><th>Field</th><th>Acres</th><th>Crop</th><th>Cost/Acre</th><th>Break-Even</th><th>Market</th><th>Profit/Acre</th><th>Total P&L</th></tr></thead><tbody id="sumFieldBody"></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ WHAT IF ══ -->
+<div id="tab-whatif" class="tab-content hidden">
+  <p class="section-intro">Compare two different crops or scenarios side by side for any field. Numbers pull from your crop profiles automatically.</p>
+  <div class="card">
+    <div class="sec-label">Select Field</div>
+    <div class="form-row cols-2">
+      <div class="form-group" style="margin:0">
+        <label>Field</label>
+        <select id="wi_field" onchange="loadWhatIfField()">
+          <option value="">— Select a Field —</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin:0">
+        <label>Market Price Entry</label>
+        <select id="wi_priceMode">
+          <option value="manual">Enter manually below</option>
+          <option value="field">Use field's current price</option>
+        </select>
       </div>
     </div>
   </div>
 
-  <!-- ══ FIELDS ══ -->
-  <div id="tab-fields" class="tab-content hidden">
-    <div id="fieldsEmpty" class="card-dark empty-state hidden"><div class="es-icon">🌱</div><p>Select or create a farm first, then add fields.</p></div>
-    <div id="fieldsContent" class="hidden">
-      <div id="fieldNoSelect">
-        <div class="flex-between">
-          <div class="sec-label" style="margin:0;border:none;">Your Fields</div>
-          <button class="btn btn-primary btn-sm" onclick="openFieldModal()">+ Add Field</button>
+  <div id="wiContent" class="hidden">
+    <div class="whatif-grid">
+      <!-- SCENARIO A -->
+      <div class="whatif-col">
+        <h3 id="wiNameA">Scenario A</h3>
+        <div class="form-group">
+          <label>Crop Profile</label>
+          <select id="wi_cropA" onchange="loadWhatIfCrop('A')"><option value="">— Select Crop —</option></select>
         </div>
-        <div class="fields-grid" id="fieldCardsGrid" style="margin-top:12px;"></div>
-      </div>
-      <div id="fieldDetailPanel" class="hidden">
-        <div class="flex-between" style="margin-bottom:16px;">
-          <button class="btn btn-ghost btn-sm" onclick="closeFieldDetail()">← All Fields</button>
-          <div class="flex-gap">
-            <button class="btn btn-outline btn-sm" onclick="openFieldModal(true)">Edit Field</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteCurrentField()">Delete</button>
-          </div>
+        <div class="form-row cols-2">
+          <div class="form-group" style="margin:0"><label>Seed ($/Ac)</label><input type="number" id="wiA_seed" placeholder="0.00" oninput="calcWhatIf()"></div>
+          <div class="form-group" style="margin:0"><label>Fertilizer ($/Ac)</label><input type="number" id="wiA_fertilizer" placeholder="0.00" oninput="calcWhatIf()"></div>
         </div>
-        <div class="card-dark" style="margin-bottom:14px;">
-          <div class="flex-between flex-wrap" style="gap:10px;">
-            <div>
-              <div style="font-family:'Playfair Display',serif;font-size:24px;color:var(--wheat);font-weight:700;" id="fdName">—</div>
-              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;" id="fdMeta">—</div>
-              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px;" id="fdLegals">—</div>
-            </div>
-            <span class="badge" id="fdSeason">—</span>
-          </div>
+        <div class="form-row cols-2">
+          <div class="form-group" style="margin:0"><label>Chemicals ($/Ac)</label><input type="number" id="wiA_chemicals" placeholder="0.00" oninput="calcWhatIf()"></div>
+          <div class="form-group" style="margin:0"><label>Crop Insurance ($/Ac)</label><input type="number" id="wiA_cropInsurance" placeholder="0.00" oninput="calcWhatIf()"></div>
         </div>
-        <div style="display:flex;align-items:center;gap:12px;background:#0A0602;border:1px solid var(--border);border-radius:4px;padding:14px 16px;margin-bottom:14px;flex-wrap:wrap;">
-          <label style="margin:0;white-space:nowrap;color:var(--wheat);">Market Price / Bu or Unit</label>
-          <input type="number" id="fd_marketPrice" placeholder="5.80" step="0.01" style="max-width:140px;background:#150D05;border-color:var(--border);color:var(--paper);" oninput="saveFieldData()">
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--sky);flex:1;text-align:right;" id="fd_insight">Enter market price to see margin</div>
+        <div class="form-row cols-2">
+          <div class="form-group" style="margin:0"><label>Irrigation ($/Ac)</label><input type="number" id="wiA_irrigation" placeholder="0.00" oninput="calcWhatIf()"></div>
+          <div class="form-group" style="margin:0"><label>Other ($/Ac)</label><input type="number" id="wiA_other" placeholder="0.00" oninput="calcWhatIf()"></div>
         </div>
-        <div class="card">
-          <div class="flex-between">
-            <div class="sec-label" style="margin:0;border:none;">Crop Input Costs ($/Acre)</div>
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);" id="fdCropSource">—</div>
-          </div>
-          <p class="section-intro" style="margin-bottom:12px;">Auto-filled from crop profile. Edit per-field as needed.</p>
-          <div class="form-row cols-2">
-            <div class="form-group" style="margin:0"><label>Seed ($/Acre)</label><input type="number" id="fd_seed" placeholder="0.00" step="0.01" oninput="saveFieldData()"></div>
-            <div class="form-group" style="margin:0"><label>Fertilizer ($/Acre)</label><input type="number" id="fd_fertilizer" placeholder="0.00" step="0.01" oninput="saveFieldData()"></div>
-          </div>
-          <div class="form-row cols-2">
-            <div class="form-group" style="margin:0"><label>Chemicals ($/Acre)</label><input type="number" id="fd_chemicals" placeholder="0.00" step="0.01" oninput="saveFieldData()"></div>
-            <div class="form-group" style="margin:0"><label>Crop Insurance ($/Acre)</label><input type="number" id="fd_cropInsurance" placeholder="0.00" step="0.01" oninput="saveFieldData()"></div>
-          </div>
-          <div class="form-row cols-2">
-            <div class="form-group" style="margin:0"><label>Irrigation ($/Acre)</label><input type="number" id="fd_irrigation" placeholder="0.00" step="0.01" oninput="saveFieldData()"></div>
-            <div class="form-group" style="margin:0"><label>Other Field Costs ($/Acre)</label><input type="number" id="fd_other" placeholder="0.00" step="0.01" oninput="saveFieldData()"></div>
-          </div>
-          <hr>
-          <div class="sec-label" style="margin-bottom:10px;">Custom Field Cost Lines</div>
-          <div id="fieldCustomCosts"></div>
-          <button class="btn btn-ghost" onclick="addFieldCustomCost()" style="margin-top:4px;">+ Add Custom Cost</button>
-          <div style="display:flex;justify-content:flex-end;align-items:center;gap:12px;padding-top:12px;border-top:1px solid var(--border-light);margin-top:12px;">
-            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;">FIELD COST / ACRE</span>
-            <strong style="font-family:'IBM Plex Mono',monospace;font-size:16px;color:var(--ink);" id="fd_fieldCostPerAcre">$0.00</strong>
-          </div>
+        <div class="form-row cols-2">
+          <div class="form-group" style="margin:0"><label>Est. Yield (Bu/Ac)</label><input type="number" id="wiA_yield" placeholder="45" oninput="calcWhatIf()"></div>
+          <div class="form-group" style="margin:0"><label>Market Price ($/Bu)</label><input type="number" id="wiA_price" placeholder="5.80" oninput="calcWhatIf()"></div>
         </div>
-        <div class="card">
-          <div class="sec-label">Expected Yield</div>
-          <div class="form-row cols-2">
-            <div class="form-group" style="margin:0"><label>Est. Yield / Acre (Bu)</label><input type="number" id="fd_yield" placeholder="45" oninput="saveFieldData()"></div>
-            <div class="form-group" style="margin:0"><label>Field Acres</label><input type="number" id="fd_acres_display" readonly></div>
-          </div>
+        <div class="whatif-result" id="wiBoxA_cost">
+          <div class="wr-label">INPUT COST / ACRE</div>
+          <div class="wr-val" id="wiA_costPerAcre">—</div>
         </div>
-        <div class="sec-label">Field Summary</div>
-        <div class="results-grid">
-          <div class="result-box"><div class="r-label">All-In Cost/Acre</div><div class="r-val" id="fd_allInCost">—</div><div class="r-sub">field + farm overhead</div></div>
-          <div class="result-box is-wheat"><div class="r-label">Break-Even / Bu</div><div class="r-val" id="fd_breakEven">—</div><div class="r-sub">all-in ÷ yield</div></div>
-          <div class="result-box" id="fd_profitBox"><div class="r-label">Profit / Acre</div><div class="r-val" id="fd_profitPerAcre">—</div><div class="r-sub" id="fd_profitSub">at market price</div></div>
-          <div class="result-box" id="fd_totalBox"><div class="r-label">Total Field P&L</div><div class="r-val" id="fd_totalPL">—</div><div class="r-sub" id="fd_totalSub">—</div></div>
+        <div class="whatif-result" id="wiBoxA_be">
+          <div class="wr-label">BREAK-EVEN / BU</div>
+          <div class="wr-val" id="wiA_breakEven">—</div>
+        </div>
+        <div class="whatif-result" id="wiBoxA_profit">
+          <div class="wr-label">PROFIT / ACRE</div>
+          <div class="wr-val" id="wiA_profitPerAcre">—</div>
+        </div>
+        <div class="whatif-result" id="wiBoxA_total">
+          <div class="wr-label">TOTAL FIELD P&L</div>
+          <div class="wr-val" id="wiA_totalPL">—</div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- ══ CROP PROFILES ══ -->
-  <div id="tab-crops" class="tab-content hidden">
-    <p class="section-intro">Set up cost profiles for each crop. Costs auto-populate when you create a field.</p>
-    <div class="flex-between">
-      <div class="sec-label" style="margin:0;border:none;">Crop Profiles</div>
-      <button class="btn btn-primary btn-sm" onclick="openCropModal()">+ Add Crop Profile</button>
-    </div>
-    <div class="crop-cards" id="cropCardsGrid" style="margin-top:12px;"></div>
-    <div id="cropDetailPanel" class="hidden">
-      <div class="card">
-        <div class="flex-between" style="margin-bottom:14px;">
-          <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;" id="cpName">—</div>
-          <div class="flex-gap">
-            <button class="btn btn-outline btn-sm" onclick="openCropModal(true)">Edit</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteCurrentCrop()">Delete</button>
-          </div>
+      <!-- SCENARIO B -->
+      <div class="whatif-col">
+        <h3 id="wiNameB">Scenario B</h3>
+        <div class="form-group">
+          <label>Crop Profile</label>
+          <select id="wi_cropB" onchange="loadWhatIfCrop('B')"><option value="">— Select Crop —</option></select>
         </div>
         <div class="form-row cols-2">
-          <div class="form-group" style="margin:0"><label>Seed ($/Acre)</label><input type="number" id="cp_seed" placeholder="0.00" step="0.01" oninput="saveCropData()"></div>
-          <div class="form-group" style="margin:0"><label>Fertilizer ($/Acre)</label><input type="number" id="cp_fertilizer" placeholder="0.00" step="0.01" oninput="saveCropData()"></div>
+          <div class="form-group" style="margin:0"><label>Seed ($/Ac)</label><input type="number" id="wiB_seed" placeholder="0.00" oninput="calcWhatIf()"></div>
+          <div class="form-group" style="margin:0"><label>Fertilizer ($/Ac)</label><input type="number" id="wiB_fertilizer" placeholder="0.00" oninput="calcWhatIf()"></div>
         </div>
         <div class="form-row cols-2">
-          <div class="form-group" style="margin:0"><label>Chemicals ($/Acre)</label><input type="number" id="cp_chemicals" placeholder="0.00" step="0.01" oninput="saveCropData()"></div>
-          <div class="form-group" style="margin:0"><label>Crop Insurance ($/Acre)</label><input type="number" id="cp_cropInsurance" placeholder="0.00" step="0.01" oninput="saveCropData()"></div>
+          <div class="form-group" style="margin:0"><label>Chemicals ($/Ac)</label><input type="number" id="wiB_chemicals" placeholder="0.00" oninput="calcWhatIf()"></div>
+          <div class="form-group" style="margin:0"><label>Crop Insurance ($/Ac)</label><input type="number" id="wiB_cropInsurance" placeholder="0.00" oninput="calcWhatIf()"></div>
         </div>
         <div class="form-row cols-2">
-          <div class="form-group" style="margin:0"><label>Irrigation ($/Acre)</label><input type="number" id="cp_irrigation" placeholder="0.00" step="0.01" oninput="saveCropData()"></div>
-          <div class="form-group" style="margin:0"><label>Other ($/Acre)</label><input type="number" id="cp_other" placeholder="0.00" step="0.01" oninput="saveCropData()"></div>
+          <div class="form-group" style="margin:0"><label>Irrigation ($/Ac)</label><input type="number" id="wiB_irrigation" placeholder="0.00" oninput="calcWhatIf()"></div>
+          <div class="form-group" style="margin:0"><label>Other ($/Ac)</label><input type="number" id="wiB_other" placeholder="0.00" oninput="calcWhatIf()"></div>
         </div>
         <div class="form-row cols-2">
-          <div class="form-group" style="margin:0"><label>Typical Yield / Acre (Bu)</label><input type="number" id="cp_yield" placeholder="45" step="1" oninput="saveCropData()"></div>
-          <div class="form-group" style="margin:0"><label>Total Profile Cost / Acre</label><input type="text" id="cp_totalDisplay" readonly></div>
+          <div class="form-group" style="margin:0"><label>Est. Yield (Bu/Ac)</label><input type="number" id="wiB_yield" placeholder="45" oninput="calcWhatIf()"></div>
+          <div class="form-group" style="margin:0"><label>Market Price ($/Bu)</label><input type="number" id="wiB_price" placeholder="5.80" oninput="calcWhatIf()"></div>
+        </div>
+        <div class="whatif-result" id="wiBoxB_cost">
+          <div class="wr-label">INPUT COST / ACRE</div>
+          <div class="wr-val" id="wiB_costPerAcre">—</div>
+        </div>
+        <div class="whatif-result" id="wiBoxB_be">
+          <div class="wr-label">BREAK-EVEN / BU</div>
+          <div class="wr-val" id="wiB_breakEven">—</div>
+        </div>
+        <div class="whatif-result" id="wiBoxB_profit">
+          <div class="wr-label">PROFIT / ACRE</div>
+          <div class="wr-val" id="wiB_profitPerAcre">—</div>
+        </div>
+        <div class="whatif-result" id="wiBoxB_total">
+          <div class="wr-label">TOTAL FIELD P&L</div>
+          <div class="wr-val" id="wiB_totalPL">—</div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- ══ SUMMARY ══ -->
-  <div id="tab-summary" class="tab-content hidden">
-    <div id="summaryEmpty" class="card-dark empty-state hidden"><div class="es-icon">📊</div><p>Add fields and costs to see your summary.</p></div>
-    <div id="summaryContent" class="hidden">
-      <div class="flex-gap" style="margin-bottom:16px;">
-        <button class="btn btn-primary btn-sm" id="sumBtnFarm" onclick="setSummaryLevel('farm')">Farm View</button>
-        <button class="btn btn-outline btn-sm" id="sumBtnField" onclick="setSummaryLevel('field')">Field View</button>
-        <div style="margin-left:auto;"><button class="btn btn-sky btn-sm" onclick="exportToCSV()">⬇ Export for Bank</button></div>
-      </div>
-      <div id="sumFarmView">
-        <div class="sec-label">Farm-Level Summary</div>
-        <div class="results-grid" style="margin-bottom:14px;">
-          <div class="result-box is-wheat"><div class="r-label">Total Acres</div><div class="r-val" id="sum_acres">—</div></div>
-          <div class="result-box"><div class="r-label">Total Revenue</div><div class="r-val" id="sum_revenue">—</div></div>
-          <div class="result-box"><div class="r-label">Total Costs</div><div class="r-val" id="sum_costs">—</div></div>
-          <div class="result-box" id="sum_plBox"><div class="r-label">Net P&L</div><div class="r-val" id="sum_pl">—</div></div>
-        </div>
-        <div class="card-dark">
-          <table class="summary-table"><thead><tr><th>Category</th><th>Total ($)</th><th>Per Acre ($)</th><th>% of Cost</th></tr></thead><tbody id="sumFarmBody"></tbody></table>
-        </div>
-      </div>
-      <div id="sumFieldView" class="hidden">
-        <div class="sec-label">Field-Level Summary</div>
-        <div class="card-dark">
-          <table class="summary-table"><thead><tr><th>Field</th><th>Acres</th><th>Crop</th><th>Cost/Acre</th><th>Break-Even</th><th>Market</th><th>Profit/Acre</th><th>Total P&L</th></tr></thead><tbody id="sumFieldBody"></tbody></table>
-        </div>
-      </div>
+    <!-- WINNER BANNER -->
+    <div id="wiBanner" class="card-dark hidden" style="margin-top:16px;text-align:center;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;">BETTER SCENARIO</div>
+      <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;" id="wiBannerText">—</div>
     </div>
   </div>
+</div>
 
 </div><!-- /appMain -->
 </div><!-- /appWrapper -->
@@ -644,6 +688,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
       <div class="form-group" style="margin:0"><label>Location / County</label><input type="text" id="fm_location" placeholder="e.g. Cheyenne County, KS"></div>
       <div class="form-group" style="margin:0"><label>Season / Year</label><input type="text" id="fm_season" placeholder="2025"></div>
     </div>
+    <div class="form-group"><label>Year Established</label><input type="text" id="fm_yearEstablished" placeholder="e.g. 1952 — honoring your legacy"></div>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeFarmModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveFarm()">Save</button>
@@ -659,7 +704,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
       <div class="form-group" style="margin:0"><label>Acres</label><input type="number" id="fldm_acres" placeholder="320"></div>
       <div class="form-group" style="margin:0"><label>Crop</label><select id="fldm_crop"><option value="">— Select Crop —</option></select></div>
     </div>
-    <div class="form-group"><label>Property Legals (Township, Range, Section)</label><input type="text" id="fldm_legals" placeholder="e.g. S12, T8S, R41W"></div>
+    <div class="form-row cols-2">
+      <div class="form-group" style="margin:0"><label>Property Legals</label><input type="text" id="fldm_legals" placeholder="e.g. S12, T8S, R41W"></div>
+      <div class="form-group" style="margin:0"><label>Year Purchased</label><input type="text" id="fldm_yearPurchased" placeholder="e.g. 1987"></div>
+    </div>
     <div class="form-group"><label>Season / Year</label><input type="text" id="fldm_season" placeholder="2025"></div>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeFieldModal()">Cancel</button>
@@ -682,898 +730,705 @@ hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 <div class="save-indicator" id="saveIndicator">✓ SAVED</div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════════════
-// SUPABASE INIT
-// ═══════════════════════════════════════════════════════════════════════════
-const SUPABASE_URL = 'https://tyttsvngdeitkjttdarp.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5dHRzdm5nZGVpdGtqdHRkYXJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyOTM0MTMsImV4cCI6MjA5MTg2OTQxM30.whG0Kp-ybQEo4vqhlSCUmjJJT5DKOBLqcNms4ngsYF8';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+// ═══ SUPABASE ═══
+const SUPABASE_URL='https://tyttsvngdeitkjttdarp.supabase.co';
+const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5dHRzdm5nZGVpdGtqdHRkYXJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyOTM0MTMsImV4cCI6MjA5MTg2OTQxM30.whG0Kp-ybQEo4vqhlSCUmjJJT5DKOBLqcNms4ngsYF8';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
 
-// ═══════════════════════════════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════════════════════════════
-let currentUser = null;
-let farms = [];
-let crops = [];
-let activeFarmId = null;
-let activeFieldId = null;
-let activeCropId = null;
-let summaryLevel = 'farm';
-let editingFarm = false;
-let editingField = false;
-let editingCrop = false;
-let saveTimer = null;
+// ═══ STATE ═══
+let currentUser=null,farms=[],crops=[],activeFarmId=null,activeFieldId=null,activeCropId=null,summaryLevel='farm',editingFarm=false,editingField=false,editingCrop=false,saveTimer=null;
+function farm(){return farms.find(f=>f.id===activeFarmId)||null;}
+function field(){return(farm()?.fields||[]).find(f=>f.id===activeFieldId)||null;}
+function cropObj(){return crops.find(c=>c.id===activeCropId)||null;}
+function farmTotalAcres(){return(farm()?.fields||[]).reduce((s,f)=>s+(parseFloat(f.acres)||0),0);}
+function showSaved(){const el=document.getElementById('saveIndicator');el.classList.add('show');clearTimeout(saveTimer);saveTimer=setTimeout(()=>el.classList.remove('show'),2000);}
 
-function farm() { return farms.find(f => f.id === activeFarmId) || null; }
-function field() { return (farm()?.fields || []).find(f => f.id === activeFieldId) || null; }
-function cropObj() { return crops.find(c => c.id === activeCropId) || null; }
-function farmTotalAcres() { return (farm()?.fields || []).reduce((s,f) => s + (parseFloat(f.acres)||0), 0); }
-
-function showSaved() {
-  const el = document.getElementById('saveIndicator');
-  el.classList.add('show');
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => el.classList.remove('show'), 2000);
+// ═══ AUTH ═══
+function showAuthTab(tab){
+  ['login','signup','reset'].forEach(t=>{document.getElementById('auth'+t.charAt(0).toUpperCase()+t.slice(1)).classList.toggle('hidden',t!==tab);});
+  document.querySelectorAll('.auth-tab').forEach((b,i)=>{b.classList.toggle('active',['login','signup','reset'][i]===tab);});
+  document.getElementById('authError').style.display='none';
+  document.getElementById('authSuccess').style.display='none';
 }
-
-// ═══════════════════════════════════════════════════════════════════════════
-// AUTH
-// ═══════════════════════════════════════════════════════════════════════════
-function showAuthTab(tab) {
-  ['login','signup','reset'].forEach(t => {
-    document.getElementById('auth' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('hidden', t !== tab);
-  });
-  document.querySelectorAll('.auth-tab').forEach((b,i) => {
-    b.classList.toggle('active', ['login','signup','reset'][i] === tab);
-  });
-  document.getElementById('authError').style.display = 'none';
-  document.getElementById('authSuccess').style.display = 'none';
+function showAuthError(msg){const el=document.getElementById('authError');el.textContent=msg;el.style.display='block';document.getElementById('authSuccess').style.display='none';}
+function showAuthSuccess(msg){const el=document.getElementById('authSuccess');el.textContent=msg;el.style.display='block';document.getElementById('authError').style.display='none';}
+async function doLogin(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const password=document.getElementById('loginPassword').value;
+  if(!email||!password){showAuthError('Please enter email and password.');return;}
+  const btn=document.getElementById('loginBtn');btn.disabled=true;btn.textContent='Signing in...';
+  const{error}=await sb.auth.signInWithPassword({email,password});
+  btn.disabled=false;btn.textContent='Sign In';
+  if(error)showAuthError(error.message);
 }
-
-function showAuthError(msg) {
-  const el = document.getElementById('authError');
-  el.textContent = msg;
-  el.style.display = 'block';
-  document.getElementById('authSuccess').style.display = 'none';
+async function doSignup(){
+  const name=document.getElementById('signupName').value.trim();
+  const email=document.getElementById('signupEmail').value.trim();
+  const password=document.getElementById('signupPassword').value;
+  if(!name||!email||!password){showAuthError('Please fill in all fields.');return;}
+  if(password.length<6){showAuthError('Password must be at least 6 characters.');return;}
+  const btn=document.getElementById('signupBtn');btn.disabled=true;btn.textContent='Creating account...';
+  const{error}=await sb.auth.signUp({email,password,options:{data:{full_name:name}}});
+  btn.disabled=false;btn.textContent='Create Account';
+  if(error)showAuthError(error.message);
+  else showAuthSuccess('Account created! You can now sign in.');
 }
-
-function showAuthSuccess(msg) {
-  const el = document.getElementById('authSuccess');
-  el.textContent = msg;
-  el.style.display = 'block';
-  document.getElementById('authError').style.display = 'none';
-}
-
-async function doLogin() {
-  const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value;
-  if (!email || !password) { showAuthError('Please enter email and password.'); return; }
-  const btn = document.getElementById('loginBtn');
-  btn.disabled = true; btn.textContent = 'Signing in...';
-  const { error } = await sb.auth.signInWithPassword({ email, password });
-  btn.disabled = false; btn.textContent = 'Sign In';
-  if (error) showAuthError(error.message);
-}
-
-async function doSignup() {
-  const name = document.getElementById('signupName').value.trim();
-  const email = document.getElementById('signupEmail').value.trim();
-  const password = document.getElementById('signupPassword').value;
-  if (!name || !email || !password) { showAuthError('Please fill in all fields.'); return; }
-  if (password.length < 6) { showAuthError('Password must be at least 6 characters.'); return; }
-  const btn = document.getElementById('signupBtn');
-  btn.disabled = true; btn.textContent = 'Creating account...';
-  const { error } = await sb.auth.signUp({ email, password, options: { data: { full_name: name } } });
-  btn.disabled = false; btn.textContent = 'Create Account';
-  if (error) showAuthError(error.message);
-  else showAuthSuccess('Account created! Check your email to confirm, then sign in.');
-}
-
-async function doReset() {
-  const email = document.getElementById('resetEmail').value.trim();
-  if (!email) { showAuthError('Please enter your email.'); return; }
-  const btn = document.getElementById('resetBtn');
-  btn.disabled = true; btn.textContent = 'Sending...';
-  const { error } = await sb.auth.resetPasswordForEmail(email);
-  btn.disabled = false; btn.textContent = 'Send Reset Link';
-  if (error) showAuthError(error.message);
+async function doReset(){
+  const email=document.getElementById('resetEmail').value.trim();
+  if(!email){showAuthError('Please enter your email.');return;}
+  const btn=document.getElementById('resetBtn');btn.disabled=true;btn.textContent='Sending...';
+  const{error}=await sb.auth.resetPasswordForEmail(email);
+  btn.disabled=false;btn.textContent='Send Reset Link';
+  if(error)showAuthError(error.message);
   else showAuthSuccess('Reset link sent — check your email.');
 }
-
-async function doSignOut() {
+async function doSignOut(){
   await sb.auth.signOut();
-  currentUser = null;
-  farms = []; crops = []; activeFarmId = null; activeFieldId = null; activeCropId = null;
+  currentUser=null;farms=[];crops=[];activeFarmId=null;activeFieldId=null;activeCropId=null;
   document.getElementById('appWrapper').classList.add('hidden');
   document.getElementById('authScreen').classList.remove('hidden');
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// LOAD DATA
-// ═══════════════════════════════════════════════════════════════════════════
-async function loadAllData() {
-  // Load farms
-  const { data: farmsData } = await sb.from('farms').select('*').order('created_at');
-  // Load fields for all farms
-  const { data: fieldsData } = await sb.from('fields').select('*').order('created_at');
-  // Load crop profiles
-  const { data: cropsData } = await sb.from('crop_profiles').select('*').order('created_at');
-
-  crops = (cropsData || []).map(c => ({
-    id: c.id,
-    name: c.name,
-    seed: c.seed || 0,
-    fertilizer: c.fertilizer || 0,
-    chemicals: c.chemicals || 0,
-    cropInsurance: c.crop_insurance || 0,
-    irrigation: c.irrigation || 0,
-    other: c.other || 0,
-    yield: c.yield_per_acre || 0
+// ═══ LOAD DATA ═══
+async function loadAllData(){
+  const[{data:farmsData},{data:fieldsData},{data:cropsData}]=await Promise.all([
+    sb.from('farms').select('*').order('created_at'),
+    sb.from('fields').select('*').order('created_at'),
+    sb.from('crop_profiles').select('*').order('created_at')
+  ]);
+  crops=(cropsData||[]).map(c=>({
+    id:c.id,name:c.name,seed:c.seed||0,fertilizer:c.fertilizer||0,chemicals:c.chemicals||0,
+    cropInsurance:c.crop_insurance||0,irrigation:c.irrigation||0,other:c.other||0,yield:c.yield_per_acre||0,
+    fsaCoverage:c.fsa_coverage||false,fsaType:c.fsa_type||'',arcType:c.arc_type||'ARC-CO'
   }));
-
-  farms = (farmsData || []).map(f => ({
-    id: f.id,
-    name: f.name,
-    location: f.location || '',
-    season: f.season || '',
-    costs: f.costs || {},
-    customCosts: f.custom_costs || [],
-    offFarmIncome: f.off_farm_income || [],
-    equipCombined: f.equip_combined || false,
-    fields: (fieldsData || []).filter(fld => fld.farm_id === f.id).map(fld => ({
-      id: fld.id,
-      name: fld.name,
-      acres: fld.acres || 0,
-      crop: fld.crop || '',
-      legals: fld.legals || '',
-      season: fld.season || '',
-      fieldCosts: fld.field_costs || {},
-      customCosts: fld.custom_costs || [],
-      yield: fld.yield_per_acre || 0,
-      marketPrice: fld.market_price || 0
+  farms=(farmsData||[]).map(f=>({
+    id:f.id,name:f.name,location:f.location||'',season:f.season||'',
+    yearEstablished:f.year_established||'',
+    costs:f.costs||{},customCosts:f.custom_costs||[],offFarmIncome:f.off_farm_income||[],
+    equipCombined:f.equip_combined||false,
+    fields:(fieldsData||[]).filter(fld=>fld.farm_id===f.id).map(fld=>({
+      id:fld.id,name:fld.name,acres:fld.acres||0,crop:fld.crop||'',legals:fld.legals||'',
+      season:fld.season||'',yearPurchased:fld.year_purchased||'',
+      fieldCosts:fld.field_costs||{},customCosts:fld.custom_costs||[],
+      yield:fld.yield_per_acre||0,marketPrice:fld.market_price||0,
+      hasLoan:fld.has_loan||false,loanScope:fld.loan_scope||'field',
+      loanAmount:fld.loan_amount||0,loanRate:fld.loan_rate||0,
+      loanMaturity:fld.loan_maturity||'',loanPayment:fld.loan_payment||0
     }))
   }));
-
-  if (farms.length > 0) activeFarmId = farms[0].id;
+  if(farms.length>0)activeFarmId=farms[0].id;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SUPABASE WRITE HELPERS
-// ═══════════════════════════════════════════════════════════════════════════
-async function dbSaveFarm(f) {
+// ═══ DB HELPERS ═══
+async function dbSaveFarm(f){
   await sb.from('farms').upsert({
-    id: f.id,
-    user_id: currentUser.id,
-    name: f.name,
-    location: f.location,
-    season: f.season,
-    costs: f.costs,
-    custom_costs: f.customCosts,
-    off_farm_income: f.offFarmIncome,
-    equip_combined: f.equipCombined
-  });
-  showSaved();
+    id:f.id,user_id:currentUser.id,name:f.name,location:f.location,season:f.season,
+    year_established:f.yearEstablished,costs:f.costs,custom_costs:f.customCosts,
+    off_farm_income:f.offFarmIncome,equip_combined:f.equipCombined
+  });showSaved();
 }
-
-async function dbSaveField(fld) {
+async function dbSaveField(fld){
   await sb.from('fields').upsert({
-    id: fld.id,
-    farm_id: activeFarmId,
-    user_id: currentUser.id,
-    name: fld.name,
-    acres: fld.acres,
-    crop: fld.crop,
-    legals: fld.legals,
-    season: fld.season,
-    field_costs: fld.fieldCosts,
-    custom_costs: fld.customCosts,
-    yield_per_acre: fld.yield,
-    market_price: fld.marketPrice
-  });
-  showSaved();
+    id:fld.id,farm_id:activeFarmId,user_id:currentUser.id,name:fld.name,acres:fld.acres,
+    crop:fld.crop,legals:fld.legals,season:fld.season,year_purchased:fld.yearPurchased,
+    field_costs:fld.fieldCosts,custom_costs:fld.customCosts,yield_per_acre:fld.yield,
+    market_price:fld.marketPrice,has_loan:fld.hasLoan,loan_scope:fld.loanScope,
+    loan_amount:fld.loanAmount,loan_rate:fld.loanRate,loan_maturity:fld.loanMaturity,
+    loan_payment:fld.loanPayment
+  });showSaved();
 }
-
-async function dbSaveCrop(c) {
+async function dbSaveCrop(c){
   await sb.from('crop_profiles').upsert({
-    id: c.id,
-    user_id: currentUser.id,
-    name: c.name,
-    seed: c.seed,
-    fertilizer: c.fertilizer,
-    chemicals: c.chemicals,
-    crop_insurance: c.cropInsurance,
-    irrigation: c.irrigation,
-    other: c.other,
-    yield_per_acre: c.yield
-  });
-  showSaved();
+    id:c.id,user_id:currentUser.id,name:c.name,seed:c.seed,fertilizer:c.fertilizer,
+    chemicals:c.chemicals,crop_insurance:c.cropInsurance,irrigation:c.irrigation,
+    other:c.other,yield_per_acre:c.yield,fsa_coverage:c.fsaCoverage,
+    fsa_type:c.fsaType,arc_type:c.arcType
+  });showSaved();
 }
+async function dbDeleteField(id){await sb.from('fields').delete().eq('id',id);}
+async function dbDeleteCrop(id){await sb.from('crop_profiles').delete().eq('id',id);}
 
-async function dbDeleteField(id) {
-  await sb.from('fields').delete().eq('id', id);
-}
-async function dbDeleteCrop(id) {
-  await sb.from('crop_profiles').delete().eq('id', id);
-}
-async function dbDeleteFarm(id) {
-  await sb.from('farms').delete().eq('id', id);
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// TAB NAVIGATION
-// ═══════════════════════════════════════════════════════════════════════════
-function switchTab(tab) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-  document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.remove('hidden');
+// ═══ TABS ═══
+function switchTab(tab){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.add('hidden'));
+  document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.remove('hidden');
   document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
-  if (tab === 'overview') renderOverview();
-  if (tab === 'farm') renderFarmCosts();
-  if (tab === 'fields') renderFields();
-  if (tab === 'crops') renderCrops();
-  if (tab === 'summary') renderSummary();
+  if(tab==='overview')renderOverview();
+  if(tab==='farm')renderFarmCosts();
+  if(tab==='fields')renderFields();
+  if(tab==='crops')renderCrops();
+  if(tab==='summary')renderSummary();
+  if(tab==='whatif')renderWhatIf();
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// FARM SELECT
-// ═══════════════════════════════════════════════════════════════════════════
-function renderFarmSelect() {
-  const sel = document.getElementById('farmSelect');
-  sel.innerHTML = farms.length === 0 ? '<option value="">No farms yet</option>' : '';
-  farms.forEach(f => {
-    const o = document.createElement('option');
-    o.value = f.id; o.textContent = f.name;
-    if (f.id === activeFarmId) o.selected = true;
-    sel.appendChild(o);
-  });
+// ═══ FARM SELECT ═══
+function renderFarmSelect(){
+  const sel=document.getElementById('farmSelect');
+  sel.innerHTML=farms.length===0?'<option value="">No farms yet</option>':'';
+  farms.forEach(f=>{const o=document.createElement('option');o.value=f.id;o.textContent=f.name;if(f.id===activeFarmId)o.selected=true;sel.appendChild(o);});
 }
-
-function selectFarm(id) {
-  activeFarmId = id; activeFieldId = null;
-  renderFarmSelect(); renderOverview(); renderFarmCosts(); renderFields(); renderSummary();
-}
-
-function openFarmModal(editing=false) {
-  editingFarm = editing;
-  document.getElementById('farmModalTitle').textContent = editing ? 'Edit Farm' : 'Create Farm';
-  const f = editing ? farm() : null;
-  document.getElementById('fm_name').value = f?.name || '';
-  document.getElementById('fm_location').value = f?.location || '';
-  document.getElementById('fm_season').value = f?.season || new Date().getFullYear();
+function selectFarm(id){activeFarmId=id;activeFieldId=null;renderFarmSelect();renderOverview();renderFarmCosts();renderFields();renderSummary();}
+function openFarmModal(editing=false){
+  editingFarm=editing;
+  document.getElementById('farmModalTitle').textContent=editing?'Edit Farm':'Create Farm';
+  const f=editing?farm():null;
+  document.getElementById('fm_name').value=f?.name||'';
+  document.getElementById('fm_location').value=f?.location||'';
+  document.getElementById('fm_season').value=f?.season||new Date().getFullYear();
+  document.getElementById('fm_yearEstablished').value=f?.yearEstablished||'';
   document.getElementById('farmModal').classList.remove('hidden');
 }
-function closeFarmModal() { document.getElementById('farmModal').classList.add('hidden'); }
-
-async function saveFarm() {
-  const name = document.getElementById('fm_name').value.trim();
-  if (!name) { alert('Please enter a farm name.'); return; }
-  if (editingFarm && farm()) {
-    const f = farm();
-    f.name = name;
-    f.location = document.getElementById('fm_location').value.trim();
-    f.season = document.getElementById('fm_season').value.trim();
+function closeFarmModal(){document.getElementById('farmModal').classList.add('hidden');}
+async function saveFarm(){
+  const name=document.getElementById('fm_name').value.trim();
+  if(!name){alert('Please enter a farm name.');return;}
+  if(editingFarm&&farm()){
+    const f=farm();f.name=name;f.location=document.getElementById('fm_location').value.trim();
+    f.season=document.getElementById('fm_season').value.trim();
+    f.yearEstablished=document.getElementById('fm_yearEstablished').value.trim();
     await dbSaveFarm(f);
-  } else {
-    const newFarm = {
-      id: crypto.randomUUID(),
-      name, location: document.getElementById('fm_location').value.trim(),
-      season: document.getElementById('fm_season').value.trim() || String(new Date().getFullYear()),
-      costs: {}, customCosts: [], offFarmIncome: [], equipCombined: false, fields: []
-    };
-    farms.push(newFarm);
-    activeFarmId = newFarm.id;
-    await dbSaveFarm(newFarm);
+  }else{
+    const nf={id:crypto.randomUUID(),name,location:document.getElementById('fm_location').value.trim(),
+      season:document.getElementById('fm_season').value.trim()||String(new Date().getFullYear()),
+      yearEstablished:document.getElementById('fm_yearEstablished').value.trim(),
+      costs:{},customCosts:[],offFarmIncome:[],equipCombined:false,fields:[]};
+    farms.push(nf);activeFarmId=nf.id;await dbSaveFarm(nf);
   }
-  closeFarmModal(); renderFarmSelect(); renderOverview(); renderFarmCosts(); renderSummary();
+  closeFarmModal();renderFarmSelect();renderOverview();renderFarmCosts();renderSummary();
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// OVERVIEW
-// ═══════════════════════════════════════════════════════════════════════════
-function renderOverview() {
-  const f = farm();
-  document.getElementById('overviewEmpty').classList.toggle('hidden', !!f);
-  document.getElementById('overviewContent').classList.toggle('hidden', !f);
-  if (!f) return;
-  document.getElementById('ovFarmName').textContent = f.name;
-  document.getElementById('ovFarmMeta').textContent = [f.location, f.season].filter(Boolean).join(' · ');
-  document.getElementById('ovSeason').textContent = f.season || '2025';
-  const acres = farmTotalAcres();
-  const farmCostTotal = calcFarmCostTotal();
-  const offFarmTotal = calcOffFarmTotal();
-  const farmCPA = acres > 0 ? farmCostTotal / acres : 0;
-  let totalRevenue = 0, totalFieldCost = 0;
-  (f.fields || []).forEach(fld => {
-    const fca = calcFieldCostPerAcre(fld);
-    const allIn = fca + farmCPA;
-    const rev = (parseFloat(fld.marketPrice)||0) * (parseFloat(fld.yield)||0);
-    const a = parseFloat(fld.acres)||0;
-    totalRevenue += rev * a;
-    totalFieldCost += allIn * a;
+// ═══ OVERVIEW ═══
+function renderOverview(){
+  const f=farm();
+  document.getElementById('overviewEmpty').classList.toggle('hidden',!!f);
+  document.getElementById('overviewContent').classList.toggle('hidden',!f);
+  if(!f)return;
+  document.getElementById('ovFarmName').textContent=f.name;
+  document.getElementById('ovFarmMeta').textContent=[f.location,f.season].filter(Boolean).join(' · ');
+  document.getElementById('ovSeason').textContent=f.season||'2025';
+  document.getElementById('ovLegacy').textContent=f.yearEstablished?`Est. ${f.yearEstablished}`:'';
+  const acres=farmTotalAcres(),farmCostTotal=calcFarmCostTotal(),offFarmTotal=calcOffFarmTotal();
+  const farmCPA=acres>0?farmCostTotal/acres:0;
+  let totalRevenue=0,totalFieldCost=0;
+  (f.fields||[]).forEach(fld=>{
+    const fca=calcFieldCostPerAcre(fld);const allIn=fca+farmCPA;
+    const rev=(parseFloat(fld.marketPrice)||0)*(parseFloat(fld.yield)||0);
+    const a=parseFloat(fld.acres)||0;totalRevenue+=rev*a;totalFieldCost+=allIn*a;
   });
-  const netProfit = totalRevenue - totalFieldCost;
-  document.getElementById('ovTotalAcres').textContent = acres || '—';
-  document.getElementById('ovTotalCost').textContent = totalFieldCost > 0 ? fmt(totalFieldCost) : '—';
-  document.getElementById('ovCostPerAcre').textContent = acres > 0 && totalFieldCost > 0 ? fmt(totalFieldCost/acres) : '—';
-  document.getElementById('ovOffFarm').textContent = fmt(offFarmTotal);
-  document.getElementById('ovHousehold').textContent = totalRevenue > 0 ? fmt(totalRevenue + offFarmTotal) : '—';
-  const pb = document.getElementById('ovProfitBox');
-  document.getElementById('ovProfit').textContent = totalRevenue > 0 ? fmt(netProfit) : '—';
-  pb.className = 'result-box' + (totalRevenue > 0 ? (netProfit >= 0 ? ' is-profit' : ' is-loss') : '');
-  const strip = document.getElementById('ovFieldStrip');
-  strip.innerHTML = '';
-  (f.fields || []).forEach(fld => {
-    const fca = calcFieldCostPerAcre(fld);
-    const allIn = fca + farmCPA;
-    const rev = (parseFloat(fld.marketPrice)||0) * (parseFloat(fld.yield)||0);
-    const profit = rev - allIn;
-    const hasData = parseFloat(fld.marketPrice) > 0 && parseFloat(fld.yield) > 0;
-    const div = document.createElement('div');
-    div.className = 'field-card';
-    div.innerHTML = `<div class="fc-name">${fld.name}</div><div class="fc-meta">${fld.acres} AC · ${fld.crop||'—'}</div><div class="fc-stat ${hasData?(profit>=0?'':'loss'):''}">${hasData?(profit>=0?'+':'')+fmt(profit)+'/ac':'No market price set'}</div>`;
-    div.onclick = () => { switchTab('fields'); setTimeout(() => openFieldDetail(fld.id), 50); };
+  const netProfit=totalRevenue-totalFieldCost;
+  document.getElementById('ovTotalAcres').textContent=acres||'—';
+  document.getElementById('ovTotalCost').textContent=totalFieldCost>0?fmt(totalFieldCost):'—';
+  document.getElementById('ovCostPerAcre').textContent=acres>0&&totalFieldCost>0?fmt(totalFieldCost/acres):'—';
+  document.getElementById('ovOffFarm').textContent=fmt(offFarmTotal);
+  document.getElementById('ovHousehold').textContent=totalRevenue>0?fmt(totalRevenue+offFarmTotal):'—';
+  const pb=document.getElementById('ovProfitBox');
+  document.getElementById('ovProfit').textContent=totalRevenue>0?fmt(netProfit):'—';
+  pb.className='result-box'+(totalRevenue>0?(netProfit>=0?' is-profit':' is-loss'):'');
+  const strip=document.getElementById('ovFieldStrip');strip.innerHTML='';
+  (f.fields||[]).forEach(fld=>{
+    const fca=calcFieldCostPerAcre(fld);const allIn=fca+farmCPA;
+    const rev=(parseFloat(fld.marketPrice)||0)*(parseFloat(fld.yield)||0);
+    const profit=rev-allIn;const hasData=parseFloat(fld.marketPrice)>0&&parseFloat(fld.yield)>0;
+    const div=document.createElement('div');div.className='field-card';
+    div.innerHTML=`<div class="fc-name">${fld.name}</div><div class="fc-meta">${fld.acres} AC · ${fld.crop||'—'}${fld.yearPurchased?' · Est. '+fld.yearPurchased:''}</div><div class="fc-stat ${hasData?(profit>=0?'':'loss'):''}">${hasData?(profit>=0?'+':'')+fmt(profit)+'/ac':'No market price set'}</div>`;
+    div.onclick=()=>{switchTab('fields');setTimeout(()=>openFieldDetail(fld.id),50);};
     strip.appendChild(div);
   });
-  if (!f.fields?.length) strip.innerHTML = '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:12px;color:var(--muted);padding:10px 0;">No fields yet. Add fields in the Fields tab.</div>';
+  if(!f.fields?.length)strip.innerHTML='<div style="font-family:\'IBM Plex Mono\',monospace;font-size:12px;color:var(--muted);padding:10px 0;">No fields yet. Add fields in the Fields tab.</div>';
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// FARM COSTS
-// ═══════════════════════════════════════════════════════════════════════════
-function renderFarmCosts() {
-  const f = farm();
-  document.getElementById('farmCostsEmpty').classList.toggle('hidden', !!f);
-  document.getElementById('farmCostsContent').classList.toggle('hidden', !f);
-  if (!f) return;
-  const c = f.costs || {};
-  const equip = f.equipCombined || false;
-  document.getElementById('equipToggle').checked = equip;
-  document.getElementById('equipSeparate').classList.toggle('hidden', equip);
-  document.getElementById('equipCombined').classList.toggle('hidden', !equip);
-  ['fuel','depreciation','fuelEquipCombined','familyLiving','repairs','loans','labor','landPayments','equipPayments'].forEach(k => {
-    const el = document.getElementById('fc_' + k);
-    if (el) el.value = c[k] || '';
+// ═══ FARM COSTS ═══
+function renderFarmCosts(){
+  const f=farm();
+  document.getElementById('farmCostsEmpty').classList.toggle('hidden',!!f);
+  document.getElementById('farmCostsContent').classList.toggle('hidden',!f);
+  if(!f)return;
+  const c=f.costs||{};const equip=f.equipCombined||false;
+  document.getElementById('equipToggle').checked=equip;
+  document.getElementById('equipSeparate').classList.toggle('hidden',equip);
+  document.getElementById('equipCombined').classList.toggle('hidden',!equip);
+  ['fuel','depreciation','fuelEquipCombined','familyLiving','repairs','loans','labor','landPayments','equipPayments'].forEach(k=>{
+    const el=document.getElementById('fc_'+k);if(el)el.value=c[k]||'';
   });
-  document.getElementById('farmCustomCosts').innerHTML = '';
-  (f.customCosts || []).forEach(c => renderFarmCustomCostRow(c));
-  document.getElementById('offFarmIncome').innerHTML = '';
-  (f.offFarmIncome || []).forEach(i => renderOffFarmRow(i));
+  document.getElementById('farmCustomCosts').innerHTML='';
+  (f.customCosts||[]).forEach(c=>renderFarmCustomCostRow(c));
+  document.getElementById('offFarmIncome').innerHTML='';
+  (f.offFarmIncome||[]).forEach(i=>renderOffFarmRow(i));
   updateFarmCostSummary();
 }
-
-function toggleEquipMode() {
-  const f = farm(); if (!f) return;
-  f.equipCombined = document.getElementById('equipToggle').checked;
-  document.getElementById('equipSeparate').classList.toggle('hidden', f.equipCombined);
-  document.getElementById('equipCombined').classList.toggle('hidden', !f.equipCombined);
-  dbSaveFarm(f); updateFarmCostSummary();
+function toggleEquipMode(){const f=farm();if(!f)return;f.equipCombined=document.getElementById('equipToggle').checked;document.getElementById('equipSeparate').classList.toggle('hidden',f.equipCombined);document.getElementById('equipCombined').classList.toggle('hidden',!f.equipCombined);dbSaveFarm(f);updateFarmCostSummary();}
+async function saveFarmCosts(){
+  const f=farm();if(!f)return;if(!f.costs)f.costs={};
+  ['fuel','depreciation','fuelEquipCombined','familyLiving','repairs','loans','labor','landPayments','equipPayments'].forEach(k=>{const el=document.getElementById('fc_'+k);if(el)f.costs[k]=parseFloat(el.value)||0;});
+  await dbSaveFarm(f);updateFarmCostSummary();
 }
-
-async function saveFarmCosts() {
-  const f = farm(); if (!f) return;
-  if (!f.costs) f.costs = {};
-  ['fuel','depreciation','fuelEquipCombined','familyLiving','repairs','loans','labor','landPayments','equipPayments'].forEach(k => {
-    const el = document.getElementById('fc_' + k);
-    if (el) f.costs[k] = parseFloat(el.value) || 0;
-  });
-  await dbSaveFarm(f); updateFarmCostSummary();
-}
-
-function calcFarmCostTotal() {
-  const f = farm(); if (!f) return 0;
-  const c = f.costs || {};
-  let total = f.equipCombined ? (c.fuelEquipCombined||0) : (c.fuel||0) + (c.depreciation||0);
-  total += (c.familyLiving||0) + (c.repairs||0) + (c.loans||0) + (c.labor||0) + (c.landPayments||0) + (c.equipPayments||0);
-  (f.customCosts||[]).forEach(cc => total += parseFloat(cc.value)||0);
+function calcFarmCostTotal(){
+  const f=farm();if(!f)return 0;const c=f.costs||{};
+  let total=f.equipCombined?(c.fuelEquipCombined||0):(c.fuel||0)+(c.depreciation||0);
+  total+=(c.familyLiving||0)+(c.repairs||0)+(c.loans||0)+(c.labor||0)+(c.landPayments||0)+(c.equipPayments||0);
+  (f.customCosts||[]).forEach(cc=>total+=parseFloat(cc.value)||0);
+  // Add farm-scoped field loans
+  (f.fields||[]).forEach(fld=>{if(fld.hasLoan&&fld.loanScope==='farm')total+=parseFloat(fld.loanPayment)||0;});
   return total;
 }
+function calcOffFarmTotal(){const f=farm();if(!f)return 0;return(f.offFarmIncome||[]).reduce((s,i)=>s+(parseFloat(i.amount)||0),0);}
+function updateFarmCostSummary(){
+  const f=farm();if(!f)return;
+  const acres=farmTotalAcres(),total=calcFarmCostTotal(),offFarm=calcOffFarmTotal();
+  const perAcre=acres>0?total/acres:0,netPerAcre=acres>0?Math.max(0,total-offFarm)/acres:0;
+  document.getElementById('fc_totalDisplay').textContent=fmt(total);
+  document.getElementById('fc_perAcreDisplay').textContent=acres>0?fmt(perAcre):'—';
+  document.getElementById('fc_offFarmDisplay').textContent=fmt(offFarm);
+  document.getElementById('fc_netPerAcreDisplay').textContent=acres>0?fmt(netPerAcre):'—';
+}
+function addFarmCustomCost(){const f=farm();if(!f)return;const id=crypto.randomUUID();if(!f.customCosts)f.customCosts=[];f.customCosts.push({id,label:'',value:0});renderFarmCustomCostRow({id,label:'',value:0});dbSaveFarm(f);}
+function renderFarmCustomCostRow(c){const wrap=document.getElementById('farmCustomCosts');const row=document.createElement('div');row.className='cost-row';row.dataset.id=c.id;row.innerHTML=`<input class="cost-row-label editable" type="text" placeholder="Cost name..." value="${c.label||''}" oninput="updateFarmCustomLabel('${c.id}',this.value)"><input type="number" placeholder="$0.00" step="0.01" value="${c.value||''}" oninput="updateFarmCustomValue('${c.id}',this.value)"><button class="remove-btn" onclick="removeFarmCustomCost('${c.id}')">×</button>`;wrap.appendChild(row);}
+async function updateFarmCustomLabel(id,val){const f=farm();const c=(f.customCosts||[]).find(x=>x.id===id);if(c){c.label=val;await dbSaveFarm(f);}}
+async function updateFarmCustomValue(id,val){const f=farm();const c=(f.customCosts||[]).find(x=>x.id===id);if(c){c.value=parseFloat(val)||0;await dbSaveFarm(f);updateFarmCostSummary();}}
+async function removeFarmCustomCost(id){const f=farm();f.customCosts=(f.customCosts||[]).filter(x=>x.id!==id);await dbSaveFarm(f);document.querySelector(`[data-id="${id}"]`)?.remove();updateFarmCostSummary();}
+function addOffFarmIncome(){const f=farm();if(!f)return;const id=crypto.randomUUID();if(!f.offFarmIncome)f.offFarmIncome=[];f.offFarmIncome.push({id,label:'',amount:0});renderOffFarmRow({id,label:'',amount:0});dbSaveFarm(f);}
+function renderOffFarmRow(i){const wrap=document.getElementById('offFarmIncome');const row=document.createElement('div');row.className='cost-row';row.dataset.id=i.id;row.innerHTML=`<input class="cost-row-label editable" type="text" placeholder="Source (e.g. Spouse salary)..." value="${i.label||''}" oninput="updateOFILabel('${i.id}',this.value)"><input type="number" placeholder="$0.00" step="0.01" value="${i.amount||''}" oninput="updateOFIAmount('${i.id}',this.value)"><button class="remove-btn" onclick="removeOFI('${i.id}')">×</button>`;wrap.appendChild(row);}
+async function updateOFILabel(id,val){const f=farm();const i=(f.offFarmIncome||[]).find(x=>x.id===id);if(i){i.label=val;await dbSaveFarm(f);}}
+async function updateOFIAmount(id,val){const f=farm();const i=(f.offFarmIncome||[]).find(x=>x.id===id);if(i){i.amount=parseFloat(val)||0;await dbSaveFarm(f);updateFarmCostSummary();}}
+async function removeOFI(id){const f=farm();f.offFarmIncome=(f.offFarmIncome||[]).filter(x=>x.id!==id);await dbSaveFarm(f);document.querySelector(`[data-id="${id}"]`)?.remove();updateFarmCostSummary();}
 
-function calcOffFarmTotal() {
-  const f = farm(); if (!f) return 0;
-  return (f.offFarmIncome||[]).reduce((s,i) => s + (parseFloat(i.amount)||0), 0);
+// ═══ FIELDS ═══
+function renderFields(){
+  const f=farm();
+  document.getElementById('fieldsEmpty').classList.toggle('hidden',!!f);
+  document.getElementById('fieldsContent').classList.toggle('hidden',!f);
+  if(!f)return;renderFieldCards();if(activeFieldId)openFieldDetail(activeFieldId);
 }
-
-function updateFarmCostSummary() {
-  const f = farm(); if (!f) return;
-  const acres = farmTotalAcres();
-  const total = calcFarmCostTotal();
-  const offFarm = calcOffFarmTotal();
-  const perAcre = acres > 0 ? total / acres : 0;
-  const netPerAcre = acres > 0 ? Math.max(0, total - offFarm) / acres : 0;
-  document.getElementById('fc_totalDisplay').textContent = fmt(total);
-  document.getElementById('fc_perAcreDisplay').textContent = acres > 0 ? fmt(perAcre) : '—';
-  document.getElementById('fc_offFarmDisplay').textContent = fmt(offFarm);
-  document.getElementById('fc_netPerAcreDisplay').textContent = acres > 0 ? fmt(netPerAcre) : '—';
-}
-
-function addFarmCustomCost() {
-  const f = farm(); if (!f) return;
-  const id = crypto.randomUUID();
-  if (!f.customCosts) f.customCosts = [];
-  f.customCosts.push({ id, label: '', value: 0 });
-  renderFarmCustomCostRow({ id, label: '', value: 0 });
-  dbSaveFarm(f);
-}
-function renderFarmCustomCostRow(c) {
-  const wrap = document.getElementById('farmCustomCosts');
-  const row = document.createElement('div');
-  row.className = 'cost-row'; row.dataset.id = c.id;
-  row.innerHTML = `<input class="cost-row-label editable" type="text" placeholder="Cost name..." value="${c.label||''}" oninput="updateFarmCustomLabel('${c.id}',this.value)"><input type="number" placeholder="$0.00" step="0.01" value="${c.value||''}" oninput="updateFarmCustomValue('${c.id}',this.value)"><button class="remove-btn" onclick="removeFarmCustomCost('${c.id}')">×</button>`;
-  wrap.appendChild(row);
-}
-async function updateFarmCustomLabel(id, val) { const f=farm(); const c=(f.customCosts||[]).find(x=>x.id===id); if(c){c.label=val; await dbSaveFarm(f);} }
-async function updateFarmCustomValue(id, val) { const f=farm(); const c=(f.customCosts||[]).find(x=>x.id===id); if(c){c.value=parseFloat(val)||0; await dbSaveFarm(f); updateFarmCostSummary();} }
-async function removeFarmCustomCost(id) { const f=farm(); f.customCosts=(f.customCosts||[]).filter(x=>x.id!==id); await dbSaveFarm(f); document.querySelector(`[data-id="${id}"]`)?.remove(); updateFarmCostSummary(); }
-
-function addOffFarmIncome() {
-  const f = farm(); if (!f) return;
-  const id = crypto.randomUUID();
-  if (!f.offFarmIncome) f.offFarmIncome = [];
-  f.offFarmIncome.push({ id, label: '', amount: 0 });
-  renderOffFarmRow({ id, label: '', amount: 0 });
-  dbSaveFarm(f);
-}
-function renderOffFarmRow(i) {
-  const wrap = document.getElementById('offFarmIncome');
-  const row = document.createElement('div');
-  row.className = 'cost-row'; row.dataset.id = i.id;
-  row.innerHTML = `<input class="cost-row-label editable" type="text" placeholder="Source (e.g. Spouse salary)..." value="${i.label||''}" oninput="updateOFILabel('${i.id}',this.value)"><input type="number" placeholder="$0.00" step="0.01" value="${i.amount||''}" oninput="updateOFIAmount('${i.id}',this.value)"><button class="remove-btn" onclick="removeOFI('${i.id}')">×</button>`;
-  wrap.appendChild(row);
-}
-async function updateOFILabel(id, val) { const f=farm(); const i=(f.offFarmIncome||[]).find(x=>x.id===id); if(i){i.label=val; await dbSaveFarm(f);} }
-async function updateOFIAmount(id, val) { const f=farm(); const i=(f.offFarmIncome||[]).find(x=>x.id===id); if(i){i.amount=parseFloat(val)||0; await dbSaveFarm(f); updateFarmCostSummary();} }
-async function removeOFI(id) { const f=farm(); f.offFarmIncome=(f.offFarmIncome||[]).filter(x=>x.id!==id); await dbSaveFarm(f); document.querySelector(`[data-id="${id}"]`)?.remove(); updateFarmCostSummary(); }
-
-// ═══════════════════════════════════════════════════════════════════════════
-// FIELDS
-// ═══════════════════════════════════════════════════════════════════════════
-function renderFields() {
-  const f = farm();
-  document.getElementById('fieldsEmpty').classList.toggle('hidden', !!f);
-  document.getElementById('fieldsContent').classList.toggle('hidden', !f);
-  if (!f) return;
-  renderFieldCards();
-  if (activeFieldId) openFieldDetail(activeFieldId);
-}
-
-function renderFieldCards() {
-  const f = farm(); if (!f) return;
-  const grid = document.getElementById('fieldCardsGrid');
-  grid.innerHTML = '';
-  const farmCPA = farmTotalAcres() > 0 ? calcFarmCostTotal() / farmTotalAcres() : 0;
-  (f.fields || []).forEach(fld => {
-    const fca = calcFieldCostPerAcre(fld);
-    const allIn = fca + farmCPA;
-    const rev = (parseFloat(fld.marketPrice)||0) * (parseFloat(fld.yield)||0);
-    const profit = rev - allIn;
-    const hasData = parseFloat(fld.marketPrice) > 0 && parseFloat(fld.yield) > 0;
-    const div = document.createElement('div');
-    div.className = 'field-card' + (fld.id === activeFieldId ? ' active' : '');
-    div.innerHTML = `<div class="fc-name">${fld.name}</div><div class="fc-meta">${fld.acres} AC · ${fld.crop||'—'} · ${fld.season||''}</div><div class="fc-stat ${hasData?(profit>=0?'':'loss'):''}">${hasData?(profit>=0?'+':'')+fmt(profit)+'/ac':'Enter yield & price'}</div>`;
-    div.onclick = () => openFieldDetail(fld.id);
-    grid.appendChild(div);
+function renderFieldCards(){
+  const f=farm();if(!f)return;
+  const grid=document.getElementById('fieldCardsGrid');grid.innerHTML='';
+  const farmCPA=farmTotalAcres()>0?calcFarmCostTotal()/farmTotalAcres():0;
+  (f.fields||[]).forEach(fld=>{
+    const fca=calcFieldCostPerAcre(fld);const allIn=fca+farmCPA;
+    const rev=(parseFloat(fld.marketPrice)||0)*(parseFloat(fld.yield)||0);
+    const profit=rev-allIn;const hasData=parseFloat(fld.marketPrice)>0&&parseFloat(fld.yield)>0;
+    const div=document.createElement('div');div.className='field-card'+(fld.id===activeFieldId?' active':'');
+    div.innerHTML=`<div class="fc-name">${fld.name}</div><div class="fc-meta">${fld.acres} AC · ${fld.crop||'—'}${fld.yearPurchased?' · '+fld.yearPurchased:''}</div><div class="fc-stat ${hasData?(profit>=0?'':'loss'):''}">${hasData?(profit>=0?'+':'')+fmt(profit)+'/ac':'Enter yield & price'}</div>`;
+    div.onclick=()=>openFieldDetail(fld.id);grid.appendChild(div);
   });
-  const add = document.createElement('div');
-  add.className = 'add-field-card';
-  add.innerHTML = '<span style="font-size:24px;">+</span><span>Add Field</span>';
-  add.onclick = openFieldModal;
-  grid.appendChild(add);
+  const add=document.createElement('div');add.className='add-field-card';add.innerHTML='<span style="font-size:24px;">+</span><span>Add Field</span>';add.onclick=openFieldModal;grid.appendChild(add);
 }
-
-function openFieldDetail(id) {
-  activeFieldId = id;
+function openFieldDetail(id){
+  activeFieldId=id;
   document.getElementById('fieldNoSelect').classList.add('hidden');
   document.getElementById('fieldDetailPanel').classList.remove('hidden');
-  const fld = field(); if (!fld) return;
-  document.getElementById('fdName').textContent = fld.name;
-  document.getElementById('fdMeta').textContent = `${fld.acres} acres · ${fld.crop||'—'} · ${fld.season||''}`;
-  document.getElementById('fdLegals').textContent = fld.legals ? `Legals: ${fld.legals}` : '';
-  document.getElementById('fdSeason').textContent = fld.season || '—';
-  document.getElementById('fd_acres_display').value = fld.acres || '';
-  document.getElementById('fd_marketPrice').value = fld.marketPrice || '';
-  document.getElementById('fd_yield').value = fld.yield || '';
-  document.getElementById('fdCropSource').textContent = fld.crop ? `Profile: ${fld.crop}` : '';
-  const costs = fld.fieldCosts || {};
-  ['seed','fertilizer','chemicals','cropInsurance','irrigation','other'].forEach(k => {
-    document.getElementById('fd_' + k).value = costs[k] || '';
-  });
-  document.getElementById('fieldCustomCosts').innerHTML = '';
-  (fld.customCosts||[]).forEach(c => renderFieldCustomCostRow(c));
-  recalcField(); renderFieldCards();
+  const fld=field();if(!fld)return;
+  document.getElementById('fdName').textContent=fld.name;
+  document.getElementById('fdMeta').textContent=`${fld.acres} acres · ${fld.crop||'—'} · ${fld.season||''}`;
+  document.getElementById('fdLegals').textContent=fld.legals?`Legals: ${fld.legals}`:'';
+  document.getElementById('fdPurchased').textContent=fld.yearPurchased?`Purchased: ${fld.yearPurchased}`:'';
+  document.getElementById('fdSeason').textContent=fld.season||'—';
+  document.getElementById('fd_acres_display').value=fld.acres||'';
+  document.getElementById('fd_marketPrice').value=fld.marketPrice||'';
+  document.getElementById('fd_yield').value=fld.yield||'';
+  document.getElementById('fdCropSource').textContent=fld.crop?`Profile: ${fld.crop}`:'';
+  const costs=fld.fieldCosts||{};
+  ['seed','fertilizer','chemicals','cropInsurance','irrigation','other'].forEach(k=>{document.getElementById('fd_'+k).value=costs[k]||'';});
+  // Loan
+  document.getElementById('fd_hasLoan').checked=fld.hasLoan||false;
+  document.getElementById('fdLoanDetails').classList.toggle('hidden',!fld.hasLoan);
+  document.getElementById('fd_loanScopeFarm').checked=(fld.loanScope==='farm');
+  document.getElementById('fd_loanAmount').value=fld.loanAmount||'';
+  document.getElementById('fd_loanRate').value=fld.loanRate||'';
+  document.getElementById('fd_loanMaturity').value=fld.loanMaturity||'';
+  document.getElementById('fd_loanPayment').value=fld.loanPayment||'';
+  updateLoanPerAcre();
+  // Custom costs
+  document.getElementById('fieldCustomCosts').innerHTML='';
+  (fld.customCosts||[]).forEach(c=>renderFieldCustomCostRow(c));
+  recalcField();renderFieldCards();
 }
-
-function closeFieldDetail() {
-  activeFieldId = null;
-  document.getElementById('fieldNoSelect').classList.remove('hidden');
-  document.getElementById('fieldDetailPanel').classList.add('hidden');
-  renderFieldCards();
+function closeFieldDetail(){activeFieldId=null;document.getElementById('fieldNoSelect').classList.remove('hidden');document.getElementById('fieldDetailPanel').classList.add('hidden');renderFieldCards();}
+function toggleFieldLoan(){
+  const fld=field();if(!fld)return;
+  fld.hasLoan=document.getElementById('fd_hasLoan').checked;
+  document.getElementById('fdLoanDetails').classList.toggle('hidden',!fld.hasLoan);
+  dbSaveField(fld);recalcField();
 }
-
-function calcFieldCostPerAcre(fld) {
-  const c = fld.fieldCosts || {};
-  let total = 0;
-  ['seed','fertilizer','chemicals','cropInsurance','irrigation','other'].forEach(k => total += parseFloat(c[k])||0);
-  (fld.customCosts||[]).forEach(cc => total += parseFloat(cc.value)||0);
+function calcLoanPayment(){
+  // Auto-calc annual payment from amount + rate if both present
+  const amount=parseFloat(document.getElementById('fd_loanAmount').value)||0;
+  const rate=parseFloat(document.getElementById('fd_loanRate').value)||0;
+  if(amount>0&&rate>0){
+    // Simple interest annual payment estimate
+    const annualInterest=amount*(rate/100);
+    const el=document.getElementById('fd_loanPayment');
+    if(!el.value)el.value=annualInterest.toFixed(2);
+  }
+  saveFieldData();
+}
+function updateLoanPerAcre(){
+  const fld=field();if(!fld)return;
+  const acres=parseFloat(fld.acres)||0;
+  const payment=parseFloat(document.getElementById('fd_loanPayment').value)||0;
+  const perAcre=acres>0?payment/acres:0;
+  document.getElementById('fd_loanPerAcre').value=perAcre>0?fmt(perAcre):'—';
+}
+function calcFieldCostPerAcre(fld){
+  const c=fld.fieldCosts||{};let total=0;
+  ['seed','fertilizer','chemicals','cropInsurance','irrigation','other'].forEach(k=>total+=parseFloat(c[k])||0);
+  (fld.customCosts||[]).forEach(cc=>total+=parseFloat(cc.value)||0);
+  // Add field-scoped loan payment per acre
+  if(fld.hasLoan&&fld.loanScope==='field'){
+    const acres=parseFloat(fld.acres)||1;
+    total+=(parseFloat(fld.loanPayment)||0)/acres;
+  }
   return total;
 }
-
-async function saveFieldData() {
-  const fld = field(); if (!fld) return;
-  fld.marketPrice = parseFloat(document.getElementById('fd_marketPrice').value) || 0;
-  fld.yield = parseFloat(document.getElementById('fd_yield').value) || 0;
-  if (!fld.fieldCosts) fld.fieldCosts = {};
-  ['seed','fertilizer','chemicals','cropInsurance','irrigation','other'].forEach(k => {
-    fld.fieldCosts[k] = parseFloat(document.getElementById('fd_' + k).value) || 0;
-  });
-  await dbSaveField(fld); recalcField();
+async function saveFieldData(){
+  const fld=field();if(!fld)return;
+  fld.marketPrice=parseFloat(document.getElementById('fd_marketPrice').value)||0;
+  fld.yield=parseFloat(document.getElementById('fd_yield').value)||0;
+  fld.hasLoan=document.getElementById('fd_hasLoan').checked;
+  fld.loanScope=document.getElementById('fd_loanScopeFarm').checked?'farm':'field';
+  fld.loanAmount=parseFloat(document.getElementById('fd_loanAmount').value)||0;
+  fld.loanRate=parseFloat(document.getElementById('fd_loanRate').value)||0;
+  fld.loanMaturity=document.getElementById('fd_loanMaturity').value;
+  fld.loanPayment=parseFloat(document.getElementById('fd_loanPayment').value)||0;
+  if(!fld.fieldCosts)fld.fieldCosts={};
+  ['seed','fertilizer','chemicals','cropInsurance','irrigation','other'].forEach(k=>{fld.fieldCosts[k]=parseFloat(document.getElementById('fd_'+k).value)||0;});
+  updateLoanPerAcre();
+  await dbSaveField(fld);recalcField();
 }
-
-function recalcField() {
-  const fld = field(); if (!fld) return;
-  const farmCPA = farmTotalAcres() > 0 ? calcFarmCostTotal() / farmTotalAcres() : 0;
-  const fieldCPA = calcFieldCostPerAcre(fld);
-  const allIn = fieldCPA + farmCPA;
-  const acres = parseFloat(fld.acres) || 0;
-  const yld = parseFloat(fld.yield) || 0;
-  const mkt = parseFloat(fld.marketPrice) || 0;
-  const breakEven = yld > 0 ? allIn / yld : 0;
-  const revPerAcre = mkt * yld;
-  const profitPerAcre = revPerAcre - allIn;
-  const totalPL = profitPerAcre * acres;
-  document.getElementById('fd_fieldCostPerAcre').textContent = fmt(fieldCPA);
-  document.getElementById('fd_allInCost').textContent = allIn > 0 ? fmt(allIn) : '—';
-  document.getElementById('fd_breakEven').textContent = breakEven > 0 ? '$' + breakEven.toFixed(2) : '—';
-  const profitBox = document.getElementById('fd_profitBox');
-  const totalBox = document.getElementById('fd_totalBox');
-  if (mkt > 0 && yld > 0) {
-    document.getElementById('fd_profitPerAcre').textContent = fmt(profitPerAcre);
-    profitBox.className = 'result-box ' + (profitPerAcre >= 0 ? 'is-profit' : 'is-loss');
-    document.getElementById('fd_profitSub').textContent = profitPerAcre >= 0 ? 'projected profit' : 'projected loss';
-    document.getElementById('fd_totalPL').textContent = fmt(totalPL);
-    totalBox.className = 'result-box ' + (totalPL >= 0 ? 'is-profit' : 'is-loss');
-    document.getElementById('fd_totalSub').textContent = `${acres} acres`;
-    const margin = mkt - breakEven;
-    const insight = document.getElementById('fd_insight');
-    if (breakEven > 0) {
-      insight.textContent = margin >= 0 ? `▲ $${Math.abs(margin).toFixed(2)}/bu above break-even` : `▼ $${Math.abs(margin).toFixed(2)}/bu below break-even`;
-      insight.style.color = margin >= 0 ? 'var(--field-light)' : 'var(--red-light)';
-    }
-  } else {
-    document.getElementById('fd_profitPerAcre').textContent = '—';
-    document.getElementById('fd_totalPL').textContent = '—';
-    profitBox.className = 'result-box'; totalBox.className = 'result-box';
-    document.getElementById('fd_insight').textContent = 'Enter market price to see margin';
-    document.getElementById('fd_insight').style.color = 'var(--sky)';
+function recalcField(){
+  const fld=field();if(!fld)return;
+  const farmCPA=farmTotalAcres()>0?calcFarmCostTotal()/farmTotalAcres():0;
+  const fieldCPA=calcFieldCostPerAcre(fld);const allIn=fieldCPA+farmCPA;
+  const acres=parseFloat(fld.acres)||0,yld=parseFloat(fld.yield)||0,mkt=parseFloat(fld.marketPrice)||0;
+  const breakEven=yld>0?allIn/yld:0;const revPerAcre=mkt*yld;
+  const profitPerAcre=revPerAcre-allIn;const totalPL=profitPerAcre*acres;
+  document.getElementById('fd_fieldCostPerAcre').textContent=fmt(fieldCPA);
+  document.getElementById('fd_allInCost').textContent=allIn>0?fmt(allIn):'—';
+  document.getElementById('fd_breakEven').textContent=breakEven>0?'$'+breakEven.toFixed(2):'—';
+  const profitBox=document.getElementById('fd_profitBox'),totalBox=document.getElementById('fd_totalBox');
+  if(mkt>0&&yld>0){
+    document.getElementById('fd_profitPerAcre').textContent=fmt(profitPerAcre);
+    profitBox.className='result-box '+(profitPerAcre>=0?'is-profit':'is-loss');
+    document.getElementById('fd_profitSub').textContent=profitPerAcre>=0?'projected profit':'projected loss';
+    document.getElementById('fd_totalPL').textContent=fmt(totalPL);
+    totalBox.className='result-box '+(totalPL>=0?'is-profit':'is-loss');
+    document.getElementById('fd_totalSub').textContent=`${acres} acres`;
+    const margin=mkt-breakEven,insight=document.getElementById('fd_insight');
+    if(breakEven>0){insight.textContent=margin>=0?`▲ $${Math.abs(margin).toFixed(2)}/bu above break-even`:`▼ $${Math.abs(margin).toFixed(2)}/bu below break-even`;insight.style.color=margin>=0?'var(--field-light)':'var(--red-light)';}
+  }else{
+    document.getElementById('fd_profitPerAcre').textContent='—';document.getElementById('fd_totalPL').textContent='—';
+    profitBox.className='result-box';totalBox.className='result-box';
+    document.getElementById('fd_insight').textContent='Enter market price to see margin';document.getElementById('fd_insight').style.color='var(--sky)';
   }
 }
-
-function addFieldCustomCost() {
-  const fld = field(); if (!fld) return;
-  const id = crypto.randomUUID();
-  if (!fld.customCosts) fld.customCosts = [];
-  fld.customCosts.push({ id, label: '', value: 0 });
-  renderFieldCustomCostRow({ id, label: '', value: 0 });
-  dbSaveField(fld);
-}
-function renderFieldCustomCostRow(c) {
-  const wrap = document.getElementById('fieldCustomCosts');
-  const row = document.createElement('div');
-  row.className = 'cost-row'; row.dataset.fid = c.id;
-  row.innerHTML = `<input class="cost-row-label editable" type="text" placeholder="Cost name..." value="${c.label||''}" oninput="updateFieldCustomLabel('${c.id}',this.value)"><input type="number" placeholder="$0.00" step="0.01" value="${c.value||''}" oninput="updateFieldCustomValue('${c.id}',this.value)"><button class="remove-btn" onclick="removeFieldCustomCost('${c.id}')">×</button>`;
-  wrap.appendChild(row);
-}
+function addFieldCustomCost(){const fld=field();if(!fld)return;const id=crypto.randomUUID();if(!fld.customCosts)fld.customCosts=[];fld.customCosts.push({id,label:'',value:0});renderFieldCustomCostRow({id,label:'',value:0});dbSaveField(fld);}
+function renderFieldCustomCostRow(c){const wrap=document.getElementById('fieldCustomCosts');const row=document.createElement('div');row.className='cost-row';row.dataset.fid=c.id;row.innerHTML=`<input class="cost-row-label editable" type="text" placeholder="Cost name..." value="${c.label||''}" oninput="updateFieldCustomLabel('${c.id}',this.value)"><input type="number" placeholder="$0.00" step="0.01" value="${c.value||''}" oninput="updateFieldCustomValue('${c.id}',this.value)"><button class="remove-btn" onclick="removeFieldCustomCost('${c.id}')">×</button>`;wrap.appendChild(row);}
 async function updateFieldCustomLabel(id,val){const fld=field();const c=(fld.customCosts||[]).find(x=>x.id===id);if(c){c.label=val;await dbSaveField(fld);}}
 async function updateFieldCustomValue(id,val){const fld=field();const c=(fld.customCosts||[]).find(x=>x.id===id);if(c){c.value=parseFloat(val)||0;await dbSaveField(fld);recalcField();}}
 async function removeFieldCustomCost(id){const fld=field();fld.customCosts=(fld.customCosts||[]).filter(x=>x.id!==id);await dbSaveField(fld);document.querySelector(`[data-fid="${id}"]`)?.remove();recalcField();}
-
-function openFieldModal(editing=false) {
-  editingField = editing;
-  document.getElementById('fieldModalTitle').textContent = editing ? 'Edit Field' : 'Add Field';
-  const fld = editing ? field() : null;
-  document.getElementById('fldm_name').value = fld?.name || '';
-  document.getElementById('fldm_acres').value = fld?.acres || '';
-  document.getElementById('fldm_legals').value = fld?.legals || '';
-  document.getElementById('fldm_season').value = fld?.season || farm()?.season || new Date().getFullYear();
-  const sel = document.getElementById('fldm_crop');
-  sel.innerHTML = '<option value="">— Select Crop —</option>';
-  crops.forEach(c => {
-    const o = document.createElement('option');
-    o.value = c.name; o.textContent = c.name;
-    if (fld?.crop === c.name) o.selected = true;
-    sel.appendChild(o);
-  });
+function openFieldModal(editing=false){
+  editingField=editing;
+  document.getElementById('fieldModalTitle').textContent=editing?'Edit Field':'Add Field';
+  const fld=editing?field():null;
+  document.getElementById('fldm_name').value=fld?.name||'';
+  document.getElementById('fldm_acres').value=fld?.acres||'';
+  document.getElementById('fldm_legals').value=fld?.legals||'';
+  document.getElementById('fldm_yearPurchased').value=fld?.yearPurchased||'';
+  document.getElementById('fldm_season').value=fld?.season||farm()?.season||new Date().getFullYear();
+  const sel=document.getElementById('fldm_crop');sel.innerHTML='<option value="">— Select Crop —</option>';
+  crops.forEach(c=>{const o=document.createElement('option');o.value=c.name;o.textContent=c.name;if(fld?.crop===c.name)o.selected=true;sel.appendChild(o);});
   document.getElementById('fieldModal').classList.remove('hidden');
 }
-function closeFieldModal() { document.getElementById('fieldModal').classList.add('hidden'); }
-
-async function saveField() {
-  const f = farm(); if (!f) return;
-  const name = document.getElementById('fldm_name').value.trim();
-  const acres = document.getElementById('fldm_acres').value;
-  if (!name || !acres) { alert('Please enter field name and acres.'); return; }
-  if (editingField && field()) {
-    const fld = field();
-    fld.name = name; fld.acres = parseFloat(acres);
-    fld.crop = document.getElementById('fldm_crop').value;
-    fld.legals = document.getElementById('fldm_legals').value.trim();
-    fld.season = document.getElementById('fldm_season').value.trim();
+function closeFieldModal(){document.getElementById('fieldModal').classList.add('hidden');}
+async function saveField(){
+  const f=farm();if(!f)return;
+  const name=document.getElementById('fldm_name').value.trim();
+  const acres=document.getElementById('fldm_acres').value;
+  if(!name||!acres){alert('Please enter field name and acres.');return;}
+  if(editingField&&field()){
+    const fld=field();fld.name=name;fld.acres=parseFloat(acres);
+    fld.crop=document.getElementById('fldm_crop').value;
+    fld.legals=document.getElementById('fldm_legals').value.trim();
+    fld.yearPurchased=document.getElementById('fldm_yearPurchased').value.trim();
+    fld.season=document.getElementById('fldm_season').value.trim();
     await dbSaveField(fld);
-  } else {
-    const cropName = document.getElementById('fldm_crop').value;
-    const cropProfile = crops.find(c => c.name === cropName);
-    const newField = {
-      id: crypto.randomUUID(), name, acres: parseFloat(acres), crop: cropName,
-      legals: document.getElementById('fldm_legals').value.trim(),
-      season: document.getElementById('fldm_season').value.trim(),
-      fieldCosts: cropProfile ? { seed: cropProfile.seed||0, fertilizer: cropProfile.fertilizer||0, chemicals: cropProfile.chemicals||0, cropInsurance: cropProfile.cropInsurance||0, irrigation: cropProfile.irrigation||0, other: cropProfile.other||0 } : {},
-      yield: cropProfile?.yield || 0, customCosts: [], marketPrice: 0
-    };
-    if (!f.fields) f.fields = [];
-    f.fields.push(newField);
-    activeFieldId = newField.id;
-    await dbSaveField(newField);
+  }else{
+    const cropName=document.getElementById('fldm_crop').value;
+    const cp=crops.find(c=>c.name===cropName);
+    const nf={id:crypto.randomUUID(),name,acres:parseFloat(acres),crop:cropName,
+      legals:document.getElementById('fldm_legals').value.trim(),
+      yearPurchased:document.getElementById('fldm_yearPurchased').value.trim(),
+      season:document.getElementById('fldm_season').value.trim(),
+      fieldCosts:cp?{seed:cp.seed||0,fertilizer:cp.fertilizer||0,chemicals:cp.chemicals||0,cropInsurance:cp.cropInsurance||0,irrigation:cp.irrigation||0,other:cp.other||0}:{},
+      yield:cp?.yield||0,customCosts:[],marketPrice:0,
+      hasLoan:false,loanScope:'field',loanAmount:0,loanRate:0,loanMaturity:'',loanPayment:0};
+    if(!f.fields)f.fields=[];f.fields.push(nf);activeFieldId=nf.id;await dbSaveField(nf);
   }
-  closeFieldModal(); renderFieldCards();
-  if (activeFieldId) openFieldDetail(activeFieldId);
-  updateFarmCostSummary(); renderOverview();
+  closeFieldModal();renderFieldCards();if(activeFieldId)openFieldDetail(activeFieldId);updateFarmCostSummary();renderOverview();
+}
+async function deleteCurrentField(){
+  const f=farm();if(!f)return;if(!confirm('Delete this field and all its data?'))return;
+  await dbDeleteField(activeFieldId);f.fields=(f.fields||[]).filter(x=>x.id!==activeFieldId);
+  activeFieldId=null;closeFieldDetail();renderOverview();updateFarmCostSummary();
 }
 
-async function deleteCurrentField() {
-  const f = farm(); if (!f) return;
-  if (!confirm('Delete this field and all its data?')) return;
-  await dbDeleteField(activeFieldId);
-  f.fields = (f.fields||[]).filter(x => x.id !== activeFieldId);
-  activeFieldId = null;
-  closeFieldDetail(); renderOverview(); updateFarmCostSummary();
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// CROP PROFILES
-// ═══════════════════════════════════════════════════════════════════════════
-function renderCrops() { renderCropCards(); if (activeCropId) openCropDetail(activeCropId); }
-
-function renderCropCards() {
-  const grid = document.getElementById('cropCardsGrid');
-  grid.innerHTML = '';
-  crops.forEach(c => {
-    const total = (c.seed||0)+(c.fertilizer||0)+(c.chemicals||0)+(c.cropInsurance||0)+(c.irrigation||0)+(c.other||0);
-    const div = document.createElement('div');
-    div.className = 'crop-card' + (c.id === activeCropId ? ' active' : '');
-    div.innerHTML = `<div class="cc-name">${c.name}</div><div class="cc-costs">Seed: $${(c.seed||0).toFixed(0)}/ac<br>Fertilizer: $${(c.fertilizer||0).toFixed(0)}/ac<br>Total: $${total.toFixed(0)}/ac</div>`;
-    div.onclick = () => openCropDetail(c.id);
-    grid.appendChild(div);
+// ═══ CROP PROFILES ═══
+function renderCrops(){renderCropCards();if(activeCropId)openCropDetail(activeCropId);}
+function renderCropCards(){
+  const grid=document.getElementById('cropCardsGrid');grid.innerHTML='';
+  crops.forEach(c=>{
+    const total=(c.seed||0)+(c.fertilizer||0)+(c.chemicals||0)+(c.cropInsurance||0)+(c.irrigation||0)+(c.other||0);
+    const div=document.createElement('div');div.className='crop-card'+(c.id===activeCropId?' active':'');
+    div.innerHTML=`<div class="cc-name">${c.name}</div><div class="cc-costs">Seed: $${(c.seed||0).toFixed(0)}/ac<br>Fertilizer: $${(c.fertilizer||0).toFixed(0)}/ac<br>Total: $${total.toFixed(0)}/ac</div>${c.fsaCoverage?`<div class="fsa-badge">${c.fsaType||'FSA'}</div>`:''}`;
+    div.onclick=()=>openCropDetail(c.id);grid.appendChild(div);
   });
-  const add = document.createElement('div');
-  add.className = 'add-field-card';
-  add.innerHTML = '<span style="font-size:24px;">+</span><span>Add Crop Profile</span>';
-  add.onclick = () => openCropModal();
-  grid.appendChild(add);
+  const add=document.createElement('div');add.className='add-field-card';add.innerHTML='<span style="font-size:24px;">+</span><span>Add Crop Profile</span>';add.onclick=()=>openCropModal();grid.appendChild(add);
 }
-
-function openCropDetail(id) {
-  activeCropId = id;
-  document.getElementById('cropDetailPanel').classList.remove('hidden');
-  const c = cropObj(); if (!c) return;
-  document.getElementById('cpName').textContent = c.name;
-  ['seed','fertilizer','chemicals','cropInsurance','irrigation','other','yield'].forEach(k => {
-    document.getElementById('cp_' + k).value = c[k] || '';
-  });
-  updateCropTotal(); renderCropCards();
+function openCropDetail(id){
+  activeCropId=id;document.getElementById('cropDetailPanel').classList.remove('hidden');
+  const c=cropObj();if(!c)return;
+  document.getElementById('cpName').textContent=c.name;
+  ['seed','fertilizer','chemicals','cropInsurance','irrigation','other','yield'].forEach(k=>{document.getElementById('cp_'+k).value=c[k]||'';});
+  document.getElementById('cp_fsaCoverage').checked=c.fsaCoverage||false;
+  document.getElementById('fsaDetails').classList.toggle('hidden',!c.fsaCoverage);
+  document.getElementById('cp_fsaType').value=c.fsaType||'';
+  document.getElementById('arcOptions').classList.toggle('hidden',c.fsaType!=='ARC');
+  document.getElementById('plcOptions').classList.toggle('hidden',c.fsaType!=='PLC');
+  if(c.arcType)document.getElementById('cp_arcType').value=c.arcType;
+  updateCropTotal();renderCropCards();
 }
-
-async function saveCropData() {
-  const c = cropObj(); if (!c) return;
-  ['seed','fertilizer','chemicals','cropInsurance','irrigation','other','yield'].forEach(k => {
-    c[k] = parseFloat(document.getElementById('cp_' + k).value) || 0;
-  });
-  await dbSaveCrop(c); updateCropTotal(); renderCropCards();
+function toggleFSA(){
+  const c=cropObj();if(!c)return;
+  c.fsaCoverage=document.getElementById('cp_fsaCoverage').checked;
+  document.getElementById('fsaDetails').classList.toggle('hidden',!c.fsaCoverage);
+  dbSaveCrop(c);renderCropCards();
 }
-
-function updateCropTotal() {
-  const c = cropObj(); if (!c) return;
-  const total = (c.seed||0)+(c.fertilizer||0)+(c.chemicals||0)+(c.cropInsurance||0)+(c.irrigation||0)+(c.other||0);
-  document.getElementById('cp_totalDisplay').value = '$' + total.toFixed(2) + ' / acre';
+function toggleFSAType(){
+  const val=document.getElementById('cp_fsaType').value;
+  document.getElementById('arcOptions').classList.toggle('hidden',val!=='ARC');
+  document.getElementById('plcOptions').classList.toggle('hidden',val!=='PLC');
+  saveCropData();
 }
-
-async function deleteCurrentCrop() {
-  if (!confirm('Delete this crop profile?')) return;
-  await dbDeleteCrop(activeCropId);
-  crops = crops.filter(c => c.id !== activeCropId);
-  activeCropId = null;
-  document.getElementById('cropDetailPanel').classList.add('hidden');
-  renderCropCards();
+async function saveCropData(){
+  const c=cropObj();if(!c)return;
+  ['seed','fertilizer','chemicals','cropInsurance','irrigation','other','yield'].forEach(k=>{c[k]=parseFloat(document.getElementById('cp_'+k).value)||0;});
+  c.fsaCoverage=document.getElementById('cp_fsaCoverage').checked;
+  c.fsaType=document.getElementById('cp_fsaType').value;
+  c.arcType=document.getElementById('cp_arcType')?.value||'ARC-CO';
+  await dbSaveCrop(c);updateCropTotal();renderCropCards();
 }
-
-function openCropModal(editing=false) {
-  editingCrop = editing;
-  document.getElementById('cropModalTitle').textContent = editing ? 'Edit Crop Profile' : 'Add Crop Profile';
-  document.getElementById('cpm_name').value = editing ? (cropObj()?.name||'') : '';
+function updateCropTotal(){
+  const c=cropObj();if(!c)return;
+  const total=(c.seed||0)+(c.fertilizer||0)+(c.chemicals||0)+(c.cropInsurance||0)+(c.irrigation||0)+(c.other||0);
+  document.getElementById('cp_totalDisplay').value='$'+total.toFixed(2)+' / acre';
+}
+async function deleteCurrentCrop(){
+  if(!confirm('Delete this crop profile?'))return;
+  await dbDeleteCrop(activeCropId);crops=crops.filter(c=>c.id!==activeCropId);
+  activeCropId=null;document.getElementById('cropDetailPanel').classList.add('hidden');renderCropCards();
+}
+function openCropModal(editing=false){
+  editingCrop=editing;
+  document.getElementById('cropModalTitle').textContent=editing?'Edit Crop Profile':'Add Crop Profile';
+  document.getElementById('cpm_name').value=editing?(cropObj()?.name||''):'';
   document.getElementById('cropModal').classList.remove('hidden');
 }
-function closeCropModal() { document.getElementById('cropModal').classList.add('hidden'); }
-
-async function saveCropProfile() {
-  const name = document.getElementById('cpm_name').value.trim();
-  if (!name) { alert('Please enter a crop name.'); return; }
-  if (editingCrop && cropObj()) {
-    cropObj().name = name;
-    document.getElementById('cpName').textContent = name;
-    await dbSaveCrop(cropObj());
-  } else {
-    const newCrop = { id: crypto.randomUUID(), name, seed:0, fertilizer:0, chemicals:0, cropInsurance:0, irrigation:0, other:0, yield:0 };
-    crops.push(newCrop);
-    activeCropId = newCrop.id;
-    await dbSaveCrop(newCrop);
-  }
-  closeCropModal(); renderCropCards();
-  if (activeCropId) openCropDetail(activeCropId);
+function closeCropModal(){document.getElementById('cropModal').classList.add('hidden');}
+async function saveCropProfile(){
+  const name=document.getElementById('cpm_name').value.trim();
+  if(!name){alert('Please enter a crop name.');return;}
+  if(editingCrop&&cropObj()){cropObj().name=name;document.getElementById('cpName').textContent=name;await dbSaveCrop(cropObj());}
+  else{const nc={id:crypto.randomUUID(),name,seed:0,fertilizer:0,chemicals:0,cropInsurance:0,irrigation:0,other:0,yield:0,fsaCoverage:false,fsaType:'',arcType:'ARC-CO'};crops.push(nc);activeCropId=nc.id;await dbSaveCrop(nc);}
+  closeCropModal();renderCropCards();if(activeCropId)openCropDetail(activeCropId);
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SUMMARY
-// ═══════════════════════════════════════════════════════════════════════════
-function setSummaryLevel(level) {
-  summaryLevel = level;
-  document.getElementById('sumBtnFarm').className = level==='farm' ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm';
-  document.getElementById('sumBtnField').className = level==='field' ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm';
-  document.getElementById('sumFarmView').classList.toggle('hidden', level!=='farm');
-  document.getElementById('sumFieldView').classList.toggle('hidden', level!=='field');
-  if (level==='farm') renderFarmSummary(); else renderFieldSummary();
+// ═══ SUMMARY ═══
+function setSummaryLevel(level){
+  summaryLevel=level;
+  document.getElementById('sumBtnFarm').className=level==='farm'?'btn btn-primary btn-sm':'btn btn-outline btn-sm';
+  document.getElementById('sumBtnField').className=level==='field'?'btn btn-primary btn-sm':'btn btn-outline btn-sm';
+  document.getElementById('sumFarmView').classList.toggle('hidden',level!=='farm');
+  document.getElementById('sumFieldView').classList.toggle('hidden',level!=='field');
+  if(level==='farm')renderFarmSummary();else renderFieldSummary();
 }
-
-function renderSummary() {
-  const f = farm();
-  document.getElementById('summaryEmpty').classList.toggle('hidden', !!f);
-  document.getElementById('summaryContent').classList.toggle('hidden', !f);
-  if (!f) return;
-  setSummaryLevel(summaryLevel);
+function renderSummary(){
+  const f=farm();
+  document.getElementById('summaryEmpty').classList.toggle('hidden',!!f);
+  document.getElementById('summaryContent').classList.toggle('hidden',!f);
+  if(!f)return;setSummaryLevel(summaryLevel);
 }
-
-function renderFarmSummary() {
-  const f = farm(); if (!f) return;
-  const acres = farmTotalAcres();
-  const farmCostTotal = calcFarmCostTotal();
-  const farmCPA = acres > 0 ? farmCostTotal / acres : 0;
-  const offFarm = calcOffFarmTotal();
-  let totalRevenue = 0, totalFieldCosts = 0;
-  const fcosts = f.costs || {};
-  (f.fields||[]).forEach(fld => {
-    const fca = calcFieldCostPerAcre(fld);
-    totalFieldCosts += fca * (parseFloat(fld.acres)||0);
-    totalRevenue += (parseFloat(fld.marketPrice)||0) * (parseFloat(fld.yield)||0) * (parseFloat(fld.acres)||0);
+function renderFarmSummary(){
+  const f=farm();if(!f)return;
+  const acres=farmTotalAcres(),farmCostTotal=calcFarmCostTotal(),farmCPA=acres>0?farmCostTotal/acres:0,offFarm=calcOffFarmTotal();
+  let totalRevenue=0,totalFieldCosts=0;const fcosts=f.costs||{};
+  (f.fields||[]).forEach(fld=>{
+    totalFieldCosts+=calcFieldCostPerAcre(fld)*(parseFloat(fld.acres)||0);
+    totalRevenue+=(parseFloat(fld.marketPrice)||0)*(parseFloat(fld.yield)||0)*(parseFloat(fld.acres)||0);
   });
-  const totalCosts = farmCostTotal + totalFieldCosts;
-  const netPL = totalRevenue - totalCosts;
-  document.getElementById('sum_acres').textContent = acres || '—';
-  document.getElementById('sum_revenue').textContent = fmt(totalRevenue);
-  document.getElementById('sum_costs').textContent = fmt(totalCosts);
-  document.getElementById('sum_pl').textContent = fmt(netPL);
-  document.getElementById('sum_plBox').className = 'result-box ' + (netPL >= 0 ? 'is-profit' : 'is-loss');
-  const rows = [];
-  const addRow = (label, val) => { if (val > 0) rows.push({ label, val }); };
-  if (f.equipCombined) addRow('Fuel & Equipment', fcosts.fuelEquipCombined||0);
-  else { addRow('Fuel', fcosts.fuel||0); addRow('Equipment Depreciation', fcosts.depreciation||0); }
-  addRow('Family Living', fcosts.familyLiving||0); addRow('Repairs & Maintenance', fcosts.repairs||0);
-  addRow('Operating Loans', fcosts.loans||0); addRow('Labor', fcosts.labor||0);
-  addRow('Land Payments', fcosts.landPayments||0); addRow('Equipment Payments', fcosts.equipPayments||0);
-  (f.customCosts||[]).forEach(cc => addRow(cc.label||'Custom Cost', cc.value||0));
-  addRow('Field Crop Inputs', totalFieldCosts);
-  const tbody = document.getElementById('sumFarmBody');
-  tbody.innerHTML = '';
-  rows.forEach(r => {
-    const pct = totalCosts > 0 ? ((r.val/totalCosts)*100).toFixed(1) : '—';
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${r.label}</td><td class="mono">${fmt(r.val)}</td><td class="mono">${acres>0?fmt(r.val/acres):'—'}</td><td class="mono">${pct}%</td>`;
+  const totalCosts=farmCostTotal+totalFieldCosts,netPL=totalRevenue-totalCosts;
+  document.getElementById('sum_acres').textContent=acres||'—';
+  document.getElementById('sum_revenue').textContent=fmt(totalRevenue);
+  document.getElementById('sum_costs').textContent=fmt(totalCosts);
+  document.getElementById('sum_pl').textContent=fmt(netPL);
+  document.getElementById('sum_plBox').className='result-box '+(netPL>=0?'is-profit':'is-loss');
+  const rows=[];const addRow=(label,val)=>{if(val>0)rows.push({label,val});};
+  if(f.equipCombined)addRow('Fuel & Equipment',fcosts.fuelEquipCombined||0);
+  else{addRow('Fuel',fcosts.fuel||0);addRow('Equipment Depreciation',fcosts.depreciation||0);}
+  addRow('Family Living',fcosts.familyLiving||0);addRow('Repairs & Maintenance',fcosts.repairs||0);
+  addRow('Operating Loans',fcosts.loans||0);addRow('Labor',fcosts.labor||0);
+  addRow('Land Payments',fcosts.landPayments||0);addRow('Equipment Payments',fcosts.equipPayments||0);
+  (f.customCosts||[]).forEach(cc=>addRow(cc.label||'Custom Cost',cc.value||0));
+  // Farm-scoped field loans
+  (f.fields||[]).forEach(fld=>{if(fld.hasLoan&&fld.loanScope==='farm')addRow(`Loan: ${fld.name}`,fld.loanPayment||0);});
+  addRow('Field Crop Inputs',totalFieldCosts);
+  const tbody=document.getElementById('sumFarmBody');tbody.innerHTML='';
+  rows.forEach(r=>{const pct=totalCosts>0?((r.val/totalCosts)*100).toFixed(1):'—';const tr=document.createElement('tr');tr.innerHTML=`<td>${r.label}</td><td class="mono">${fmt(r.val)}</td><td class="mono">${acres>0?fmt(r.val/acres):'—'}</td><td class="mono">${pct}%</td>`;tbody.appendChild(tr);});
+  const tr=document.createElement('tr');tr.className='total-row';tr.innerHTML=`<td>TOTAL</td><td class="mono">${fmt(totalCosts)}</td><td class="mono">${acres>0?fmt(totalCosts/acres):'—'}</td><td class="mono">100%</td>`;tbody.appendChild(tr);
+  if(offFarm>0){const tr2=document.createElement('tr');tr2.style.color='var(--field-light)';tr2.innerHTML=`<td>Off-Farm Income (offset)</td><td class="mono">${fmt(offFarm)}</td><td class="mono">${acres>0?fmt(offFarm/acres):'—'}</td><td class="mono">—</td>`;tbody.appendChild(tr2);}
+}
+function renderFieldSummary(){
+  const f=farm();if(!f)return;
+  const farmCPA=farmTotalAcres()>0?calcFarmCostTotal()/farmTotalAcres():0;
+  const tbody=document.getElementById('sumFieldBody');tbody.innerHTML='';
+  let totalAcres=0,totalPL=0;
+  (f.fields||[]).forEach(fld=>{
+    const fca=calcFieldCostPerAcre(fld),allIn=fca+farmCPA;
+    const acres=parseFloat(fld.acres)||0,yld=parseFloat(fld.yield)||0,mkt=parseFloat(fld.marketPrice)||0;
+    const be=yld>0?allIn/yld:0;const profit=mkt>0&&yld>0?(mkt*yld-allIn):null;
+    const fieldPL=profit!==null?profit*acres:null;
+    totalAcres+=acres;if(fieldPL!==null)totalPL+=fieldPL;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${fld.name}</td><td class="mono">${acres}</td><td>${fld.crop||'—'}</td><td class="mono">${fmt(allIn)}</td><td class="mono">${be>0?'$'+be.toFixed(2):'—'}</td><td class="mono">${mkt>0?'$'+mkt.toFixed(2):'—'}</td><td class="mono" style="color:${profit===null?'var(--paper)':profit>=0?'var(--field-light)':'var(--red-light)'}">${profit!==null?(profit>=0?'+':'')+fmt(profit):'—'}</td><td class="mono" style="color:${fieldPL===null?'var(--paper)':fieldPL>=0?'var(--field-light)':'var(--red-light)'}">${fieldPL!==null?(fieldPL>=0?'+':'')+fmt(fieldPL):'—'}</td>`;
     tbody.appendChild(tr);
   });
-  const tr = document.createElement('tr'); tr.className = 'total-row';
-  tr.innerHTML = `<td>TOTAL</td><td class="mono">${fmt(totalCosts)}</td><td class="mono">${acres>0?fmt(totalCosts/acres):'—'}</td><td class="mono">100%</td>`;
-  tbody.appendChild(tr);
-  if (offFarm > 0) {
-    const tr2 = document.createElement('tr'); tr2.style.color = 'var(--field)';
-    tr2.innerHTML = `<td>Off-Farm Income (offset)</td><td class="mono">${fmt(offFarm)}</td><td class="mono">${acres>0?fmt(offFarm/acres):'—'}</td><td class="mono">—</td>`;
-    tbody.appendChild(tr2);
-  }
+  const tr=document.createElement('tr');tr.className='total-row';tr.innerHTML=`<td>TOTAL</td><td class="mono">${totalAcres}</td><td colspan="5"></td><td class="mono" style="color:${totalPL>=0?'var(--field-light)':'var(--red-light)'}">${fmt(totalPL)}</td>`;tbody.appendChild(tr);
 }
 
-function renderFieldSummary() {
-  const f = farm(); if (!f) return;
-  const farmCPA = farmTotalAcres() > 0 ? calcFarmCostTotal() / farmTotalAcres() : 0;
-  const tbody = document.getElementById('sumFieldBody');
-  tbody.innerHTML = '';
-  let totalAcres=0, totalPL=0;
-  (f.fields||[]).forEach(fld => {
-    const fca = calcFieldCostPerAcre(fld);
-    const allIn = fca + farmCPA;
-    const acres = parseFloat(fld.acres)||0;
-    const yld = parseFloat(fld.yield)||0;
-    const mkt = parseFloat(fld.marketPrice)||0;
-    const be = yld>0 ? allIn/yld : 0;
-    const profit = mkt>0&&yld>0 ? (mkt*yld-allIn) : null;
-    const fieldPL = profit!==null ? profit*acres : null;
-    totalAcres += acres; if (fieldPL!==null) totalPL += fieldPL;
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${fld.name}</td><td class="mono">${acres}</td><td>${fld.crop||'—'}</td><td class="mono">${fmt(allIn)}</td><td class="mono">${be>0?'$'+be.toFixed(2):'—'}</td><td class="mono">${mkt>0?'$'+mkt.toFixed(2):'—'}</td><td class="mono" style="color:${profit===null?'inherit':profit>=0?'var(--field-light)':'var(--red-light)'}">${profit!==null?(profit>=0?'+':'')+fmt(profit):'—'}</td><td class="mono" style="color:${fieldPL===null?'inherit':fieldPL>=0?'var(--field-light)':'var(--red-light)'}">${fieldPL!==null?(fieldPL>=0?'+':'')+fmt(fieldPL):'—'}</td>`;
-    tbody.appendChild(tr);
+// ═══ WHAT IF ═══
+function renderWhatIf(){
+  const f=farm();
+  const sel=document.getElementById('wi_field');
+  const prev=sel.value;
+  sel.innerHTML='<option value="">— Select a Field —</option>';
+  (f?.fields||[]).forEach(fld=>{const o=document.createElement('option');o.value=fld.id;o.textContent=`${fld.name} (${fld.acres} ac)`;if(fld.id===prev)o.selected=true;sel.appendChild(o);});
+  ['wi_cropA','wi_cropB'].forEach(id=>{
+    const s=document.getElementById(id);const pv=s.value;s.innerHTML='<option value="">— Select Crop —</option>';
+    crops.forEach(c=>{const o=document.createElement('option');o.value=c.name;o.textContent=c.name;if(c.name===pv)o.selected=true;s.appendChild(o);});
   });
-  const tr = document.createElement('tr'); tr.className = 'total-row';
-  tr.innerHTML = `<td>TOTAL</td><td class="mono">${totalAcres}</td><td colspan="5"></td><td class="mono" style="color:${totalPL>=0?'var(--field-light)':'var(--red-light)'}">${fmt(totalPL)}</td>`;
-  tbody.appendChild(tr);
+  if(prev)loadWhatIfField();
+}
+function loadWhatIfField(){
+  const fld=(farm()?.fields||[]).find(f=>f.id===document.getElementById('wi_field').value);
+  document.getElementById('wiContent').classList.toggle('hidden',!fld);
+  if(!fld)return;
+  document.getElementById('wiNameA').textContent=`Scenario A — ${fld.name}`;
+  document.getElementById('wiNameB').textContent=`Scenario B — ${fld.name}`;
+  calcWhatIf();
+}
+function loadWhatIfCrop(side){
+  const cropName=document.getElementById(`wi_crop${side}`).value;
+  const cp=crops.find(c=>c.name===cropName);if(!cp)return;
+  ['seed','fertilizer','chemicals','cropInsurance','irrigation','other','yield'].forEach(k=>{
+    const el=document.getElementById(`wi${side}_${k==='cropInsurance'?'cropInsurance':k}`);
+    if(el)el.value=cp[k]||'';
+  });
+  calcWhatIf();
+}
+function calcWhatIfSide(side){
+  const fldId=document.getElementById('wi_field').value;
+  const fld=(farm()?.fields||[]).find(f=>f.id===fldId);
+  if(!fld)return null;
+  const acres=parseFloat(fld.acres)||0;
+  const farmCPA=farmTotalAcres()>0?calcFarmCostTotal()/farmTotalAcres():0;
+  const g=k=>parseFloat(document.getElementById(`wi${side}_${k}`)?.value)||0;
+  const cost=g('seed')+g('fertilizer')+g('chemicals')+g('cropInsurance')+g('irrigation')+g('other');
+  const yld=g('yield'),price=g('price');
+  const allIn=cost+farmCPA;
+  const be=yld>0?allIn/yld:0;
+  const rev=price*yld;const profit=rev-allIn;const totalPL=profit*acres;
+  return{cost,allIn,be,profit,totalPL,acres,yld,price};
+}
+function calcWhatIf(){
+  const A=calcWhatIfSide('A'),B=calcWhatIfSide('B');
+  function setBox(side,data){
+    if(!data)return;
+    const{cost,allIn,be,profit,totalPL}=data;
+    document.getElementById(`wi${side}_costPerAcre`).textContent=fmt(allIn);
+    document.getElementById(`wi${side}_breakEven`).textContent=be>0?'$'+be.toFixed(2):'—';
+    document.getElementById(`wi${side}_profitPerAcre`).textContent=data.yld>0&&data.price>0?fmt(profit):'—';
+    document.getElementById(`wiBox${side}_profit`).className='whatif-result'+(data.yld>0&&data.price>0?(profit>=0?' is-profit':' is-loss'):'');
+    document.getElementById(`wi${side}_totalPL`).textContent=data.yld>0&&data.price>0?fmt(totalPL):'—';
+    document.getElementById(`wiBox${side}_total`).className='whatif-result'+(data.yld>0&&data.price>0?(totalPL>=0?' is-profit':' is-loss'):'');
+  }
+  setBox('A',A);setBox('B',B);
+  const banner=document.getElementById('wiBanner');
+  if(A&&B&&A.yld>0&&A.price>0&&B.yld>0&&B.price>0){
+    banner.classList.remove('hidden');
+    const diff=Math.abs(A.totalPL-B.totalPL);
+    if(A.totalPL>B.totalPL){document.getElementById('wiBannerText').textContent=`Scenario A wins by ${fmt(diff)} total`;document.getElementById('wiBannerText').style.color='var(--field-light)';}
+    else if(B.totalPL>A.totalPL){document.getElementById('wiBannerText').textContent=`Scenario B wins by ${fmt(diff)} total`;document.getElementById('wiBannerText').style.color='var(--wheat)';}
+    else{document.getElementById('wiBannerText').textContent='Dead even';document.getElementById('wiBannerText').style.color='var(--paper)';}
+  }else{banner.classList.add('hidden');}
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// CSV EXPORT
-// ═══════════════════════════════════════════════════════════════════════════
-function exportToCSV() {
-  const f = farm(); if (!f) { alert('Select a farm first.'); return; }
-  const acres = farmTotalAcres();
-  const farmCostTotal = calcFarmCostTotal();
-  const farmCPA = acres > 0 ? farmCostTotal / acres : 0;
-  const offFarm = calcOffFarmTotal();
-  const fcosts = f.costs || {};
-  const rows = [];
+// ═══ CSV EXPORT ═══
+function exportToCSV(){
+  const f=farm();if(!f){alert('Select a farm first.');return;}
+  const acres=farmTotalAcres(),farmCostTotal=calcFarmCostTotal(),farmCPA=acres>0?farmCostTotal/acres:0,offFarm=calcOffFarmTotal(),fcosts=f.costs||{};
+  const rows=[];
   rows.push(['KNOW YOUR GROUND — FARM FINANCIAL SUMMARY']);
-  rows.push(['Farm:', f.name]); rows.push(['Location:', f.location||'']);
-  rows.push(['Season:', f.season||'']); rows.push(['Total Acres:', acres]);
-  rows.push(['Export Date:', new Date().toLocaleDateString()]); rows.push([]);
-  rows.push(['FARM-LEVEL COSTS']); rows.push(['Category','Total ($)','Per Acre ($)']);
-  const addFarmRow = (label, val) => rows.push([label, val.toFixed(2), acres>0?(val/acres).toFixed(2):'']);
-  if (f.equipCombined) addFarmRow('Fuel & Equipment Combined', fcosts.fuelEquipCombined||0);
-  else { addFarmRow('Fuel', fcosts.fuel||0); addFarmRow('Equipment Depreciation', fcosts.depreciation||0); }
-  addFarmRow('Family Living', fcosts.familyLiving||0); addFarmRow('Repairs & Maintenance', fcosts.repairs||0);
-  addFarmRow('Operating Loans & Interest', fcosts.loans||0); addFarmRow('Labor', fcosts.labor||0);
-  addFarmRow('Land Payments / Rent', fcosts.landPayments||0); addFarmRow('Equipment Loan Payments', fcosts.equipPayments||0);
-  (f.customCosts||[]).forEach(cc => addFarmRow(cc.label||'Custom Cost', cc.value||0));
-  rows.push(['TOTAL FARM OVERHEAD', farmCostTotal.toFixed(2), acres>0?farmCPA.toFixed(2):'']); rows.push([]);
-  rows.push(['OFF-FARM INCOME']); rows.push(['Source','Amount ($)']);
-  (f.offFarmIncome||[]).forEach(i => rows.push([i.label||'Income', (i.amount||0).toFixed(2)]));
-  rows.push(['TOTAL OFF-FARM INCOME', offFarm.toFixed(2)]); rows.push([]);
+  rows.push(['Farm:',f.name]);rows.push(['Established:',f.yearEstablished||'']);
+  rows.push(['Location:',f.location||'']);rows.push(['Season:',f.season||'']);
+  rows.push(['Total Acres:',acres]);rows.push(['Export Date:',new Date().toLocaleDateString()]);rows.push([]);
+  rows.push(['FARM-LEVEL COSTS']);rows.push(['Category','Total ($)','Per Acre ($)']);
+  const addFR=(label,val)=>rows.push([label,val.toFixed(2),acres>0?(val/acres).toFixed(2):'']);
+  if(f.equipCombined)addFR('Fuel & Equipment Combined',fcosts.fuelEquipCombined||0);
+  else{addFR('Fuel',fcosts.fuel||0);addFR('Equipment Depreciation',fcosts.depreciation||0);}
+  addFR('Family Living',fcosts.familyLiving||0);addFR('Repairs & Maintenance',fcosts.repairs||0);
+  addFR('Operating Loans & Interest',fcosts.loans||0);addFR('Labor',fcosts.labor||0);
+  addFR('Land Payments / Rent',fcosts.landPayments||0);addFR('Equipment Loan Payments',fcosts.equipPayments||0);
+  (f.customCosts||[]).forEach(cc=>addFR(cc.label||'Custom Cost',cc.value||0));
+  (f.fields||[]).forEach(fld=>{if(fld.hasLoan&&fld.loanScope==='farm')addFR(`Land Loan: ${fld.name}`,fld.loanPayment||0);});
+  rows.push(['TOTAL FARM OVERHEAD',farmCostTotal.toFixed(2),acres>0?farmCPA.toFixed(2):'']);rows.push([]);
+  rows.push(['OFF-FARM INCOME']);rows.push(['Source','Amount ($)']);
+  (f.offFarmIncome||[]).forEach(i=>rows.push([i.label||'Income',(i.amount||0).toFixed(2)]));
+  rows.push(['TOTAL OFF-FARM INCOME',offFarm.toFixed(2)]);rows.push([]);
   rows.push(['FIELD-LEVEL DETAIL']);
-  rows.push(['Field','Acres','Crop','Legals','Seed/Ac','Fertilizer/Ac','Chemicals/Ac','Crop Ins/Ac','Irrigation/Ac','Other/Ac','Field Cost/Ac','Farm Overhead/Ac','All-In Cost/Ac','Est Yield/Bu','Market Price','Break-Even/Bu','Revenue/Ac','Profit/Ac','Total P&L']);
-  (f.fields||[]).forEach(fld => {
-    const c = fld.fieldCosts||{};
-    const fca = calcFieldCostPerAcre(fld);
-    const allIn = fca + farmCPA;
-    const fldAcres = parseFloat(fld.acres)||0;
-    const yld = parseFloat(fld.yield)||0;
-    const mkt = parseFloat(fld.marketPrice)||0;
-    const be = yld>0?(allIn/yld).toFixed(2):'';
-    const rev = mkt*yld; const profit = rev - allIn;
-    rows.push([fld.name,fldAcres,fld.crop||'',fld.legals||'',(c.seed||0).toFixed(2),(c.fertilizer||0).toFixed(2),(c.chemicals||0).toFixed(2),(c.cropInsurance||0).toFixed(2),(c.irrigation||0).toFixed(2),(c.other||0).toFixed(2),fca.toFixed(2),farmCPA.toFixed(2),allIn.toFixed(2),yld||'',mkt||'',be,rev>0?rev.toFixed(2):'',mkt>0&&yld>0?profit.toFixed(2):'',mkt>0&&yld>0?(profit*fldAcres).toFixed(2):'']);
+  rows.push(['Field','Acres','Year Purchased','Crop','Legals','Has Loan','Loan Amount','Loan Rate','Annual Payment','Seed/Ac','Fertilizer/Ac','Chemicals/Ac','Crop Ins/Ac','Irrigation/Ac','Other/Ac','Field Cost/Ac','Farm Overhead/Ac','All-In Cost/Ac','Est Yield/Bu','Market Price','Break-Even/Bu','Revenue/Ac','Profit/Ac','Total P&L']);
+  (f.fields||[]).forEach(fld=>{
+    const c=fld.fieldCosts||{};const fca=calcFieldCostPerAcre(fld);const allIn=fca+farmCPA;
+    const fldAcres=parseFloat(fld.acres)||0,yld=parseFloat(fld.yield)||0,mkt=parseFloat(fld.marketPrice)||0;
+    const be=yld>0?(allIn/yld).toFixed(2):'';const rev=mkt*yld;const profit=rev-allIn;
+    rows.push([fld.name,fldAcres,fld.yearPurchased||'',fld.crop||'',fld.legals||'',
+      fld.hasLoan?'Yes':'No',(fld.loanAmount||0).toFixed(2),(fld.loanRate||0)+'%',(fld.loanPayment||0).toFixed(2),
+      (c.seed||0).toFixed(2),(c.fertilizer||0).toFixed(2),(c.chemicals||0).toFixed(2),
+      (c.cropInsurance||0).toFixed(2),(c.irrigation||0).toFixed(2),(c.other||0).toFixed(2),
+      fca.toFixed(2),farmCPA.toFixed(2),allIn.toFixed(2),yld||'',mkt||'',be,
+      rev>0?rev.toFixed(2):'',mkt>0&&yld>0?profit.toFixed(2):'',mkt>0&&yld>0?(profit*fldAcres).toFixed(2):'']);
   });
-  const csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${f.name.replace(/\s+/g,'_')}_KnowYourGround_${f.season||new Date().getFullYear()}.csv`;
-  a.click(); URL.revokeObjectURL(url);
+  const csv=rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;
+  a.download=`${f.name.replace(/\s+/g,'_')}_KnowYourGround_${f.season||new Date().getFullYear()}.csv`;
+  a.click();URL.revokeObjectURL(url);
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// UTILS
-// ═══════════════════════════════════════════════════════════════════════════
-function fmt(n) {
-  const abs = Math.abs(n);
-  const s = abs >= 10000 ? '$' + (abs/1000).toFixed(0) + 'k' : abs >= 1000 ? '$' + abs.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0}) : '$' + abs.toFixed(2);
-  return n < 0 ? '-' + s : s;
-}
+// ═══ UTILS ═══
+function fmt(n){const abs=Math.abs(n);const s=abs>=10000?'$'+(abs/1000).toFixed(0)+'k':abs>=1000?'$'+abs.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0}):'$'+abs.toFixed(2);return n<0?'-'+s:s;}
 
-// ═══════════════════════════════════════════════════════════════════════════
-// INIT — Auth state listener
-// ═══════════════════════════════════════════════════════════════════════════
-sb.auth.onAuthStateChange(async (event, session) => {
-  if (session?.user) {
-    currentUser = session.user;
-    document.getElementById('userEmail').textContent = session.user.email.split('@')[0];
+// ═══ INIT ═══
+sb.auth.onAuthStateChange(async(event,session)=>{
+  if(session?.user){
+    currentUser=session.user;
+    document.getElementById('userEmail').textContent=session.user.email.split('@')[0];
     document.getElementById('loadingScreen').classList.add('hidden');
     document.getElementById('authScreen').classList.add('hidden');
     await loadAllData();
-    renderFarmSelect();
-    renderOverview();
+    renderFarmSelect();renderOverview();
     document.getElementById('appWrapper').classList.remove('hidden');
-  } else {
-    currentUser = null;
+  }else{
+    currentUser=null;
     document.getElementById('loadingScreen').classList.add('hidden');
     document.getElementById('appWrapper').classList.add('hidden');
     document.getElementById('authScreen').classList.remove('hidden');
