@@ -1,2 +1,2 @@
 /*
-  Content-Security-Policy: script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net https://tyttsvngdeitkjttdarp.supabase.co; connect-src 'self' https://tyttsvngdeitkjttdarp.supabase.co wss://tyttsvngdeitkjttdarp.supabase.co;
+  Content-Security-Policy: script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net; connect-src 'self' https://tyttsvngdeitkjttdarp.supabase.co wss://tyttsvngdeitkjttdarp.supabase.co https://cdn.jsdelivr.net; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;
