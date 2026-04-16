@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Know Your Ground — Farm Financial Clarity</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root {
   --soil:#1E1208;--soil-mid:#2C1A0E;--soil-light:#3D2510;
@@ -730,6 +730,8 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
 <div class="save-indicator" id="saveIndicator">✓ SAVED</div>
 
 <script>
+window.addEventListener("load", function() {
+
 // ═══ SUPABASE ═══
 const SUPABASE_URL='https://tyttsvngdeitkjttdarp.supabase.co';
 const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5dHRzdm5nZGVpdGtqdHRkYXJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyOTM0MTMsImV4cCI6MjA5MTg2OTQxM30.whG0Kp-ybQEo4vqhlSCUmjJJT5DKOBLqcNms4ngsYF8';
@@ -1433,6 +1435,8 @@ sb.auth.onAuthStateChange(async(event,session)=>{
     document.getElementById('appWrapper').classList.add('hidden');
     document.getElementById('authScreen').classList.remove('hidden');
   }
+});
+
 });
 </script>
 </body>
