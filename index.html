@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Know Your Ground — Farm Financial Clarity</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root {
   --soil:#1E1208;--soil-mid:#2C1A0E;--soil-light:#3D2510;
@@ -730,12 +729,44 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
 <div class="save-indicator" id="saveIndicator">✓ SAVED</div>
 
 <script>
-window.addEventListener("load", function() {
 
-// ═══ SUPABASE ═══
+// ═══ SUPABASE REST API (no external library) ═══
 const SUPABASE_URL='https://tyttsvngdeitkjttdarp.supabase.co';
 const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5dHRzdm5nZGVpdGtqdHRkYXJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyOTM0MTMsImV4cCI6MjA5MTg2OTQxM30.whG0Kp-ybQEo4vqhlSCUmjJJT5DKOBLqcNms4ngsYF8';
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
+let _authToken = null;
+let _refreshToken = null;
+
+// ── REST helpers ──
+function authHeaders(extra={}) {
+  const h = {'Content-Type':'application/json','apikey':SUPABASE_ANON,...extra};
+  if(_authToken) h['Authorization']='Bearer '+_authToken;
+  return h;
+}
+async function rest(method, path, body=null, params='') {
+  const url = SUPABASE_URL+'/rest/v1/'+path+(params?'?'+params:'');
+  const opts = {method, headers:authHeaders({'Prefer':'return=representation'})};
+  if(body) opts.body = JSON.stringify(body);
+  const r = await fetch(url, opts);
+  if(!r.ok && r.status!==204) { const e=await r.text(); throw new Error(e); }
+  if(r.status===204) return null;
+  return r.json();
+}
+async function authPost(path, body) {
+  const r = await fetch(SUPABASE_URL+'/auth/v1/'+path, {
+    method:'POST', headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON},
+    body:JSON.stringify(body)
+  });
+  return r.json();
+}
+async function checkSession() {
+  const stored = localStorage.getItem('kyg_session');
+  if(stored) { const s=JSON.parse(stored); _authToken=s.access_token; _refreshToken=s.refresh_token; return s.user||null; }
+  return null;
+}
+function saveSession(data) {
+  if(data?.access_token) { _authToken=data.access_token; _refreshToken=data.refresh_token; localStorage.setItem('kyg_session',JSON.stringify(data)); }
+}
+function clearSession() { _authToken=null; _refreshToken=null; localStorage.removeItem('kyg_session'); }
 
 // ═══ STATE ═══
 let currentUser=null,farms=[],crops=[],activeFarmId=null,activeFieldId=null,activeCropId=null,summaryLevel='farm',editingFarm=false,editingField=false,editingCrop=false,saveTimer=null;
@@ -759,9 +790,13 @@ async function doLogin(){
   const password=document.getElementById('loginPassword').value;
   if(!email||!password){showAuthError('Please enter email and password.');return;}
   const btn=document.getElementById('loginBtn');btn.disabled=true;btn.textContent='Signing in...';
-  const{error}=await sb.auth.signInWithPassword({email,password});
+  try {
+    const data=await authPost('token?grant_type=password',{email,password});
+    if(data.error||data.error_description){showAuthError(data.error_description||data.error);btn.disabled=false;btn.textContent='Sign In';return;}
+    saveSession(data);currentUser=data.user;
+    await bootApp();
+  } catch(e){showAuthError(e.message);}
   btn.disabled=false;btn.textContent='Sign In';
-  if(error)showAuthError(error.message);
 }
 async function doSignup(){
   const name=document.getElementById('signupName').value.trim();
@@ -770,33 +805,37 @@ async function doSignup(){
   if(!name||!email||!password){showAuthError('Please fill in all fields.');return;}
   if(password.length<6){showAuthError('Password must be at least 6 characters.');return;}
   const btn=document.getElementById('signupBtn');btn.disabled=true;btn.textContent='Creating account...';
-  const{error}=await sb.auth.signUp({email,password,options:{data:{full_name:name}}});
+  try {
+    const data=await authPost('signup',{email,password,data:{full_name:name}});
+    if(data.error||data.error_description){showAuthError(data.error_description||data.error);btn.disabled=false;btn.textContent='Create Account';return;}
+    if(data.access_token){saveSession(data);currentUser=data.user;await bootApp();}
+    else showAuthSuccess('Account created! You can now sign in.');
+  } catch(e){showAuthError(e.message);}
   btn.disabled=false;btn.textContent='Create Account';
-  if(error)showAuthError(error.message);
-  else showAuthSuccess('Account created! You can now sign in.');
 }
 async function doReset(){
   const email=document.getElementById('resetEmail').value.trim();
   if(!email){showAuthError('Please enter your email.');return;}
   const btn=document.getElementById('resetBtn');btn.disabled=true;btn.textContent='Sending...';
-  const{error}=await sb.auth.resetPasswordForEmail(email);
+  try {
+    await authPost('recover',{email});
+    showAuthSuccess('Reset link sent — check your email.');
+  } catch(e){showAuthError(e.message);}
   btn.disabled=false;btn.textContent='Send Reset Link';
-  if(error)showAuthError(error.message);
-  else showAuthSuccess('Reset link sent — check your email.');
 }
 async function doSignOut(){
-  await sb.auth.signOut();
-  currentUser=null;farms=[];crops=[];activeFarmId=null;activeFieldId=null;activeCropId=null;
+  try{await fetch(SUPABASE_URL+'/auth/v1/logout',{method:'POST',headers:authHeaders()});}catch(e){}
+  clearSession();currentUser=null;farms=[];crops=[];activeFarmId=null;activeFieldId=null;activeCropId=null;
   document.getElementById('appWrapper').classList.add('hidden');
   document.getElementById('authScreen').classList.remove('hidden');
 }
 
 // ═══ LOAD DATA ═══
 async function loadAllData(){
-  const[{data:farmsData},{data:fieldsData},{data:cropsData}]=await Promise.all([
-    sb.from('farms').select('*').order('created_at'),
-    sb.from('fields').select('*').order('created_at'),
-    sb.from('crop_profiles').select('*').order('created_at')
+  const[farmsData,fieldsData,cropsData]=await Promise.all([
+    rest('GET','farms','','select=*&order=created_at'),
+    rest('GET','fields','','select=*&order=created_at'),
+    rest('GET','crop_profiles','','select=*&order=created_at')
   ]);
   crops=(cropsData||[]).map(c=>({
     id:c.id,name:c.name,seed:c.seed||0,fertilizer:c.fertilizer||0,chemicals:c.chemicals||0,
@@ -823,32 +862,32 @@ async function loadAllData(){
 
 // ═══ DB HELPERS ═══
 async function dbSaveFarm(f){
-  await sb.from('farms').upsert({
+  await rest('POST','farms',{
     id:f.id,user_id:currentUser.id,name:f.name,location:f.location,season:f.season,
     year_established:f.yearEstablished,costs:f.costs,custom_costs:f.customCosts,
     off_farm_income:f.offFarmIncome,equip_combined:f.equipCombined
-  });showSaved();
+  },'on_conflict=id');showSaved();
 }
 async function dbSaveField(fld){
-  await sb.from('fields').upsert({
+  await rest('POST','fields',{
     id:fld.id,farm_id:activeFarmId,user_id:currentUser.id,name:fld.name,acres:fld.acres,
     crop:fld.crop,legals:fld.legals,season:fld.season,year_purchased:fld.yearPurchased,
     field_costs:fld.fieldCosts,custom_costs:fld.customCosts,yield_per_acre:fld.yield,
     market_price:fld.marketPrice,has_loan:fld.hasLoan,loan_scope:fld.loanScope,
     loan_amount:fld.loanAmount,loan_rate:fld.loanRate,loan_maturity:fld.loanMaturity,
     loan_payment:fld.loanPayment
-  });showSaved();
+  },'on_conflict=id');showSaved();
 }
 async function dbSaveCrop(c){
-  await sb.from('crop_profiles').upsert({
+  await rest('POST','crop_profiles',{
     id:c.id,user_id:currentUser.id,name:c.name,seed:c.seed,fertilizer:c.fertilizer,
     chemicals:c.chemicals,crop_insurance:c.cropInsurance,irrigation:c.irrigation,
     other:c.other,yield_per_acre:c.yield,fsa_coverage:c.fsaCoverage,
     fsa_type:c.fsaType,arc_type:c.arcType
-  });showSaved();
+  },'on_conflict=id');showSaved();
 }
-async function dbDeleteField(id){await sb.from('fields').delete().eq('id',id);}
-async function dbDeleteCrop(id){await sb.from('crop_profiles').delete().eq('id',id);}
+async function dbDeleteField(id){await rest('DELETE','fields','','id=eq.'+id);}
+async function dbDeleteCrop(id){await rest('DELETE','crop_profiles','','id=eq.'+id);}
 
 // ═══ TABS ═══
 function switchTab(tab){
@@ -1420,24 +1459,26 @@ function exportToCSV(){
 function fmt(n){const abs=Math.abs(n);const s=abs>=10000?'$'+(abs/1000).toFixed(0)+'k':abs>=1000?'$'+abs.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0}):'$'+abs.toFixed(2);return n<0?'-'+s:s;}
 
 // ═══ INIT ═══
-sb.auth.onAuthStateChange(async(event,session)=>{
-  if(session?.user){
-    currentUser=session.user;
-    document.getElementById('userEmail').textContent=session.user.email.split('@')[0];
+async function bootApp(){
+  document.getElementById('userEmail').textContent=currentUser.email.split('@')[0];
+  document.getElementById('loadingScreen').classList.add('hidden');
+  document.getElementById('authScreen').classList.add('hidden');
+  await loadAllData();
+  renderFarmSelect();renderOverview();
+  document.getElementById('appWrapper').classList.remove('hidden');
+}
+
+(async()=>{
+  const user = await checkSession();
+  if(user){
+    currentUser=user;
+    await bootApp();
+  } else {
     document.getElementById('loadingScreen').classList.add('hidden');
-    document.getElementById('authScreen').classList.add('hidden');
-    await loadAllData();
-    renderFarmSelect();renderOverview();
-    document.getElementById('appWrapper').classList.remove('hidden');
-  }else{
-    currentUser=null;
-    document.getElementById('loadingScreen').classList.add('hidden');
-    document.getElementById('appWrapper').classList.add('hidden');
     document.getElementById('authScreen').classList.remove('hidden');
   }
-});
+})();
 
-});
 </script>
 </body>
 </html>
