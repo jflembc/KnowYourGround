@@ -187,16 +187,22 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
 .empty-state p{font-size:14px;margin-bottom:16px;}
 .legacy-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--wheat-pale);letter-spacing:1px;margin-top:2px;}
 
-/* ELEVATOR PRICE WIDGET */
-.elevator-widget{background:#0A0602;border:1px solid var(--border);border-radius:4px;padding:14px 16px;margin:12px 16px;}
-.elevator-widget .ew-label{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
-.elevator-widget input{background:#150D05;border:1px solid var(--border);color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:6px 10px;border-radius:3px;width:100%;margin-bottom:6px;}
-.elevator-widget input:focus{border-color:var(--wheat);outline:none;}
-.elevator-crops{display:flex;flex-direction:column;gap:4px;margin-top:6px;}
-.elevator-crop-row{display:flex;align-items:center;gap:6px;}
+/* ELEVATOR NAV SECTION */
+.nav-elevator{border-top:1px solid var(--border);margin-top:4px;}
+.nav-elevator-toggle{
+  width:100%;background:transparent;border:none;border-left:3px solid transparent;
+  color:var(--muted);font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:0.3px;text-align:left;padding:11px 20px;cursor:pointer;
+  transition:all 0.15s;display:flex;align-items:center;gap:10px;
+}
+.nav-elevator-toggle:hover{color:var(--wheat-light);background:rgba(200,146,58,0.06);}
+.nav-elevator-toggle.open{color:var(--wheat);border-left-color:var(--wheat);background:rgba(200,146,58,0.1);}
+#elevatorPanel{overflow:hidden;transition:max-height 0.25s ease;}
+.elevator-crops{display:flex;flex-direction:column;gap:4px;padding:0 16px 4px;}
+.elevator-crop-row{display:flex;align-items:center;gap:8px;padding:2px 0;}
 .elevator-crop-row .ecr-name{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.elevator-crop-row input{width:80px;flex-shrink:0;background:#150D05;border:1px solid var(--border);color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:12px;padding:4px 8px;border-radius:3px;margin:0;}
-.elevator-crop-row input:focus{border-color:var(--wheat);outline:none;}
+.elevator-crop-row input{width:76px;flex-shrink:0;background:#150D05;border:1px solid var(--border);color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:12px;padding:4px 8px;border-radius:3px;margin:0;outline:none;}
+.elevator-crop-row input:focus{border-color:var(--wheat);}
 
 @media(max-width:768px){
   .cols-2,.cols-3{grid-template-columns:1fr;}
@@ -291,15 +297,21 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
     <button class="nav-tab" data-tab="whatif" onclick="switchTab('whatif')">
       <span class="nav-icon">🔀</span>What If
     </button>
-  </nav>
 
-  <!-- LOCAL ELEVATOR PRICES -->
-  <div class="elevator-widget">
-    <div class="ew-label">Local Elevator Prices</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:8px;">Enter your elevator's cash prices</div>
-    <div class="elevator-crops" id="elevatorCrops"></div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-top:8px;line-height:1.5;" id="elevatorUpdated"></div>
-  </div>
+    <!-- ELEVATOR PRICES — inline in nav list -->
+    <div class="nav-elevator">
+      <button class="nav-elevator-toggle" onclick="toggleElevator()">
+        <span class="nav-icon">🌽</span>
+        <span>Elevator Prices</span>
+        <span id="elevatorChevron" style="margin-left:auto;font-size:10px;transition:transform 0.2s;">▲</span>
+      </button>
+      <div id="elevatorPanel">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);padding:0 20px 8px;line-height:1.5;">Your elevator's cash prices — auto-fills field market prices</div>
+        <div class="elevator-crops" id="elevatorCrops"></div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);padding:6px 20px 10px;" id="elevatorUpdated"></div>
+      </div>
+    </div>
+  </nav>
 
   <div class="sidebar-bottom">
     <span class="user-pill" id="userEmail"></span>
@@ -471,11 +483,15 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
       </div>
 
       <!-- MARKET PRICE -->
-      <div style="display:flex;align-items:center;gap:12px;background:#0A0602;border:1px solid var(--border);border-radius:4px;padding:14px 16px;margin-bottom:14px;flex-wrap:wrap;">
-        <label style="margin:0;white-space:nowrap;color:var(--wheat);">Market Price / Bu or Unit</label>
-        <input type="number" id="fd_marketPrice" placeholder="5.80" step="0.01" style="max-width:140px;background:#150D05;border-color:var(--border);color:var(--paper);" oninput="saveFieldData()">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--sky);flex:1;text-align:right;" id="fd_insight">Enter market price to see margin</div>
-      </div>
+      <div style="background:#0A0602;border:1px solid var(--border);border-radius:4px;padding:14px 16px;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <label style="margin:0;white-space:nowrap;color:var(--wheat);">Market Price / Bu or Unit</label>
+            <input type="number" id="fd_marketPrice" placeholder="5.80" step="0.01" style="max-width:130px;background:#150D05;border-color:var(--border);color:var(--paper);" oninput="onMarketPriceInput()">
+            <button class="btn btn-ghost btn-sm" onclick="resetToElevatorPrice()" style="font-size:11px;padding:5px 10px;border-color:var(--field);color:var(--field-light);">&#x21BA; Use Elevator Price</button>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--sky);flex:1;text-align:right;min-width:140px;" id="fd_insight">Enter market price to see margin</div>
+          </div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;margin-top:7px;" id="fd_elevatorSource"></div>
+        </div>
 
       <!-- CROP INPUT COSTS -->
       <div class="card">
@@ -1039,8 +1055,9 @@ function renderOverview(){
   const strip=document.getElementById('ovFieldStrip');strip.innerHTML='';
   (f.fields||[]).forEach(fld=>{
     const fca=calcFieldCostPerAcre(fld);const allIn=fca+farmCPA;
-    const rev=(parseFloat(fld.marketPrice)||0)*(parseFloat(fld.yield)||0);
-    const profit=rev-allIn;const hasData=parseFloat(fld.marketPrice)>0&&parseFloat(fld.yield)>0;
+    const effectivePrice=parseFloat(fld.marketPrice)||getElevatorPrice(fld.crop)||0;
+    const rev=effectivePrice*(parseFloat(fld.yield)||0);
+    const profit=rev-allIn;const hasData=effectivePrice>0&&parseFloat(fld.yield)>0;
     const div=document.createElement('div');div.className='field-card';
     div.innerHTML=`<div class="fc-name">${fld.name}</div><div class="fc-meta">${fld.acres} AC · ${fld.crop||'—'}${fld.yearPurchased?' · Est. '+fld.yearPurchased:''}</div><div class="fc-stat ${hasData?(profit>=0?'':'loss'):''}">${hasData?(profit>=0?'+':'')+fmt(profit)+'/ac':'No market price set'}</div>`;
     div.onclick=()=>{switchTab('fields');setTimeout(()=>openFieldDetail(fld.id),50);};
@@ -1117,8 +1134,9 @@ function renderFieldCards(){
   const farmCPA=farmTotalAcres()>0?calcFarmCostTotal()/farmTotalAcres():0;
   (f.fields||[]).forEach(fld=>{
     const fca=calcFieldCostPerAcre(fld);const allIn=fca+farmCPA;
-    const rev=(parseFloat(fld.marketPrice)||0)*(parseFloat(fld.yield)||0);
-    const profit=rev-allIn;const hasData=parseFloat(fld.marketPrice)>0&&parseFloat(fld.yield)>0;
+    const effectivePrice=parseFloat(fld.marketPrice)||getElevatorPrice(fld.crop)||0;
+    const rev=effectivePrice*(parseFloat(fld.yield)||0);
+    const profit=rev-allIn;const hasData=effectivePrice>0&&parseFloat(fld.yield)>0;
     const div=document.createElement('div');div.className='field-card'+(fld.id===activeFieldId?' active':'');
     div.innerHTML=`<div class="fc-name">${fld.name}</div><div class="fc-meta">${fld.acres} AC · ${fld.crop||'—'}${fld.yearPurchased?' · '+fld.yearPurchased:''}</div><div class="fc-stat ${hasData?(profit>=0?'':'loss'):''}">${hasData?(profit>=0?'+':'')+fmt(profit)+'/ac':'Enter yield & price'}</div>`;
     div.onclick=()=>openFieldDetail(fld.id);grid.appendChild(div);
@@ -1136,7 +1154,25 @@ function openFieldDetail(id){
   document.getElementById('fdPurchased').textContent=fld.yearPurchased?`Purchased: ${fld.yearPurchased}`:'';
   document.getElementById('fdSeason').textContent=fld.season||'—';
   document.getElementById('fd_acres_display').value=fld.acres||'';
-  document.getElementById('fd_marketPrice').value=fld.marketPrice||'';
+  // Market price: use field override if set, otherwise pull from elevator prices
+  const elevatorPrice = fld.crop ? getElevatorPrice(fld.crop) : 0;
+  const displayPrice = fld.marketPrice || elevatorPrice || '';
+  const priceIsFromElevator = !fld.marketPrice && elevatorPrice > 0;
+  document.getElementById('fd_marketPrice').value=displayPrice;
+  // Show elevator source indicator
+  const elevatorSource = document.getElementById('fd_elevatorSource');
+  if(elevatorSource) {
+    if(priceIsFromElevator) {
+      elevatorSource.textContent = `↑ From elevator: $${elevatorPrice.toFixed(2)}/bu`;
+      elevatorSource.style.color = 'var(--field-light)';
+    } else if(fld.marketPrice && elevatorPrice > 0 && fld.marketPrice !== elevatorPrice) {
+      elevatorSource.textContent = `Elevator: $${elevatorPrice.toFixed(2)} · Overridden`;
+      elevatorSource.style.color = 'var(--wheat)';
+    } else {
+      elevatorSource.textContent = elevatorPrice > 0 ? `Elevator: $${elevatorPrice.toFixed(2)}/bu` : '';
+      elevatorSource.style.color = 'var(--muted)';
+    }
+  }
   document.getElementById('fd_yield').value=fld.yield||'';
   document.getElementById('fdCropSource').textContent=fld.crop?`Profile: ${fld.crop}`:'';
   const costs=fld.fieldCosts||{};
@@ -1207,11 +1243,46 @@ async function saveFieldData(){
   updateLoanPerAcre();
   await dbSaveField(fld);recalcField();
 }
+function onMarketPriceInput(){
+  // User is manually entering — mark as overridden
+  const fld=field();if(!fld)return;
+  const val=parseFloat(document.getElementById('fd_marketPrice').value)||0;
+  fld.marketPrice=val;
+  // Update source indicator
+  const elevatorPrice=fld.crop?getElevatorPrice(fld.crop):0;
+  const src=document.getElementById('fd_elevatorSource');
+  if(src&&elevatorPrice>0){
+    if(val===elevatorPrice){
+      src.textContent=`↑ Matches elevator: $${elevatorPrice.toFixed(2)}/bu`;
+      src.style.color='var(--field-light)';
+    } else if(val>0){
+      src.textContent=`Elevator: $${elevatorPrice.toFixed(2)}/bu · You entered: $${val.toFixed(2)}/bu`;
+      src.style.color='var(--wheat)';
+    }
+  }
+  saveFieldData();
+}
+
+function resetToElevatorPrice(){
+  const fld=field();if(!fld)return;
+  const elevatorPrice=fld.crop?getElevatorPrice(fld.crop):0;
+  if(!elevatorPrice){alert('No elevator price set for '+fld.crop+'. Enter it in the sidebar.');return;}
+  fld.marketPrice=0; // clear override — will use elevator
+  document.getElementById('fd_marketPrice').value=elevatorPrice;
+  const src=document.getElementById('fd_elevatorSource');
+  if(src){src.textContent=`↑ From elevator: $${elevatorPrice.toFixed(2)}/bu`;src.style.color='var(--field-light)';}
+  saveFieldData();
+}
+
 function recalcField(){
   const fld=field();if(!fld)return;
   const farmCPA=farmTotalAcres()>0?calcFarmCostTotal()/farmTotalAcres():0;
   const fieldCPA=calcFieldCostPerAcre(fld);const allIn=fieldCPA+farmCPA;
-  const acres=parseFloat(fld.acres)||0,yld=parseFloat(fld.yield)||0,mkt=parseFloat(fld.marketPrice)||0;
+  const acres=parseFloat(fld.acres)||0,yld=parseFloat(fld.yield)||0;
+  // Use field's manual price, fall back to elevator price if no override
+  const elevatorPrice=fld.crop?getElevatorPrice(fld.crop):0;
+  const displayedPrice=parseFloat(document.getElementById('fd_marketPrice')?.value)||0;
+  const mkt=displayedPrice||elevatorPrice||0;
   const breakEven=yld>0?allIn/yld:0;const revPerAcre=mkt*yld;
   const profitPerAcre=revPerAcre-allIn;const totalPL=profitPerAcre*acres;
   document.getElementById('fd_fieldCostPerAcre').textContent=fmt(fieldCPA);
@@ -1528,14 +1599,40 @@ function exportToCSV(){
 
 // ═══ ELEVATOR PRICES ═══
 let elevatorPrices = JSON.parse(localStorage.getItem('kyg_elevator')||'{}');
+let elevatorOpen = localStorage.getItem('kyg_elevator_open') !== 'false';
+
+function toggleElevator() {
+  elevatorOpen = !elevatorOpen;
+  localStorage.setItem('kyg_elevator_open', elevatorOpen);
+  applyElevatorState();
+}
+
+function applyElevatorState() {
+  const panel = document.getElementById('elevatorPanel');
+  const toggle = document.querySelector('.nav-elevator-toggle');
+  const chevron = document.getElementById('elevatorChevron');
+  if(!panel) return;
+  if(elevatorOpen) {
+    panel.style.maxHeight = '400px';
+    if(toggle) toggle.classList.add('open');
+    if(chevron) chevron.style.transform = 'rotate(0deg)';
+    if(chevron) chevron.textContent = '▲';
+  } else {
+    panel.style.maxHeight = '0';
+    if(toggle) toggle.classList.remove('open');
+    if(chevron) chevron.style.transform = 'rotate(180deg)';
+    if(chevron) chevron.textContent = '▼';
+  }
+}
 
 function renderElevatorWidget() {
   const container = document.getElementById('elevatorCrops');
   if(!container) return;
   container.innerHTML = '';
+  applyElevatorState();
   // Show a row for each crop profile
   if(crops.length === 0) {
-    container.innerHTML = '<div style="font-family:monospace;font-size:9px;color:var(--muted);">Add crop profiles to enter prices</div>';
+    container.innerHTML = '<div style="font-family:monospace;font-size:9px;color:var(--muted);padding:0 4px;">Add crop profiles to enter prices</div>';
     return;
   }
   crops.forEach(c => {
@@ -1563,6 +1660,20 @@ function saveElevatorPrice(cropName, val) {
   localStorage.setItem('kyg_elevator_ts', Date.now().toString());
   const updated = document.getElementById('elevatorUpdated');
   if(updated) updated.textContent = 'Updated: ' + new Date().toLocaleDateString();
+  // If a field is open and uses this crop with no manual override, update its display
+  const fld=field();
+  if(fld && fld.crop===cropName && !fld.marketPrice) {
+    const priceEl=document.getElementById('fd_marketPrice');
+    const src=document.getElementById('fd_elevatorSource');
+    if(priceEl) priceEl.value=elevatorPrices[cropName]||'';
+    if(src){
+      src.textContent=elevatorPrices[cropName]>0?`↑ From elevator: $${(elevatorPrices[cropName]).toFixed(2)}/bu`:'';
+      src.style.color='var(--field-light)';
+    }
+    recalcField();
+  }
+  // Refresh overview cards
+  renderOverview();
 }
 
 function getElevatorPrice(cropName) {
