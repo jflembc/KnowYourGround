@@ -845,13 +845,57 @@ async function authPost(path, body) {
 }
 async function checkSession() {
   const stored = localStorage.getItem('kyg_session');
-  if(stored) { const s=JSON.parse(stored); _authToken=s.access_token; _refreshToken=s.refresh_token; return s.user||null; }
+  if (!stored) return null;
+  const s = JSON.parse(stored);
+  // Check if access token is expired (with 60s buffer)
+  try {
+    const payload = JSON.parse(atob(s.access_token.split('.')[1]));
+    const expiresAt = payload.exp * 1000;
+    const isExpired = Date.now() > expiresAt - 60000;
+    if (!isExpired) {
+      _authToken = s.access_token;
+      _refreshToken = s.refresh_token;
+      return s.user || null;
+    }
+  } catch(e) { /* malformed token, fall through to refresh */ }
+  // Token expired — attempt refresh
+  if (s.refresh_token) {
+    try {
+      const r = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=refresh_token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON },
+        body: JSON.stringify({ refresh_token: s.refresh_token })
+      });
+      const data = await r.json();
+      if (data?.access_token) {
+        saveSession(data);
+        return data.user || null;
+      }
+    } catch(e) { /* network error */ }
+  }
+  // Refresh failed — clear and force login
+  clearSession();
   return null;
 }
 function saveSession(data) {
   if(data?.access_token) { _authToken=data.access_token; _refreshToken=data.refresh_token; localStorage.setItem('kyg_session',JSON.stringify(data)); }
 }
 function clearSession() { _authToken=null; _refreshToken=null; localStorage.removeItem('kyg_session'); }
+// Auto-refresh token every 50 minutes while app is open
+function startTokenRefresh() {
+  setInterval(async () => {
+    if (!_refreshToken) return;
+    try {
+      const r = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=refresh_token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON },
+        body: JSON.stringify({ refresh_token: _refreshToken })
+      });
+      const data = await r.json();
+      if (data?.access_token) saveSession(data);
+    } catch(e) { /* silent fail, will retry next interval */ }
+  }, 50 * 60 * 1000);
+}
 
 // ═══ STATE ═══
 let currentUser=null,farms=[],crops=[],activeFarmId=null,activeFieldId=null,activeCropId=null,summaryLevel='farm',editingFarm=false,editingField=false,editingCrop=false,saveTimer=null;
@@ -1691,6 +1735,7 @@ async function bootApp(){
   await loadAllData();
   renderFarmSelect();renderOverview();
   document.getElementById('appWrapper').classList.remove('hidden');
+  startTokenRefresh();
 }
 
 (async()=>{
