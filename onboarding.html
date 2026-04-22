@@ -1042,59 +1042,18 @@ async function submitForm() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Creating your farm...';
 
-  // Build payload
-  const payload = {
-    account: formData.account,
-    farm: {
-      ...formData.farm,
-      costs: {
-        fuel: formData.costs.fuel,
-        depreciation: formData.costs.depreciation,
-        familyLiving: formData.costs.familyLiving,
-        repairs: formData.costs.repairs,
-        loans: formData.costs.loans,
-        labor: formData.costs.labor,
-        landPayments: formData.costs.landPayments,
-        equipPayments: formData.costs.equipPayments
-      },
-      offFarmIncome: formData.costs.offFarmAmount > 0 ? [{
-        id: 'ofi_setup',
-        label: formData.costs.offFarmLabel || 'Off-farm income',
-        amount: formData.costs.offFarmAmount
-      }] : [],
-      customCosts: [],
-      equipCombined: false,
-      fields: formData.fields.map(f => ({
-        id: 'fld_' + Date.now() + Math.random().toString(36).slice(2),
-        name: f.name,
-        acres: f.acres,
-        crop: f.crop,
-        legals: f.legals,
-        season: formData.farm.season,
-        fieldCosts: {},
-        yield: 0,
-        customCosts: [],
-        marketPrice: 0
-      }))
-    },
-    submittedAt: new Date().toISOString(),
-    source: 'onboarding-form-v1'
-  };
-
   const SUPABASE_URL = 'https://tyttsvngdeitkjttdarp.supabase.co';
   const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5dHRzdm5nZGVpdGtqdHRkYXJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyOTM0MTMsImV4cCI6MjA5MTg2OTQxM30.whG0Kp-ybQEo4vqhlSCUmjJJT5DKOBLqcNms4ngsYF8';
 
-  const headers = {
-    'Content-Type': 'application/json',
-    'apikey': SUPABASE_ANON,
-    'Authorization': 'Bearer ' + SUPABASE_ANON
-  };
-
   try {
-    // ── STEP 1: Create Supabase auth user ──
-    const signupRes = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+    // STEP 1: Create auth user
+    const signupRes = await fetch(SUPABASE_URL + '/auth/v1/signup', {
       method: 'POST',
-      headers,
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON,
+        'Authorization': 'Bearer ' + SUPABASE_ANON
+      },
       body: JSON.stringify({
         email: formData.account.email,
         password: formData.account.password,
@@ -1107,31 +1066,15 @@ async function submitForm() {
     });
 
     const signupData = await signupRes.json();
-
     if (!signupRes.ok) {
-      const msg = signupData?.msg || signupData?.error_description || signupData?.message || 'Signup failed.';
-      throw new Error(msg);
+      throw new Error(signupData?.msg || signupData?.error_description || signupData?.message || 'Signup failed.');
     }
 
-    const userId = signupData.user?.id;
+    const userId = signupData.user && signupData.user.id;
     const accessToken = signupData.access_token;
+    if (!userId) throw new Error('Account created but no user ID returned. Please contact support.');
 
-    if (!userId) throw new Error('Account created but no user ID returned. Check your email to confirm, then contact support.');
-
-    // ── STEP 2: Insert profile row (required by FK constraints) ──
-    await fetch(`${SUPABASE_URL}/rest/v1/profiles`, {
-      method: 'POST',
-      headers: {
-        ...authHeaders,
-        'Authorization': 'Bearer ' + accessToken
-      },
-      body: JSON.stringify({
-        id: userId,
-        full_name: `${formData.account.firstName} ${formData.account.lastName}`
-      })
-    });
-
-    // ── STEP 4: Write farm data ──
+    // STEP 2: Build auth headers using the new user token
     const authHeaders = {
       'Content-Type': 'application/json',
       'apikey': SUPABASE_ANON,
@@ -1139,58 +1082,75 @@ async function submitForm() {
       'Prefer': 'return=representation'
     };
 
-    // Insert farm record
+    // STEP 3: Insert profile row (FK required before farm/field inserts)
+    await fetch(SUPABASE_URL + '/rest/v1/profiles', {
+      method: 'POST',
+      headers: authHeaders,
+      body: JSON.stringify({
+        id: userId,
+        full_name: formData.account.firstName + ' ' + formData.account.lastName
+      })
+    });
+
+    // STEP 4: Insert farm record
+    const offFarmIncome = formData.costs.offFarmAmount > 0 ? [{
+      id: 'ofi_setup',
+      label: formData.costs.offFarmLabel || 'Off-farm income',
+      amount: formData.costs.offFarmAmount
+    }] : [];
+
     const farmRecord = {
       user_id: userId,
       name: formData.farm.name,
-      location: `${formData.farm.county}, ${formData.farm.state}`,
+      location: formData.farm.county + ', ' + formData.farm.state,
       season: formData.farm.season,
       costs: {
-        fuel: payload.farm.costs.fuel,
-        depreciation: payload.farm.costs.depreciation,
-        familyLiving: payload.farm.costs.familyLiving,
-        repairs: payload.farm.costs.repairs,
-        loans: payload.farm.costs.loans,
-        labor: payload.farm.costs.labor,
-        landPayments: payload.farm.costs.landPayments,
-        equipPayments: payload.farm.costs.equipPayments
+        fuel: formData.costs.fuel || 0,
+        depreciation: formData.costs.depreciation || 0,
+        familyLiving: formData.costs.familyLiving || 0,
+        repairs: formData.costs.repairs || 0,
+        loans: formData.costs.loans || 0,
+        labor: formData.costs.labor || 0,
+        landPayments: formData.costs.landPayments || 0,
+        equipPayments: formData.costs.equipPayments || 0
       },
-      off_farm_income: payload.farm.offFarmIncome,
+      off_farm_income: offFarmIncome,
       custom_costs: [],
       equip_combined: false
     };
 
-    const farmRes = await fetch(`${SUPABASE_URL}/rest/v1/farms`, {
+    const farmRes = await fetch(SUPABASE_URL + '/rest/v1/farms', {
       method: 'POST',
       headers: authHeaders,
       body: JSON.stringify(farmRecord)
     });
 
     if (!farmRes.ok) {
-      const err = await farmRes.json();
-      console.error('Farm insert error:', err);
-      // Non-fatal — account created, farm data can be entered manually
+      const farmErr = await farmRes.json();
+      console.error('Farm insert error:', farmErr);
     } else {
       const farmRows = await farmRes.json();
-      const farmId = farmRows?.[0]?.id;
+      const farmId = farmRows && farmRows[0] && farmRows[0].id;
 
-      // Insert fields if we got the farm ID back
-      if (farmId && payload.farm.fields.length > 0) {
-        const fieldRecords = payload.farm.fields.map(f => ({
-          farm_id: farmId,
-          user_id: userId,
-          name: f.name,
-          acres: f.acres,
-          crop: f.crop || null,
-          legals: f.legals || null,
-          season: formData.farm.season,
-          field_costs: {},
-          yield_per_acre: 0,
-          market_price: 0,
-          custom_costs: []
-        }));
+      // STEP 5: Insert fields
+      if (farmId && formData.fields.length > 0) {
+        const fieldRecords = formData.fields.map(function(f) {
+          return {
+            farm_id: farmId,
+            user_id: userId,
+            name: f.name,
+            acres: f.acres,
+            crop: f.crop || null,
+            legals: f.legals || null,
+            season: formData.farm.season,
+            field_costs: {},
+            yield_per_acre: 0,
+            market_price: 0,
+            custom_costs: []
+          };
+        });
 
-        await fetch(`${SUPABASE_URL}/rest/v1/fields`, {
+        await fetch(SUPABASE_URL + '/rest/v1/fields', {
           method: 'POST',
           headers: authHeaders,
           body: JSON.stringify(fieldRecords)
@@ -1198,7 +1158,7 @@ async function submitForm() {
       }
     }
 
-    // ── STEP 5: Show success ──
+    // STEP 6: Success
     document.getElementById('successEmail').textContent = formData.account.email;
     showStep('success');
 
