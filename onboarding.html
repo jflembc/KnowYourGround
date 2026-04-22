@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Know Your Ground — Farm Setup</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --soil: #1E1208;
+  --soil-mid: #2C1A0E;
+  --soil-light: #3D2510;
+  --wheat: #C8923A;
+  --wheat-light: #E8B96A;
+  --wheat-pale: #F5D89A;
+  --sky: #7BA7BC;
+  --field: #4A6741;
+  --field-light: #6DBF6D;
+  --paper: #F5EFE0;
+  --paper-dark: #EDE4CC;
+  --paper-mid: #DDD0B0;
+  --ink: #1A1208;
+  --red: #B84040;
+  --red-light: #E07070;
+  --muted: #8A7A60;
+  --border: #4A3520;
+  --border-light: #C8B890;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'IBM Plex Sans', sans-serif;
+  background: var(--soil);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── PROGRESS HEADER ── */
+.top-bar {
+  background: var(--soil);
+  border-bottom: 2px solid var(--wheat);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+}
+.brand h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--wheat);
+}
+.brand .sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.step-dot.active {
+  border-color: var(--wheat);
+  background: var(--wheat);
+  color: var(--soil);
+}
+.step-dot.done {
+  border-color: var(--field-light);
+  background: var(--field-light);
+  color: var(--soil);
+}
+.step-line {
+  width: 24px;
+  height: 2px;
+  background: var(--border);
+  transition: background 0.2s;
+}
+.step-line.done { background: var(--field-light); }
+
+/* ── MAIN ── */
+.main {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 32px 16px 80px;
+}
+
+/* ── SECTION HEADER ── */
+.step-header {
+  margin-bottom: 24px;
+}
+.step-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--wheat);
+  margin-bottom: 6px;
+}
+.step-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--paper);
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+.step-desc {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--paper);
+  border-radius: 4px;
+  padding: 22px;
+  margin-bottom: 14px;
+}
+.card-dark {
+  background: #150D05;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 22px;
+  margin-bottom: 14px;
+}
+
+/* ── FORM ── */
+.sec-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--wheat);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.form-group { margin-bottom: 14px; }
+.form-group:last-child { margin-bottom: 0; }
+
+label {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+label .required { color: var(--wheat); margin-left: 2px; }
+label .hint { color: var(--sky); font-size: 9px; letter-spacing: 1px; margin-left: 6px; text-transform: none; }
+
+input[type=text], input[type=number], input[type=email], input[type=password], select, textarea {
+  width: 100%;
+  background: var(--paper-dark);
+  border: 1px solid var(--border-light);
+  border-radius: 3px;
+  padding: 10px 12px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--wheat); }
+input.error, select.error { border-color: var(--red); }
+textarea { resize: vertical; min-height: 80px; }
+
+.form-row {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.cols-2 { grid-template-columns: 1fr 1fr; }
+.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+.field-error {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--red-light);
+  margin-top: 4px;
+  display: none;
+}
+.field-error.show { display: block; }
+
+/* ── FIELD ROW (repeatable) ── */
+.field-entry {
+  background: #F0E8D4;
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 12px;
+  position: relative;
+}
+.field-entry .entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.field-entry .entry-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.remove-entry {
+  background: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: 3px;
+  color: var(--red);
+  font-size: 18px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.remove-entry:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+/* ── CROP ROW ── */
+.crop-entry {
+  background: #F0E8D4;
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+/* ── ADD ROW BTN ── */
+.add-row-btn {
+  width: 100%;
+  background: transparent;
+  border: 2px dashed var(--border);
+  border-radius: 4px;
+  padding: 12px;
+  color: var(--muted);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+.add-row-btn:hover { border-color: var(--wheat); color: var(--wheat); }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 22px;
+  border-radius: 3px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  letter-spacing: 0.3px;
+}
+.btn-primary { background: var(--wheat); color: var(--soil); }
+.btn-primary:hover { background: var(--wheat-light); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-outline { background: transparent; border: 1px solid var(--wheat); color: var(--wheat); }
+.btn-outline:hover { background: var(--wheat); color: var(--soil); }
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); font-size: 13px; }
+.btn-ghost:hover { border-color: var(--muted); color: var(--paper); }
+
+.nav-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── REVIEW BOX ── */
+.review-section {
+  margin-bottom: 20px;
+}
+.review-section .rv-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--wheat);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.review-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(200,184,144,0.2);
+  font-size: 13px;
+}
+.review-row .rv-key {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+.review-row .rv-val {
+  font-weight: 600;
+  color: var(--paper);
+  font-size: 13px;
+  text-align: right;
+  max-width: 60%;
+}
+
+/* ── SUCCESS ── */
+.success-screen {
+  text-align: center;
+  padding: 60px 20px;
+}
+.success-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+.success-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--field-light);
+  margin-bottom: 12px;
+}
+.success-sub {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 400px;
+  margin: 0 auto 24px;
+}
+
+/* ── TOOLTIP ── */
+.tooltip-wrap { position: relative; display: inline-flex; align-items: center; margin-left: 4px; }
+.tooltip-icon {
+  width: 14px; height: 14px;
+  background: var(--muted);
+  border-radius: 50%;
+  font-size: 9px;
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: help;
+  font-weight: 700;
+}
+.tooltip-text {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0A0602;
+  border: 1px solid var(--border);
+  color: var(--paper);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 11px;
+  line-height: 1.5;
+  padding: 8px 10px;
+  border-radius: 3px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+  z-index: 10;
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 400;
+  max-width: 200px;
+  white-space: normal;
+  width: 200px;
+}
+.tooltip-wrap:hover .tooltip-text { opacity: 1; }
+
+/* ── CROP BADGE ── */
+.crop-badge-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.crop-badge {
+  background: var(--soil-light);
+  border: 1px solid var(--border);
+  color: var(--wheat);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+.crop-badge:hover { border-color: var(--wheat); }
+.crop-badge.selected { background: var(--wheat); color: var(--soil); }
+
+/* ── COST GRID ── */
+.cost-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* RESPONSIVE */
+@media(max-width:600px) {
+  .cols-2, .cols-3, .cost-grid { grid-template-columns: 1fr; }
+  .top-bar { flex-wrap: wrap; gap: 10px; }
+  .step-line { width: 12px; }
+  .step-dot { width: 24px; height: 24px; font-size: 10px; }
+}
+
+/* Step visibility */
+.step-page { display: none; }
+.step-page.active { display: block; }
+
+/* Spinner */
+.spinner {
+  display: inline-block;
+  width: 16px; height: 16px;
+  border: 2px solid var(--soil);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="brand">
+    <h1>Know Your Ground</h1>
+    <div class="sub">Farm Setup — New Account</div>
+  </div>
+  <div class="progress-wrap" id="progressDots">
+    <!-- rendered by JS -->
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ══════════════════════════ STEP 1: ACCOUNT -->
+  <div class="step-page active" id="step-1">
+    <div class="step-header">
+      <div class="step-tag">Step 1 of 5</div>
+      <div class="step-title">Your Account</div>
+      <div class="step-desc">This creates your login. You'll use this email and password every time you access Know Your Ground.</div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Contact & Login</div>
+      <div class="form-row cols-2">
+        <div class="form-group">
+          <label>First Name <span class="required">*</span></label>
+          <input type="text" id="s1_firstName" placeholder="John">
+          <div class="field-error" id="err_firstName">First name is required.</div>
+        </div>
+        <div class="form-group">
+          <label>Last Name <span class="required">*</span></label>
+          <input type="text" id="s1_lastName" placeholder="Anderson">
+          <div class="field-error" id="err_lastName">Last name is required.</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email Address <span class="required">*</span> <span class="hint">— used to log in</span></label>
+        <input type="email" id="s1_email" placeholder="john@andersonfarm.com">
+        <div class="field-error" id="err_email">Please enter a valid email.</div>
+      </div>
+      <div class="form-row cols-2">
+        <div class="form-group">
+          <label>Password <span class="required">*</span></label>
+          <input type="password" id="s1_password" placeholder="Min. 8 characters">
+          <div class="field-error" id="err_password">Min 8 characters required.</div>
+        </div>
+        <div class="form-group">
+          <label>Confirm Password <span class="required">*</span></label>
+          <input type="password" id="s1_passwordConfirm" placeholder="Re-enter password">
+          <div class="field-error" id="err_passwordConfirm">Passwords do not match.</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Phone <span class="hint">— optional, for support</span></label>
+        <input type="text" id="s1_phone" placeholder="(785) 555-1234">
+      </div>
+    </div>
+    <div class="nav-actions">
+      <div></div>
+      <button class="btn btn-primary" onclick="nextStep(1)">Continue → Farm Info</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ STEP 2: FARM INFO -->
+  <div class="step-page" id="step-2">
+    <div class="step-header">
+      <div class="step-tag">Step 2 of 5</div>
+      <div class="step-title">Your Farm</div>
+      <div class="step-desc">Basic information about your farming operation. You can add more farms later.</div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Farm Details</div>
+      <div class="form-group">
+        <label>Farm Name <span class="required">*</span></label>
+        <input type="text" id="s2_farmName" placeholder="e.g. Anderson Family Farm">
+        <div class="field-error" id="err_farmName">Farm name is required.</div>
+      </div>
+      <div class="form-row cols-2">
+        <div class="form-group">
+          <label>County <span class="required">*</span></label>
+          <input type="text" id="s2_county" placeholder="e.g. Cheyenne County">
+          <div class="field-error" id="err_county">County is required.</div>
+        </div>
+        <div class="form-group">
+          <label>State <span class="required">*</span></label>
+          <select id="s2_state">
+            <option value="">— Select State —</option>
+            <option>AL</option><option>AR</option><option>AZ</option><option>CA</option>
+            <option>CO</option><option>FL</option><option>GA</option><option>IA</option>
+            <option>ID</option><option>IL</option><option>IN</option><option>KS</option>
+            <option>KY</option><option>LA</option><option>MI</option><option>MN</option>
+            <option>MO</option><option>MS</option><option>MT</option><option>NC</option>
+            <option>ND</option><option>NE</option><option>NM</option><option>NY</option>
+            <option>OH</option><option>OK</option><option>OR</option><option>PA</option>
+            <option>SC</option><option>SD</option><option>TN</option><option>TX</option>
+            <option>VA</option><option>WA</option><option>WI</option><option>WY</option>
+          </select>
+          <div class="field-error" id="err_state">State is required.</div>
+        </div>
+      </div>
+      <div class="form-row cols-2">
+        <div class="form-group">
+          <label>Season / Crop Year <span class="required">*</span></label>
+          <input type="text" id="s2_season" placeholder="2025">
+          <div class="field-error" id="err_season">Season is required.</div>
+        </div>
+        <div class="form-group">
+          <label>Total Approximate Acres
+            <span class="tooltip-wrap">
+              <span class="tooltip-icon">?</span>
+              <span class="tooltip-text">Rough total — you'll enter exact acres per field in the next step.</span>
+            </span>
+          </label>
+          <input type="number" id="s2_approxAcres" placeholder="1,200">
+        </div>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <button class="btn btn-ghost" onclick="prevStep(2)">← Back</button>
+      <button class="btn btn-primary" onclick="nextStep(2)">Continue → Fields</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ STEP 3: FIELDS -->
+  <div class="step-page" id="step-3">
+    <div class="step-header">
+      <div class="step-tag">Step 3 of 5</div>
+      <div class="step-title">Your Fields</div>
+      <div class="step-desc">Add each field you farm. Give it a name, acres, and the crop you're planting this season. You can add more fields after setup.</div>
+    </div>
+
+    <div id="fieldsContainer"></div>
+    <button class="add-row-btn" onclick="addFieldEntry()">+ Add Another Field</button>
+
+    <div class="nav-actions">
+      <button class="btn btn-ghost" onclick="prevStep(3)">← Back</button>
+      <button class="btn btn-primary" onclick="nextStep(3)">Continue → Costs</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ STEP 4: FARM COSTS -->
+  <div class="step-page" id="step-4">
+    <div class="step-header">
+      <div class="step-tag">Step 4 of 5</div>
+      <div class="step-title">Farm-Wide Costs</div>
+      <div class="step-desc">These are your whole-operation costs for the season — not per-field. Leave blank anything that doesn't apply. You'll refine these in the app.</div>
+    </div>
+
+    <div class="card">
+      <div class="sec-label">Equipment & Fuel</div>
+      <div class="cost-grid">
+        <div class="form-group" style="margin:0">
+          <label>Fuel — Total Farm ($)</label>
+          <input type="number" id="s4_fuel" placeholder="0">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Equipment Depreciation ($)</label>
+          <input type="number" id="s4_depreciation" placeholder="0">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-label">Farm Overhead</div>
+      <div class="cost-grid">
+        <div class="form-group" style="margin:0">
+          <label>Family Living Expenses ($)
+            <span class="tooltip-wrap">
+              <span class="tooltip-icon">?</span>
+              <span class="tooltip-text">What the farm needs to generate to cover your household costs.</span>
+            </span>
+          </label>
+          <input type="number" id="s4_familyLiving" placeholder="0">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Repairs & Maintenance ($)</label>
+          <input type="number" id="s4_repairs" placeholder="0">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Operating Loans & Interest ($)</label>
+          <input type="number" id="s4_loans" placeholder="0">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Labor ($)</label>
+          <input type="number" id="s4_labor" placeholder="0">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-label">Land & Equipment Payments</div>
+      <div class="cost-grid">
+        <div class="form-group" style="margin:0">
+          <label>Land Payments / Rent ($)</label>
+          <input type="number" id="s4_landPayments" placeholder="0">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Equipment Loan Payments ($)</label>
+          <input type="number" id="s4_equipPayments" placeholder="0">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-label">Off-Farm Income <span style="font-size:10px;color:var(--muted);font-family:'IBM Plex Sans',sans-serif;letter-spacing:0;text-transform:none;font-weight:400;">(optional — spouse salary, custom work, rentals, etc.)</span></div>
+      <div class="cost-grid">
+        <div class="form-group" style="margin:0">
+          <label>Source (e.g. Spouse salary)</label>
+          <input type="text" id="s4_offFarmLabel" placeholder="Spouse employment">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Annual Amount ($)</label>
+          <input type="number" id="s4_offFarmAmount" placeholder="0">
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <button class="btn btn-ghost" onclick="prevStep(4)">← Back</button>
+      <button class="btn btn-primary" onclick="nextStep(4)">Continue → Review</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ STEP 5: REVIEW & SUBMIT -->
+  <div class="step-page" id="step-5">
+    <div class="step-header">
+      <div class="step-tag">Step 5 of 5</div>
+      <div class="step-title">Review & Submit</div>
+      <div class="step-desc">Check everything over. Once you submit, your farm account is created and you'll receive a login email within a few minutes.</div>
+    </div>
+
+    <div class="card-dark" id="reviewBlock">
+      <!-- built dynamically -->
+    </div>
+
+    <div class="card" style="border-left: 3px solid var(--wheat);">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;color:var(--muted);margin-bottom:6px;">WHAT HAPPENS NEXT</div>
+      <div style="font-size:13px;color:var(--ink);line-height:1.7;">
+        ✓ Your account is created instantly<br>
+        ✓ A welcome email is sent to your address<br>
+        ✓ Your farm, fields, and costs are pre-loaded<br>
+        ✓ We verify your data within 24 hours and reach out if anything looks off
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <button class="btn btn-ghost" onclick="prevStep(5)">← Go Back &amp; Edit</button>
+      <button class="btn btn-primary" id="submitBtn" onclick="submitForm()">
+        Submit &amp; Create My Farm
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ SUCCESS -->
+  <div class="step-page" id="step-success">
+    <div class="success-screen">
+      <div class="success-icon">🌾</div>
+      <div class="success-title">Your Farm is Ready</div>
+      <div class="success-sub">We've created your Know Your Ground account. Check your email for login instructions. We'll verify your data within 24 hours.</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:20px;" id="successEmail">—</div>
+      <a href="#" style="text-decoration:none;">
+        <button class="btn btn-primary">Open Know Your Ground →</button>
+      </a>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════
+const STEPS = 5;
+let currentStep = 1;
+let fieldCount = 0;
+
+const formData = {
+  account: {},
+  farm: {},
+  fields: [],
+  costs: {}
+};
+
+// ════════════════════════════════════════════
+// PROGRESS DOTS
+// ════════════════════════════════════════════
+function renderProgress() {
+  const wrap = document.getElementById('progressDots');
+  wrap.innerHTML = '';
+  for (let i = 1; i <= STEPS; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'step-dot' + (i < currentStep ? ' done' : i === currentStep ? ' active' : '');
+    dot.textContent = i < currentStep ? '✓' : i;
+    wrap.appendChild(dot);
+    if (i < STEPS) {
+      const line = document.createElement('div');
+      line.className = 'step-line' + (i < currentStep ? ' done' : '');
+      wrap.appendChild(line);
+    }
+  }
+}
+
+// ════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════
+function showStep(n) {
+  document.querySelectorAll('.step-page').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('step-' + n) || document.getElementById('step-success');
+  if (el) el.classList.add('active');
+  currentStep = n;
+  renderProgress();
+  window.scrollTo(0, 0);
+}
+
+function prevStep(from) { showStep(from - 1); }
+
+function nextStep(from) {
+  if (!validateStep(from)) return;
+  collectStep(from);
+  if (from === STEPS) {
+    buildReview();
+    showStep(STEPS);
+  } else {
+    showStep(from + 1);
+  }
+}
+
+// ════════════════════════════════════════════
+// VALIDATION
+// ════════════════════════════════════════════
+function showErr(id, show) {
+  const el = document.getElementById('err_' + id);
+  const input = document.getElementById('s1_' + id) || document.getElementById('s2_' + id);
+  if (el) el.classList.toggle('show', show);
+  if (input) input.classList.toggle('error', show);
+  return show;
+}
+
+function clearErrors(ids, prefix) {
+  ids.forEach(id => {
+    const el = document.getElementById('err_' + id);
+    const input = document.getElementById(prefix + id);
+    if (el) el.classList.remove('show');
+    if (input) input.classList.remove('error');
+  });
+}
+
+function validateStep(step) {
+  let valid = true;
+
+  if (step === 1) {
+    const fn = document.getElementById('s1_firstName').value.trim();
+    const ln = document.getElementById('s1_lastName').value.trim();
+    const em = document.getElementById('s1_email').value.trim();
+    const pw = document.getElementById('s1_password').value;
+    const pc = document.getElementById('s1_passwordConfirm').value;
+
+    if (!fn) { showErr('firstName', true); valid = false; } else showErr('firstName', false);
+    if (!ln) { showErr('lastName', true); valid = false; } else showErr('lastName', false);
+    if (!em || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { showErr('email', true); valid = false; } else showErr('email', false);
+    if (!pw || pw.length < 8) { showErr('password', true); valid = false; } else showErr('password', false);
+    if (pw !== pc) { showErr('passwordConfirm', true); valid = false; } else showErr('passwordConfirm', false);
+  }
+
+  if (step === 2) {
+    const fn = document.getElementById('s2_farmName').value.trim();
+    const co = document.getElementById('s2_county').value.trim();
+    const st = document.getElementById('s2_state').value;
+    const se = document.getElementById('s2_season').value.trim();
+
+    if (!fn) { showErr('farmName', true); valid = false; } else showErr('farmName', false);
+    if (!co) { showErr('county', true); valid = false; } else showErr('county', false);
+    if (!st) { showErr('state', true); valid = false; } else showErr('state', false);
+    if (!se) { showErr('season', true); valid = false; } else showErr('season', false);
+  }
+
+  if (step === 3) {
+    // At least 1 field required with name and acres
+    const entries = document.querySelectorAll('.field-entry');
+    if (entries.length === 0) {
+      alert('Please add at least one field.');
+      return false;
+    }
+    entries.forEach((entry, i) => {
+      const nameEl = entry.querySelector('.f-name');
+      const acresEl = entry.querySelector('.f-acres');
+      if (!nameEl.value.trim()) { nameEl.classList.add('error'); valid = false; } else nameEl.classList.remove('error');
+      if (!acresEl.value || parseFloat(acresEl.value) <= 0) { acresEl.classList.add('error'); valid = false; } else acresEl.classList.remove('error');
+    });
+    if (!valid) alert('Please fill in the name and acres for each field.');
+  }
+
+  return valid;
+}
+
+// ════════════════════════════════════════════
+// COLLECT DATA
+// ════════════════════════════════════════════
+function collectStep(step) {
+  if (step === 1) {
+    formData.account = {
+      firstName: document.getElementById('s1_firstName').value.trim(),
+      lastName: document.getElementById('s1_lastName').value.trim(),
+      email: document.getElementById('s1_email').value.trim(),
+      password: document.getElementById('s1_password').value,
+      phone: document.getElementById('s1_phone').value.trim()
+    };
+  }
+  if (step === 2) {
+    formData.farm = {
+      name: document.getElementById('s2_farmName').value.trim(),
+      county: document.getElementById('s2_county').value.trim(),
+      state: document.getElementById('s2_state').value,
+      season: document.getElementById('s2_season').value.trim(),
+      approxAcres: parseFloat(document.getElementById('s2_approxAcres').value) || 0
+    };
+  }
+  if (step === 3) {
+    formData.fields = [];
+    document.querySelectorAll('.field-entry').forEach(entry => {
+      formData.fields.push({
+        name: entry.querySelector('.f-name').value.trim(),
+        acres: parseFloat(entry.querySelector('.f-acres').value) || 0,
+        crop: entry.querySelector('.f-crop').value.trim(),
+        legals: entry.querySelector('.f-legals').value.trim()
+      });
+    });
+  }
+  if (step === 4) {
+    formData.costs = {
+      fuel: parseFloat(document.getElementById('s4_fuel').value) || 0,
+      depreciation: parseFloat(document.getElementById('s4_depreciation').value) || 0,
+      familyLiving: parseFloat(document.getElementById('s4_familyLiving').value) || 0,
+      repairs: parseFloat(document.getElementById('s4_repairs').value) || 0,
+      loans: parseFloat(document.getElementById('s4_loans').value) || 0,
+      labor: parseFloat(document.getElementById('s4_labor').value) || 0,
+      landPayments: parseFloat(document.getElementById('s4_landPayments').value) || 0,
+      equipPayments: parseFloat(document.getElementById('s4_equipPayments').value) || 0,
+      offFarmLabel: document.getElementById('s4_offFarmLabel').value.trim(),
+      offFarmAmount: parseFloat(document.getElementById('s4_offFarmAmount').value) || 0
+    };
+  }
+}
+
+// ════════════════════════════════════════════
+// FIELD ENTRIES (STEP 3)
+// ════════════════════════════════════════════
+const CROP_OPTIONS = [
+  'Corn','Winter Wheat','Milo / Sorghum','Soybeans','Sunflowers',
+  'Alfalfa','Cotton','Oats','Barley','Other'
+];
+
+function addFieldEntry(data = {}) {
+  fieldCount++;
+  const idx = fieldCount;
+  const container = document.getElementById('fieldsContainer');
+  const div = document.createElement('div');
+  div.className = 'field-entry';
+  div.dataset.idx = idx;
+
+  const cropOptions = CROP_OPTIONS.map(c =>
+    `<option value="${c}" ${data.crop === c ? 'selected' : ''}>${c}</option>`
+  ).join('');
+
+  div.innerHTML = `
+    <div class="entry-header">
+      <div class="entry-num">Field #${idx}</div>
+      ${idx > 1 ? `<button class="remove-entry" onclick="removeFieldEntry(this)">×</button>` : ''}
+    </div>
+    <div class="form-row cols-2" style="margin-bottom:10px;">
+      <div class="form-group" style="margin:0">
+        <label>Field Name <span class="required">*</span></label>
+        <input type="text" class="f-name" placeholder="e.g. North Quarter" value="${data.name||''}">
+      </div>
+      <div class="form-group" style="margin:0">
+        <label>Acres <span class="required">*</span></label>
+        <input type="number" class="f-acres" placeholder="320" value="${data.acres||''}">
+      </div>
+    </div>
+    <div class="form-row cols-2" style="margin:0;">
+      <div class="form-group" style="margin:0">
+        <label>Crop This Season</label>
+        <select class="f-crop">
+          <option value="">— Select —</option>
+          ${cropOptions}
+        </select>
+      </div>
+      <div class="form-group" style="margin:0">
+        <label>Property Legals <span class="hint">— optional</span></label>
+        <input type="text" class="f-legals" placeholder="e.g. S12, T8S, R41W" value="${data.legals||''}">
+      </div>
+    </div>
+  `;
+  container.appendChild(div);
+}
+
+function removeFieldEntry(btn) {
+  btn.closest('.field-entry').remove();
+  // Renumber
+  document.querySelectorAll('.field-entry').forEach((el, i) => {
+    el.querySelector('.entry-num').textContent = `Field #${i + 1}`;
+  });
+}
+
+// ════════════════════════════════════════════
+// REVIEW
+// ════════════════════════════════════════════
+function fmt(n) {
+  if (!n || n === 0) return '—';
+  return '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0});
+}
+
+function buildReview() {
+  collectStep(4); // make sure cost data is fresh
+  const block = document.getElementById('reviewBlock');
+  
+  const totalAcres = formData.fields.reduce((s, f) => s + f.acres, 0);
+  const totalCosts = Object.entries(formData.costs)
+    .filter(([k]) => k !== 'offFarmLabel' && k !== 'offFarmAmount')
+    .reduce((s, [, v]) => s + v, 0);
+
+  block.innerHTML = `
+    <div class="review-section">
+      <div class="rv-title">Account</div>
+      <div class="review-row"><span class="rv-key">Name</span><span class="rv-val">${formData.account.firstName} ${formData.account.lastName}</span></div>
+      <div class="review-row"><span class="rv-key">Email</span><span class="rv-val">${formData.account.email}</span></div>
+      <div class="review-row"><span class="rv-key">Phone</span><span class="rv-val">${formData.account.phone || '—'}</span></div>
+    </div>
+
+    <div class="review-section">
+      <div class="rv-title">Farm</div>
+      <div class="review-row"><span class="rv-key">Farm Name</span><span class="rv-val">${formData.farm.name}</span></div>
+      <div class="review-row"><span class="rv-key">Location</span><span class="rv-val">${formData.farm.county}, ${formData.farm.state}</span></div>
+      <div class="review-row"><span class="rv-key">Season</span><span class="rv-val">${formData.farm.season}</span></div>
+    </div>
+
+    <div class="review-section">
+      <div class="rv-title">Fields (${formData.fields.length} fields · ${totalAcres} total acres)</div>
+      ${formData.fields.map((f, i) => `
+        <div class="review-row">
+          <span class="rv-key">Field ${i+1}: ${f.name}</span>
+          <span class="rv-val">${f.acres} ac · ${f.crop || '—'}</span>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="review-section">
+      <div class="rv-title">Farm Costs</div>
+      ${formData.costs.fuel > 0 ? `<div class="review-row"><span class="rv-key">Fuel</span><span class="rv-val">${fmt(formData.costs.fuel)}</span></div>` : ''}
+      ${formData.costs.depreciation > 0 ? `<div class="review-row"><span class="rv-key">Equipment Depreciation</span><span class="rv-val">${fmt(formData.costs.depreciation)}</span></div>` : ''}
+      ${formData.costs.familyLiving > 0 ? `<div class="review-row"><span class="rv-key">Family Living</span><span class="rv-val">${fmt(formData.costs.familyLiving)}</span></div>` : ''}
+      ${formData.costs.repairs > 0 ? `<div class="review-row"><span class="rv-key">Repairs</span><span class="rv-val">${fmt(formData.costs.repairs)}</span></div>` : ''}
+      ${formData.costs.loans > 0 ? `<div class="review-row"><span class="rv-key">Operating Loans</span><span class="rv-val">${fmt(formData.costs.loans)}</span></div>` : ''}
+      ${formData.costs.labor > 0 ? `<div class="review-row"><span class="rv-key">Labor</span><span class="rv-val">${fmt(formData.costs.labor)}</span></div>` : ''}
+      ${formData.costs.landPayments > 0 ? `<div class="review-row"><span class="rv-key">Land Payments</span><span class="rv-val">${fmt(formData.costs.landPayments)}</span></div>` : ''}
+      ${formData.costs.equipPayments > 0 ? `<div class="review-row"><span class="rv-key">Equipment Payments</span><span class="rv-val">${fmt(formData.costs.equipPayments)}</span></div>` : ''}
+      <div class="review-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:8px;">
+        <span class="rv-key" style="color:var(--wheat);">Total Farm Overhead</span>
+        <span class="rv-val" style="color:var(--wheat);">${fmt(totalCosts)}</span>
+      </div>
+      ${formData.costs.offFarmAmount > 0 ? `<div class="review-row"><span class="rv-key">Off-Farm Income (${formData.costs.offFarmLabel || 'Other'})</span><span class="rv-val" style="color:var(--field-light);">${fmt(formData.costs.offFarmAmount)}</span></div>` : ''}
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════════
+// SUBMIT
+// ════════════════════════════════════════════
+async function submitForm() {
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Creating your farm...';
+
+  // Build payload
+  const payload = {
+    account: formData.account,
+    farm: {
+      ...formData.farm,
+      costs: {
+        fuel: formData.costs.fuel,
+        depreciation: formData.costs.depreciation,
+        familyLiving: formData.costs.familyLiving,
+        repairs: formData.costs.repairs,
+        loans: formData.costs.loans,
+        labor: formData.costs.labor,
+        landPayments: formData.costs.landPayments,
+        equipPayments: formData.costs.equipPayments
+      },
+      offFarmIncome: formData.costs.offFarmAmount > 0 ? [{
+        id: 'ofi_setup',
+        label: formData.costs.offFarmLabel || 'Off-farm income',
+        amount: formData.costs.offFarmAmount
+      }] : [],
+      customCosts: [],
+      equipCombined: false,
+      fields: formData.fields.map(f => ({
+        id: 'fld_' + Date.now() + Math.random().toString(36).slice(2),
+        name: f.name,
+        acres: f.acres,
+        crop: f.crop,
+        legals: f.legals,
+        season: formData.farm.season,
+        fieldCosts: {},
+        yield: 0,
+        customCosts: [],
+        marketPrice: 0
+      }))
+    },
+    submittedAt: new Date().toISOString(),
+    source: 'onboarding-form-v1'
+  };
+
+  const SUPABASE_URL = 'https://tyttsvngdeitkjttdarp.supabase.co';
+  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5dHRzdm5nZGVpdGtqdHRkYXJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyOTM0MTMsImV4cCI6MjA5MTg2OTQxM30.whG0Kp-ybQEo4vqhlSCUmjJJT5DKOBLqcNms4ngsYF8';
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'apikey': SUPABASE_ANON,
+    'Authorization': 'Bearer ' + SUPABASE_ANON
+  };
+
+  try {
+    // ── STEP 1: Create Supabase auth user ──
+    const signupRes = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        email: formData.account.email,
+        password: formData.account.password,
+        data: {
+          first_name: formData.account.firstName,
+          last_name: formData.account.lastName,
+          phone: formData.account.phone
+        }
+      })
+    });
+
+    const signupData = await signupRes.json();
+
+    if (!signupRes.ok) {
+      const msg = signupData?.msg || signupData?.error_description || signupData?.message || 'Signup failed.';
+      throw new Error(msg);
+    }
+
+    const userId = signupData.user?.id;
+    const accessToken = signupData.access_token;
+
+    if (!userId) throw new Error('Account created but no user ID returned. Check your email to confirm, then contact support.');
+
+    // ── STEP 2: Insert profile row (required by FK constraints) ──
+    await fetch(`${SUPABASE_URL}/rest/v1/profiles`, {
+      method: 'POST',
+      headers: {
+        ...authHeaders,
+        'Authorization': 'Bearer ' + accessToken
+      },
+      body: JSON.stringify({
+        id: userId,
+        full_name: `${formData.account.firstName} ${formData.account.lastName}`
+      })
+    });
+
+    // ── STEP 4: Write farm data ──
+    const authHeaders = {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON,
+      'Authorization': 'Bearer ' + accessToken,
+      'Prefer': 'return=representation'
+    };
+
+    // Insert farm record
+    const farmRecord = {
+      user_id: userId,
+      name: formData.farm.name,
+      location: `${formData.farm.county}, ${formData.farm.state}`,
+      season: formData.farm.season,
+      costs: {
+        fuel: payload.farm.costs.fuel,
+        depreciation: payload.farm.costs.depreciation,
+        familyLiving: payload.farm.costs.familyLiving,
+        repairs: payload.farm.costs.repairs,
+        loans: payload.farm.costs.loans,
+        labor: payload.farm.costs.labor,
+        landPayments: payload.farm.costs.landPayments,
+        equipPayments: payload.farm.costs.equipPayments
+      },
+      off_farm_income: payload.farm.offFarmIncome,
+      custom_costs: [],
+      equip_combined: false
+    };
+
+    const farmRes = await fetch(`${SUPABASE_URL}/rest/v1/farms`, {
+      method: 'POST',
+      headers: authHeaders,
+      body: JSON.stringify(farmRecord)
+    });
+
+    if (!farmRes.ok) {
+      const err = await farmRes.json();
+      console.error('Farm insert error:', err);
+      // Non-fatal — account created, farm data can be entered manually
+    } else {
+      const farmRows = await farmRes.json();
+      const farmId = farmRows?.[0]?.id;
+
+      // Insert fields if we got the farm ID back
+      if (farmId && payload.farm.fields.length > 0) {
+        const fieldRecords = payload.farm.fields.map(f => ({
+          farm_id: farmId,
+          user_id: userId,
+          name: f.name,
+          acres: f.acres,
+          crop: f.crop || null,
+          legals: f.legals || null,
+          season: formData.farm.season,
+          field_costs: {},
+          yield_per_acre: 0,
+          market_price: 0,
+          custom_costs: []
+        }));
+
+        await fetch(`${SUPABASE_URL}/rest/v1/fields`, {
+          method: 'POST',
+          headers: authHeaders,
+          body: JSON.stringify(fieldRecords)
+        });
+      }
+    }
+
+    // ── STEP 5: Show success ──
+    document.getElementById('successEmail').textContent = formData.account.email;
+    showStep('success');
+
+  } catch (err) {
+    btn.disabled = false;
+    btn.innerHTML = 'Submit &amp; Create My Farm';
+    alert('Error: ' + err.message + '\n\nIf this keeps happening, contact support.');
+    console.error(err);
+  }
+}
+
+// ════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════
+renderProgress();
+addFieldEntry(); // Start with 1 field
+document.getElementById('s2_season').value = new Date().getFullYear();
+</script>
+</body>
+</html>
