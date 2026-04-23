@@ -358,6 +358,7 @@ hr{border:none;border-top:1.5px solid var(--card-border);margin:16px 0;}
   #mobileTopBar,#mobileBottomNav{display:none!important;}
 }
 </style>
+<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 </head>
 <body>
 
@@ -390,7 +391,13 @@ hr{border:none;border-top:1.5px solid var(--card-border);margin:16px 0;}
       <div class="form-group"><label>Full Name</label><input type="text" id="signupName" placeholder="John Anderson"></div>
       <div class="form-group"><label>Email</label><input type="email" id="signupEmail" placeholder="you@example.com"></div>
       <div class="form-group"><label>Password</label><input type="password" id="signupPassword" placeholder="Min 6 characters"></div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px;" onclick="doSignup()" id="signupBtn">Create Account</button>
+      <div class="h-captcha" style="margin-top:10px;"
+           data-sitekey="54c88b50-bedc-4ce8-9824-b66ee33ec7d2"
+           data-theme="dark"
+           data-callback="onCaptchaSolved"
+           data-expired-callback="onCaptchaExpired">
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:10px;" onclick="doSignup()" id="signupBtn">Create Account</button>
     </div>
     <div id="authReset" class="hidden">
       <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Enter your email and we'll send you a reset link.</p>
@@ -1047,6 +1054,10 @@ hr{border:none;border-top:1.5px solid var(--card-border);margin:16px 0;}
 <script>
 
 // ═══ SUPABASE REST API (no external library) ═══
+let captchaToken = null;
+function onCaptchaSolved(token) { captchaToken = token; }
+function onCaptchaExpired() { captchaToken = null; }
+
 const SUPABASE_URL='https://tyttsvngdeitkjttdarp.supabase.co';
 const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5dHRzdm5nZGVpdGtqdHRkYXJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyOTM0MTMsImV4cCI6MjA5MTg2OTQxM30.whG0Kp-ybQEo4vqhlSCUmjJJT5DKOBLqcNms4ngsYF8';
 let _authToken = null;
@@ -1149,13 +1160,14 @@ async function doSignup(){
   const password=document.getElementById('signupPassword').value;
   if(!name||!email||!password){showAuthError('Please fill in all fields.');return;}
   if(password.length<6){showAuthError('Password must be at least 6 characters.');return;}
+  if(!captchaToken){showAuthError('Please complete the captcha.');return;}
   const btn=document.getElementById('signupBtn');btn.disabled=true;btn.textContent='Creating account...';
   try {
-    const data=await authPost('signup',{email,password,data:{full_name:name}});
+    const data=await authPost('signup',{email,password,gotrue_meta_security:{captcha_token:captchaToken},data:{full_name:name}});
     if(data.error||data.error_description){showAuthError(data.error_description||data.error);btn.disabled=false;btn.textContent='Create Account';return;}
     if(data.access_token){saveSession(data);currentUser=data.user;await bootApp();}
     else showAuthSuccess('Account created! You can now sign in.');
-  } catch(e){showAuthError(e.message);}
+  } catch(e){captchaToken=null;if(window.hcaptcha)window.hcaptcha.reset();showAuthError(e.message);}
   btn.disabled=false;btn.textContent='Create Account';
 }
 async function doReset(){

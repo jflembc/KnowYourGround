@@ -467,6 +467,7 @@ textarea { resize: vertical; min-height: 80px; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 </style>
+<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 </head>
 <body>
 
@@ -714,9 +715,21 @@ textarea { resize: vertical; min-height: 80px; }
       </div>
     </div>
 
+    <div style="margin-bottom:16px;">
+      <div class="h-captcha"
+           data-sitekey="54c88b50-bedc-4ce8-9824-b66ee33ec7d2"
+           data-theme="dark"
+           data-callback="onCaptchaSolved"
+           data-expired-callback="onCaptchaExpired">
+      </div>
+      <div id="captchaError" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red-light);margin-top:6px;display:none;">
+        Please complete the captcha before submitting.
+      </div>
+    </div>
+
     <div class="nav-actions">
       <button class="btn btn-ghost" onclick="prevStep(5)">← Go Back &amp; Edit</button>
-      <button class="btn btn-primary" id="submitBtn" onclick="submitForm()">
+      <button class="btn btn-primary" id="submitBtn" onclick="submitForm()" disabled style="opacity:0.5;cursor:not-allowed;">
         Submit &amp; Create My Farm
       </button>
     </div>
@@ -744,6 +757,24 @@ textarea { resize: vertical; min-height: 80px; }
 const STEPS = 5;
 let currentStep = 1;
 let fieldCount = 0;
+let captchaToken = null;
+
+function onCaptchaSolved(token) {
+  captchaToken = token;
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = false;
+  btn.style.opacity = '1';
+  btn.style.cursor = 'pointer';
+  document.getElementById('captchaError').style.display = 'none';
+}
+
+function onCaptchaExpired() {
+  captchaToken = null;
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.style.opacity = '0.5';
+  btn.style.cursor = 'not-allowed';
+}
 
 const formData = {
   account: {},
@@ -1039,6 +1070,12 @@ function buildReview() {
 // ════════════════════════════════════════════
 async function submitForm() {
   const btn = document.getElementById('submitBtn');
+  // Validate captcha
+  if (!captchaToken) {
+    document.getElementById('captchaError').style.display = 'block';
+    return;
+  }
+
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Creating your farm...';
 
@@ -1057,6 +1094,7 @@ async function submitForm() {
       body: JSON.stringify({
         email: formData.account.email,
         password: formData.account.password,
+        gotrue_meta_security: { captcha_token: captchaToken },
         data: {
           first_name: formData.account.firstName,
           last_name: formData.account.lastName,
@@ -1165,6 +1203,9 @@ async function submitForm() {
   } catch (err) {
     btn.disabled = false;
     btn.innerHTML = 'Submit &amp; Create My Farm';
+    // Reset captcha so they can try again
+    captchaToken = null;
+    if (window.hcaptcha) window.hcaptcha.reset();
     alert('Error: ' + err.message + '\n\nIf this keeps happening, contact support.');
     console.error(err);
   }
