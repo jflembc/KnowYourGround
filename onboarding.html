@@ -729,7 +729,7 @@ textarea { resize: vertical; min-height: 80px; }
       <div class="success-title">Your Farm is Ready</div>
       <div class="success-sub">We've created your Know Your Ground account. Check your email for login instructions. We'll verify your data within 24 hours.</div>
       <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:20px;" id="successEmail">—</div>
-      <a href="#" style="text-decoration:none;">
+      <a href="https://knowyourground.flemming-josh.workers.dev" style="text-decoration:none;">
         <button class="btn btn-primary">Open Know Your Ground →</button>
       </a>
     </div>
@@ -1085,7 +1085,7 @@ async function submitForm() {
     // STEP 3: Insert profile row (FK required before farm/field inserts)
     await fetch(SUPABASE_URL + '/rest/v1/profiles', {
       method: 'POST',
-      headers: authHeaders,
+      headers: { ...authHeaders, 'Prefer': 'return=minimal,resolution=ignore-duplicates' },
       body: JSON.stringify({
         id: userId,
         full_name: formData.account.firstName + ' ' + formData.account.lastName
