@@ -7,20 +7,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --soil:#1A0F06;--soil-mid:#2C1A0E;--soil-light:#3D2510;
-  --wheat:#D4973E;--wheat-light:#ECC070;--wheat-pale:#F5D89A;
-  --sky:#7BA7BC;--field:#3A7A35;--field-light:#5DB85D;
-  --paper:#FDFAF3;--paper-dark:#F2ECD8;--paper-mid:#E5DBB8;
-  --ink:#1A0F06;--red:#C03030;--red-light:#E06060;
-  --muted:#6B5D45;--border:#5A3E22;--border-light:#C8B890;
-  /* Readability upgrades */
-  --text-primary:#1A0F06;--text-secondary:#3D2A12;--text-muted:#6B5D45;
-  --card-bg:#FDFAF3;--card-border:#D4B896;
-  --input-bg:#FDFAF3;--input-border:#B89870;
-  --dark-bg:#150D05;--dark-border:#5A3E22;
+  --soil:#1E1208;--soil-mid:#2C1A0E;--soil-light:#3D2510;
+  --wheat:#C8923A;--wheat-light:#E8B96A;--wheat-pale:#F5D89A;
+  --sky:#7BA7BC;--field:#4A6741;--field-light:#6DBF6D;
+  --paper:#F5EFE0;--paper-dark:#EDE4CC;--paper-mid:#DDD0B0;
+  --ink:#1A1208;--red:#B84040;--red-light:#E07070;
+  --muted:#8A7A60;--border:#4A3520;--border-light:#C8B890;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'IBM Plex Sans',sans-serif;background:var(--soil);color:var(--ink);min-height:100vh;overflow-x:hidden;font-size:16px;}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--soil);color:var(--ink);min-height:100vh;overflow-x:hidden;}
 
 /* AUTH */
 #authScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--soil);}
@@ -74,71 +69,67 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--soil);color:var(--i
 /* MAIN CONTENT */
 #appContent{flex:1;min-width:0;overflow-x:hidden;}
 #appMain{max-width:960px;margin:0 auto;padding:28px 24px 80px;}
-.sec-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--wheat-light);margin-bottom:12px;padding-bottom:7px;border-bottom:1px solid var(--border);}
-.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:22px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
-.card-dark{background:var(--dark-bg);border:1px solid var(--dark-border);border-radius:6px;padding:22px;margin-bottom:16px;}
+.sec-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--wheat);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.card{background:var(--paper);border-radius:4px;padding:20px;margin-bottom:14px;}
+.card-dark{background:#150D05;border:1px solid var(--border);border-radius:4px;padding:20px;margin-bottom:14px;}
 
 /* FORMS */
-.form-group{margin-bottom:14px;}
-label{display:block;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.2px;text-transform:none;color:var(--text-secondary);margin-bottom:6px;}
-input[type=text],input[type=number],input[type=email],input[type=password],input[type=date],select,textarea{
-  width:100%;background:var(--input-bg);border:1.5px solid var(--input-border);border-radius:5px;
-  padding:11px 14px;font-family:'IBM Plex Sans',sans-serif;font-size:15px;color:var(--text-primary);
-  outline:none;transition:border-color 0.15s,box-shadow 0.15s;
-}
-input[type=number]{font-family:'IBM Plex Mono',monospace;font-size:15px;}
-input:focus,select:focus,textarea:focus{border-color:var(--wheat);box-shadow:0 0 0 3px rgba(212,151,62,0.15);}
-input[readonly]{background:var(--paper-mid);opacity:0.7;cursor:not-allowed;}
-.form-row{display:grid;gap:14px;margin-bottom:14px;}
+.form-group{margin-bottom:12px;}
+label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+input[type=text],input[type=number],input[type=email],input[type=password],input[type=date],select,textarea{width:100%;background:var(--paper-dark);border:1px solid var(--border-light);border-radius:3px;padding:9px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color 0.15s;}
+input[type=number]{font-family:'IBM Plex Mono',monospace;}
+input:focus,select:focus,textarea:focus{border-color:var(--wheat);}
+input[readonly]{opacity:0.55;cursor:not-allowed;}
+.form-row{display:grid;gap:12px;margin-bottom:12px;}
 .cols-2{grid-template-columns:1fr 1fr;}
 .cols-3{grid-template-columns:1fr 1fr 1fr;}
 
 /* COST ROWS */
-.cost-row{display:grid;grid-template-columns:1fr 160px 44px;gap:10px;align-items:center;margin-bottom:10px;}
-.cost-row-label{font-size:15px;font-weight:500;color:var(--text-primary);padding:4px 0;}
-.cost-row-label.editable{background:transparent;border:none;border-bottom:2px dashed var(--border-light);border-radius:0;padding:10px 4px;font-size:15px;font-weight:500;}
-.remove-btn{background:transparent;border:1.5px solid var(--border-light);border-radius:5px;color:var(--red);font-size:20px;cursor:pointer;height:42px;width:44px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;}
+.cost-row{display:grid;grid-template-columns:1fr 150px 42px;gap:8px;align-items:center;margin-bottom:8px;}
+.cost-row-label{font-size:14px;font-weight:500;color:var(--ink);padding:4px 0;}
+.cost-row-label.editable{background:transparent;border:none;border-bottom:1px dashed var(--border-light);border-radius:0;padding:9px 4px;font-size:14px;font-weight:500;}
+.remove-btn{background:transparent;border:1px solid var(--border-light);border-radius:3px;color:var(--red);font-size:18px;cursor:pointer;height:38px;width:42px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;}
 .remove-btn:hover{background:var(--red);color:#fff;border-color:var(--red);}
 
 /* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 18px;border-radius:5px;font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;letter-spacing:0.2px;white-space:nowrap;}
-.btn-primary{background:var(--wheat);color:#fff;}
-.btn-primary:hover{background:var(--wheat-light);color:var(--soil);}
-.btn-outline{background:transparent;border:2px solid var(--wheat);color:var(--wheat);}
-.btn-outline:hover{background:var(--wheat);color:#fff;}
-.btn-ghost{background:transparent;border:2px dashed var(--border);color:var(--muted);font-size:13px;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:3px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;letter-spacing:0.3px;white-space:nowrap;}
+.btn-primary{background:var(--wheat);color:var(--soil);}
+.btn-primary:hover{background:var(--wheat-light);}
+.btn-outline{background:transparent;border:1px solid var(--wheat);color:var(--wheat);}
+.btn-outline:hover{background:var(--wheat);color:var(--soil);}
+.btn-ghost{background:transparent;border:1px dashed var(--border);color:var(--muted);font-size:12px;}
 .btn-ghost:hover{border-color:var(--wheat);color:var(--wheat);}
-.btn-danger{background:transparent;border:2px solid var(--red);color:var(--red);font-size:13px;}
+.btn-danger{background:transparent;border:1px solid var(--red);color:var(--red);font-size:12px;}
 .btn-danger:hover{background:var(--red);color:#fff;}
-.btn-sky{background:transparent;border:2px solid var(--sky);color:var(--sky);}
+.btn-sky{background:transparent;border:1px solid var(--sky);color:var(--sky);}
 .btn-sky:hover{background:var(--sky);color:var(--soil);}
-.btn-sm{padding:7px 14px;font-size:13px;}
+.btn-sm{padding:6px 12px;font-size:12px;}
 .btn:disabled{opacity:0.5;cursor:not-allowed;}
 
 /* RESULTS */
-.results-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
-.result-box{background:#0A0602;border:1px solid var(--dark-border);border-radius:6px;padding:18px;text-align:center;}
-.result-box .r-label{font-family:'IBM Plex Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:#A08060;margin-bottom:8px;}
-.result-box .r-val{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--paper);line-height:1;}
-.result-box .r-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7A6040;margin-top:5px;}
-.result-box.is-profit .r-val{color:#6DDC6D;}
-.result-box.is-loss .r-val{color:#E07070;}
-.result-box.is-wheat .r-val{color:var(--wheat-light);}
+.results-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.result-box{background:#0A0602;border:1px solid var(--border);border-radius:4px;padding:14px;text-align:center;}
+.result-box .r-label{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.result-box .r-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--paper);line-height:1;}
+.result-box .r-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-top:4px;}
+.result-box.is-profit .r-val{color:var(--field-light);}
+.result-box.is-loss .r-val{color:var(--red-light);}
+.result-box.is-wheat .r-val{color:var(--wheat);}
 
-/* ── TOGGLE ── */
-.toggle-wrap{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
-.toggle{position:relative;width:46px;height:24px;flex-shrink:0;}
+/* TOGGLE */
+.toggle-wrap{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.toggle{position:relative;width:42px;height:22px;flex-shrink:0;}
 .toggle input{opacity:0;width:0;height:0;}
-.toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:24px;cursor:pointer;transition:0.2s;}
-.toggle-slider:before{content:'';position:absolute;left:3px;top:3px;width:18px;height:18px;background:var(--muted);border-radius:50%;transition:0.2s;}
+.toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:22px;cursor:pointer;transition:0.2s;}
+.toggle-slider:before{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;background:var(--muted);border-radius:50%;transition:0.2s;}
 .toggle input:checked+.toggle-slider{background:var(--wheat);}
-.toggle input:checked+.toggle-slider:before{transform:translateX(22px);background:#fff;}
+.toggle input:checked+.toggle-slider:before{transform:translateX(20px);background:var(--soil);}
 
-/* ── MODAL ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:center;z-index:200;padding:16px;}
-.modal{background:var(--card-bg);border-radius:8px;padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
-.modal h2{font-family:'Playfair Display',serif;font-size:24px;margin-bottom:20px;color:var(--text-primary);}
-.modal-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:22px;}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;z-index:200;padding:16px;}
+.modal{background:var(--paper);border-radius:6px;padding:24px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+.modal h2{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:18px;color:var(--soil);}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
 
 /* FIELD CARDS */
 .fields-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:16px;}
@@ -182,183 +173,53 @@ input[readonly]{background:var(--paper-mid);opacity:0.7;cursor:not-allowed;}
 /* LOAN SECTION */
 .loan-section{background:#FDF8EE;border:1px solid var(--border-light);border-radius:4px;padding:16px;margin-top:12px;}
 
-/* ── TREE COMPONENTS ── */
-.tree-section{border:1.5px solid var(--card-border);border-radius:6px;overflow:hidden;margin-bottom:12px;}
-.tree-header{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--paper-dark);cursor:pointer;user-select:none;transition:background 0.15s;}
-.tree-header:hover{background:var(--paper-mid);}
-.tree-toggle{width:26px;height:26px;border-radius:50%;background:var(--wheat);color:#fff;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform 0.2s;}
-.tree-toggle.open{transform:rotate(45deg);}
-.tree-label{font-family:'IBM Plex Sans',sans-serif;font-size:15px;font-weight:700;color:var(--text-secondary);flex:1;}
-.tree-total{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;color:var(--wheat);margin-left:auto;}
-.tree-body{display:none;padding:16px;background:var(--card-bg);border-top:1px solid var(--card-border);}
-.tree-body.open{display:block;}
-.tree-subrow{display:grid;grid-template-columns:1fr 160px;gap:10px;align-items:center;margin-bottom:10px;}
-.tree-subrow label{font-size:14px;font-weight:500;color:var(--text-secondary);margin:0;}
-.tree-custom-row{display:grid;grid-template-columns:1fr 160px 44px;gap:10px;align-items:center;margin-bottom:10px;}
-
-/* ── SECTION INTRO ── */
-.section-intro{font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.7;}
-
-/* ── MISC ── */
-.save-indicator{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6DDC6D;letter-spacing:1px;opacity:0;transition:opacity 0.3s;position:fixed;bottom:24px;right:20px;background:#0A0602;border:1px solid var(--dark-border);padding:7px 14px;border-radius:4px;z-index:100;}
+/* MISC */
+.save-indicator{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--field-light);letter-spacing:1px;opacity:0;transition:opacity 0.3s;position:fixed;bottom:20px;right:20px;background:#0A0602;border:1px solid var(--border);padding:6px 12px;border-radius:3px;z-index:100;}
 .save-indicator.show{opacity:1;}
-hr{border:none;border-top:1.5px solid var(--card-border);margin:16px 0;}
-.flex-between{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
-.flex-gap{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
+.flex-between{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.flex-gap{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
 .hidden{display:none!important;}
-.badge{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;background:var(--soil-light);color:var(--wheat-light);padding:4px 10px;border-radius:3px;}
-.empty-state{text-align:center;padding:56px 20px;color:var(--muted);}
-.empty-state .es-icon{font-size:48px;margin-bottom:14px;}
-.empty-state p{font-size:15px;margin-bottom:18px;}
-.legacy-tag{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--wheat-pale);letter-spacing:1px;margin-top:2px;}
+.badge{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:1px;background:var(--soil-light);color:var(--wheat);padding:3px 8px;border-radius:2px;}
+.section-intro{font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;}
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty-state .es-icon{font-size:44px;margin-bottom:12px;}
+.empty-state p{font-size:14px;margin-bottom:16px;}
+.legacy-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--wheat-pale);letter-spacing:1px;margin-top:2px;}
 
-/* ── FIELD CARDS ── */
-.fields-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:18px;}
-.field-card{background:var(--card-bg);border:2px solid var(--card-border);border-radius:6px;padding:18px;cursor:pointer;transition:all 0.15s;}
-.field-card:hover{border-color:var(--wheat);box-shadow:0 2px 8px rgba(212,151,62,0.15);}
-.field-card.active{border-color:var(--wheat);background:#FEFBF0;}
-.field-card .fc-name{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--text-primary);margin-bottom:5px;}
-.field-card .fc-meta{font-size:13px;color:var(--text-muted);margin-bottom:10px;}
-.field-card .fc-stat{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--field);font-weight:600;}
-.field-card .fc-stat.loss{color:var(--red);}
-.add-field-card{background:transparent;border:2px dashed var(--border);border-radius:6px;padding:18px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:14px;font-weight:600;transition:all 0.15s;min-height:100px;}
-.add-field-card:hover{border-color:var(--wheat);color:var(--wheat);}
-
-/* ── CROP CARDS ── */
-.crop-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:16px;}
-.crop-card{background:var(--card-bg);border:2px solid var(--card-border);border-radius:6px;padding:16px;cursor:pointer;transition:all 0.15s;}
-.crop-card:hover,.crop-card.active{border-color:var(--wheat);}
-.crop-card .cc-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--text-primary);margin-bottom:7px;}
-.crop-card .cc-costs{font-size:13px;color:var(--text-muted);line-height:1.9;}
-
-/* ── SUMMARY TABLE ── */
-.summary-table{width:100%;border-collapse:collapse;font-size:14px;}
-.summary-table th{font-family:'IBM Plex Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--wheat-light);padding:10px 14px;text-align:left;background:#0A0602;border-bottom:1px solid var(--dark-border);}
-.summary-table td{padding:12px 14px;border-bottom:1px solid #2A1A0A;color:var(--paper);font-size:14px;}
-.summary-table td.mono{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--paper);}
-.summary-table tr:last-child td{border-bottom:none;}
-.summary-table tr.total-row td{font-weight:700;background:#0F0804;border-top:2px solid var(--dark-border);color:var(--wheat-pale);}
-
-/* ── SIDEBAR (desktop) ── */
-#appSidebar{
-  width:230px;flex-shrink:0;background:var(--soil);border-right:2px solid var(--wheat);
-  display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;
+/* ELEVATOR NAV SECTION */
+.nav-elevator{border-top:1px solid var(--border);margin-top:4px;}
+.nav-elevator-toggle{
+  width:100%;background:transparent;border:none;border-left:3px solid transparent;
+  color:var(--muted);font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:0.3px;text-align:left;padding:11px 20px;cursor:pointer;
+  transition:all 0.15s;display:flex;align-items:center;gap:10px;
 }
-.sidebar-brand{padding:24px 20px 18px;border-bottom:1px solid var(--dark-border);}
-.sidebar-brand h1{font-family:'Playfair Display',serif;font-size:21px;font-weight:900;color:var(--wheat);letter-spacing:-0.5px;line-height:1.1;}
-.sidebar-brand .tagline{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
-.sidebar-farm{padding:14px 16px;border-bottom:1px solid var(--dark-border);}
-.sidebar-farm select{width:100%;background:var(--soil-light);border:1px solid var(--dark-border);border-radius:4px;color:var(--paper);font-size:13px;padding:8px 10px;cursor:pointer;outline:none;}
-.sidebar-farm button{width:100%;margin-top:8px;}
-.nav-tabs{display:flex;flex-direction:column;padding:10px 0;flex:1;}
-.nav-tab{background:transparent;border:none;border-left:3px solid transparent;color:#A08070;font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:600;text-align:left;padding:13px 20px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:10px;}
-.nav-tab:hover{color:var(--wheat-light);background:rgba(212,151,62,0.07);}
-.nav-tab.active{color:var(--wheat);border-left-color:var(--wheat);background:rgba(212,151,62,0.12);}
-.nav-tab .nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
-.sidebar-bottom{padding:16px;border-top:1px solid var(--dark-border);margin-top:auto;}
-.user-pill{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-#appContent{flex:1;min-width:0;overflow-x:hidden;}
-#appMain{max-width:960px;margin:0 auto;padding:28px 24px 80px;}
-
-/* ── WHAT IF ── */
-.whatif-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px;}
-.whatif-col{background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:20px;}
-.whatif-col h3{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--text-primary);margin-bottom:16px;}
-.whatif-result{background:#0A0602;border:1px solid var(--dark-border);border-radius:5px;padding:14px;margin-top:12px;}
-.whatif-result .wr-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#8A7060;margin-bottom:5px;}
-.whatif-result .wr-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--paper);}
-.whatif-result.is-profit .wr-val{color:#6DDC6D;}
-.whatif-result.is-loss .wr-val{color:#E07070;}
-.loan-section{background:#F8F3E8;border:1px solid var(--card-border);border-radius:5px;padding:18px;margin-top:12px;}
-.fsa-badge{display:inline-block;font-size:10px;letter-spacing:1px;background:#1A3A28;color:#6DBF6D;padding:3px 8px;border-radius:3px;margin-top:6px;}
-
-/* ── ELEVATOR NAV ── */
-.nav-elevator{border-top:1px solid var(--dark-border);margin-top:4px;}
-.nav-elevator-toggle{width:100%;background:transparent;border:none;border-left:3px solid transparent;color:#A08070;font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:600;text-align:left;padding:13px 20px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:10px;}
-.nav-elevator-toggle:hover{color:var(--wheat-light);background:rgba(212,151,62,0.07);}
-.nav-elevator-toggle.open{color:var(--wheat);border-left-color:var(--wheat);background:rgba(212,151,62,0.12);}
+.nav-elevator-toggle:hover{color:var(--wheat-light);background:rgba(200,146,58,0.06);}
+.nav-elevator-toggle.open{color:var(--wheat);border-left-color:var(--wheat);background:rgba(200,146,58,0.1);}
 #elevatorPanel{overflow:hidden;transition:max-height 0.25s ease;}
-.elevator-crops{display:flex;flex-direction:column;gap:6px;padding:0 16px 6px;}
-.elevator-crop-row{display:flex;align-items:center;gap:10px;padding:2px 0;}
-.elevator-crop-row .ecr-name{font-size:13px;color:#C0A080;flex:1;overflow:hidden;text-overflow:ellipsis;}
-.elevator-crop-row input{width:80px;flex-shrink:0;background:#150D05;border:1px solid var(--dark-border);color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:5px 8px;border-radius:4px;margin:0;outline:none;}
+.elevator-crops{display:flex;flex-direction:column;gap:4px;padding:0 16px 4px;}
+.elevator-crop-row{display:flex;align-items:center;gap:8px;padding:2px 0;}
+.elevator-crop-row .ecr-name{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.elevator-crop-row input{width:76px;flex-shrink:0;background:#150D05;border:1px solid var(--border);color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:12px;padding:4px 8px;border-radius:3px;margin:0;outline:none;}
 .elevator-crop-row input:focus{border-color:var(--wheat);}
 
-/* ══════════════════════════════════════════
-   MOBILE — complete redesign
-══════════════════════════════════════════ */
 @media(max-width:768px){
-  body{font-size:16px;}
   .cols-2,.cols-3{grid-template-columns:1fr;}
   .results-grid{grid-template-columns:1fr 1fr;}
-  .cost-row{grid-template-columns:1fr 120px 44px;}
+  .cost-row{grid-template-columns:1fr 110px 42px;}
   .whatif-grid{grid-template-columns:1fr;}
-
-  /* Hide sidebar entirely on mobile */
-  #appSidebar{display:none;}
+  #appSidebar{width:100%;height:auto;position:relative;flex-direction:row;flex-wrap:wrap;border-right:none;border-bottom:2px solid var(--wheat);}
   #appShell{flex-direction:column;}
-
-  /* Mobile top bar */
-  #mobileTopBar{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    background:var(--soil);
-    border-bottom:2px solid var(--wheat);
-    padding:12px 16px;
-    position:sticky;
-    top:0;
-    z-index:60;
-  }
-  #mobileTopBar h1{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:var(--wheat);}
-  #mobileTopBar .mob-farm-sel{background:var(--soil-light);border:1px solid var(--dark-border);border-radius:4px;color:var(--paper);font-size:13px;padding:6px 10px;max-width:140px;}
-
-  /* Bottom tab nav */
-  #mobileBottomNav{
-    display:flex;
-    position:fixed;
-    bottom:0;left:0;right:0;
-    background:var(--soil);
-    border-top:2px solid var(--wheat);
-    z-index:60;
-    padding-bottom:env(safe-area-inset-bottom);
-  }
-  .mob-nav-btn{
-    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:3px;padding:10px 2px;background:transparent;border:none;cursor:pointer;
-    color:#806040;font-family:'IBM Plex Sans',sans-serif;font-size:9px;font-weight:600;
-    letter-spacing:0.3px;text-transform:uppercase;transition:all 0.15s;
-    border-top:3px solid transparent;
-  }
-  .mob-nav-btn .mob-icon{font-size:20px;line-height:1;}
-  .mob-nav-btn.active{color:var(--wheat);border-top-color:var(--wheat);}
-
-  /* Adjust main content for top+bottom bars */
-  #appMain{padding:16px 14px 100px;}
-
-  /* Farm selector on mobile comes from top bar */
-  .sidebar-farm,.sidebar-bottom,.sidebar-brand,.nav-tabs,.nav-elevator{display:none;}
-
-  /* Bigger tap targets */
-  .btn{min-height:44px;}
-  .btn-sm{min-height:38px;padding:8px 14px;}
-
-  /* Result boxes readable on small screens */
-  .result-box{padding:14px 10px;}
-  .result-box .r-val{font-size:20px;}
-  .result-box .r-label{font-size:10px;}
-
-  /* Field cards full width */
-  .fields-grid{grid-template-columns:1fr;}
-  .crop-cards{grid-template-columns:1fr 1fr;}
-}
-
-/* Hide mobile chrome on desktop */
-@media(min-width:769px){
-  #mobileTopBar,#mobileBottomNav{display:none!important;}
+  .sidebar-brand{padding:14px 16px;border-bottom:none;border-right:1px solid var(--border);}
+  .nav-tabs{flex-direction:row;flex-wrap:wrap;padding:8px;gap:2px;flex:1;}
+  .nav-tab{border-left:none;border-bottom:2px solid transparent;padding:8px 12px;font-size:11px;}
+  .nav-tab.active{border-left:none;border-bottom-color:var(--wheat);}
+  .sidebar-farm{width:100%;padding:10px 16px;border-bottom:1px solid var(--border);}
+  .sidebar-bottom{padding:10px 16px;border-top:none;border-left:1px solid var(--border);}
+  .elevator-widget{margin:8px 16px;}
 }
 </style>
-<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 </head>
 <body>
 
@@ -382,6 +243,10 @@ hr{border:none;border-top:1.5px solid var(--card-border);margin:16px 0;}
     </div>
     <div class="auth-error" id="authError"></div>
     <div class="auth-success" id="authSuccess"></div>
+    <!-- Resend confirmation link — shown only when unconfirmed email detected -->
+    <div id="resendConfirmWrap" style="display:none;margin-bottom:12px;">
+      <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center;" onclick="doResendConfirm()" id="resendConfirmBtn">Resend Confirmation Email</button>
+    </div>
     <div id="authLogin">
       <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email"></div>
       <div class="form-group"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"></div>
@@ -390,17 +255,11 @@ hr{border:none;border-top:1.5px solid var(--card-border);margin:16px 0;}
     <div id="authSignup" class="hidden">
       <div class="form-group"><label>Full Name</label><input type="text" id="signupName" placeholder="John Anderson"></div>
       <div class="form-group"><label>Email</label><input type="email" id="signupEmail" placeholder="you@example.com"></div>
-      <div class="form-group"><label>Password</label><input type="password" id="signupPassword" placeholder="Min 6 characters"></div>
-      <div class="h-captcha" style="margin-top:10px;"
-           data-sitekey="54c88b50-bedc-4ce8-9824-b66ee33ec7d2"
-           data-theme="dark"
-           data-callback="onCaptchaSolved"
-           data-expired-callback="onCaptchaExpired">
-      </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:10px;" onclick="doSignup()" id="signupBtn">Create Account</button>
+      <div class="form-group"><label>Password</label><input type="password" id="signupPassword" placeholder="Min 8 characters"></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px;" onclick="doSignup()" id="signupBtn">Create Account</button>
     </div>
     <div id="authReset" class="hidden">
-      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Enter your email and we'll send you a reset link.</p>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Enter your email and we'll send a password reset link. Check your spam folder if it doesn't arrive within 2 minutes.</p>
       <div class="form-group"><label>Email</label><input type="email" id="resetEmail" placeholder="you@example.com"></div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="doReset()" id="resetBtn">Send Reset Link</button>
     </div>
@@ -409,16 +268,6 @@ hr{border:none;border-top:1.5px solid var(--card-border);margin:16px 0;}
 
 <!-- APP -->
 <div id="appWrapper" class="hidden">
-
-<!-- MOBILE TOP BAR (hidden on desktop via CSS) -->
-<div id="mobileTopBar">
-  <h1>Know Your Ground</h1>
-  <div style="display:flex;align-items:center;gap:8px;">
-    <select class="mob-farm-sel" id="mobileFarmSelect" onchange="selectFarm(this.value)"></select>
-    <button class="btn btn-ghost btn-sm" onclick="openFarmModal()" style="padding:6px 10px;min-height:36px;">+</button>
-  </div>
-</div>
-
 <div id="appShell">
 
 <!-- SIDEBAR -->
@@ -526,7 +375,7 @@ hr{border:none;border-top:1.5px solid var(--card-border);margin:16px 0;}
     <div class="card">
       <div class="sec-label">Equipment & Fuel</div>
       <div class="toggle-wrap">
-        <label style="margin:0;font-size:14px;font-weight:500;color:var(--text-secondary);">Combine fuel & depreciation into one line</label>
+        <label style="margin:0;text-transform:none;font-size:13px;letter-spacing:0;color:var(--ink);">Combine fuel & depreciation into one line</label>
         <label class="toggle"><input type="checkbox" id="equipToggle" onchange="toggleEquipMode()"><span class="toggle-slider"></span></label>
       </div>
       <div id="equipSeparate">
@@ -539,7 +388,6 @@ hr{border:none;border-top:1.5px solid var(--card-border);margin:16px 0;}
         <div class="form-group"><label>Fuel & Equipment Combined ($)</label><input type="number" id="fc_fuelEquipCombined" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
       </div>
     </div>
-
     <div class="card">
       <div class="sec-label">Farm Overhead</div>
       <div class="form-row cols-2">
@@ -551,7 +399,6 @@ hr{border:none;border-top:1.5px solid var(--card-border);margin:16px 0;}
         <div class="form-group" style="margin:0"><label>Labor ($)</label><input type="number" id="fc_labor" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
       </div>
     </div>
-
     <div class="card">
       <div class="sec-label">Land & Equipment Payments</div>
       <div class="form-row cols-2">
@@ -559,67 +406,6 @@ hr{border:none;border-top:1.5px solid var(--card-border);margin:16px 0;}
         <div class="form-group" style="margin:0"><label>Equipment Loan Payments ($)</label><input type="number" id="fc_equipPayments" placeholder="0.00" step="0.01" oninput="saveFarmCosts()"></div>
       </div>
     </div>
-
-    <!-- ── INSURANCE TREE ── -->
-    <div class="card">
-      <div class="sec-label">Insurance</div>
-      <div class="tree-section" id="insuranceTree">
-        <div class="tree-header" onclick="toggleTree('insurance')">
-          <div class="tree-toggle" id="insuranceToggleIcon">+</div>
-          <span class="tree-label">Insurance</span>
-          <span class="tree-total" id="insuranceTotal">$0</span>
-        </div>
-        <div class="tree-body" id="insuranceBody">
-          <div class="tree-subrow">
-            <label>Crop Insurance ($)</label>
-            <input type="number" id="ins_crop" placeholder="0.00" step="0.01" oninput="saveInsurance()">
-          </div>
-          <div class="tree-subrow">
-            <label>Vehicle Insurance ($)</label>
-            <input type="number" id="ins_vehicle" placeholder="0.00" step="0.01" oninput="saveInsurance()">
-          </div>
-          <div class="tree-subrow">
-            <label>Farm Insurance ($)</label>
-            <input type="number" id="ins_farm" placeholder="0.00" step="0.01" oninput="saveInsurance()">
-          </div>
-          <hr>
-          <div class="sec-label" style="margin-bottom:10px;font-size:9px;">Custom Insurance Lines</div>
-          <div id="insCustomRows"></div>
-          <button class="btn btn-ghost btn-sm" onclick="addInsCustom()" style="margin-top:4px;">+ Add Insurance</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── TAXES TREE ── -->
-    <div class="card">
-      <div class="sec-label">Taxes</div>
-      <div class="tree-section" id="taxesTree">
-        <div class="tree-header" onclick="toggleTree('taxes')">
-          <div class="tree-toggle" id="taxesToggleIcon">+</div>
-          <span class="tree-label">Taxes</span>
-          <span class="tree-total" id="taxesTotal">$0</span>
-        </div>
-        <div class="tree-body" id="taxesBody">
-          <div class="tree-subrow">
-            <label>Vehicle Taxes ($)</label>
-            <input type="number" id="tax_vehicle" placeholder="0.00" step="0.01" oninput="saveTaxes()">
-          </div>
-          <div class="tree-subrow">
-            <label>Farm / Real Estate Taxes ($)</label>
-            <input type="number" id="tax_farm" placeholder="0.00" step="0.01" oninput="saveTaxes()">
-          </div>
-          <div class="tree-subrow">
-            <label>Property Taxes ($)</label>
-            <input type="number" id="tax_property" placeholder="0.00" step="0.01" oninput="saveTaxes()">
-          </div>
-          <hr>
-          <div class="sec-label" style="margin-bottom:10px;font-size:9px;">Custom Tax Lines</div>
-          <div id="taxCustomRows"></div>
-          <button class="btn btn-ghost btn-sm" onclick="addTaxCustom()" style="margin-top:4px;">+ Add Tax</button>
-        </div>
-      </div>
-    </div>
-
     <div class="card">
       <div class="sec-label">Additional Farm Costs</div>
       <div id="farmCustomCosts"></div>
@@ -979,26 +765,6 @@ hr{border:none;border-top:1.5px solid var(--card-border);margin:16px 0;}
 </div><!-- /appMain -->
 </div><!-- /appContent -->
 </div><!-- /appShell -->
-
-<!-- MOBILE BOTTOM NAV -->
-<nav id="mobileBottomNav">
-  <button class="mob-nav-btn active" data-tab="overview" onclick="switchTab('overview');updateMobNav('overview')">
-    <span class="mob-icon">🌾</span>Overview
-  </button>
-  <button class="mob-nav-btn" data-tab="farm" onclick="switchTab('farm');updateMobNav('farm')">
-    <span class="mob-icon">🏡</span>Farm
-  </button>
-  <button class="mob-nav-btn" data-tab="fields" onclick="switchTab('fields');updateMobNav('fields')">
-    <span class="mob-icon">📍</span>Fields
-  </button>
-  <button class="mob-nav-btn" data-tab="crops" onclick="switchTab('crops');updateMobNav('crops')">
-    <span class="mob-icon">🌱</span>Crops
-  </button>
-  <button class="mob-nav-btn" data-tab="summary" onclick="switchTab('summary');updateMobNav('summary')">
-    <span class="mob-icon">📊</span>Summary
-  </button>
-</nav>
-
 </div><!-- /appWrapper -->
 
 <!-- MODALS -->
@@ -1054,10 +820,6 @@ hr{border:none;border-top:1.5px solid var(--card-border);margin:16px 0;}
 <script>
 
 // ═══ SUPABASE REST API (no external library) ═══
-let captchaToken = null;
-function onCaptchaSolved(token) { captchaToken = token; }
-function onCaptchaExpired() { captchaToken = null; }
-
 const SUPABASE_URL='https://tyttsvngdeitkjttdarp.supabase.co';
 const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5dHRzdm5nZGVpdGtqdHRkYXJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyOTM0MTMsImV4cCI6MjA5MTg2OTQxM30.whG0Kp-ybQEo4vqhlSCUmjJJT5DKOBLqcNms4ngsYF8';
 let _authToken = null;
@@ -1094,6 +856,7 @@ async function checkSession() {
     const isExpired = Date.now() > (payload.exp * 1000) - 60000;
     if (!isExpired) { _authToken=s.access_token; _refreshToken=s.refresh_token; return s.user||null; }
   } catch(e) {}
+  // Token expired — attempt silent refresh
   if (s.refresh_token) {
     try {
       const r = await fetch(SUPABASE_URL+'/auth/v1/token?grant_type=refresh_token',{
@@ -1123,6 +886,7 @@ function startTokenRefresh() {
     }catch(e){}
   }, 50*60*1000);
 }
+function clearSession() { _authToken=null; _refreshToken=null; localStorage.removeItem('kyg_session'); }
 
 // ═══ STATE ═══
 let currentUser=null,farms=[],crops=[],activeFarmId=null,activeFieldId=null,activeCropId=null,summaryLevel='farm',editingFarm=false,editingField=false,editingCrop=false,saveTimer=null;
@@ -1138,6 +902,28 @@ function showAuthTab(tab){
   document.querySelectorAll('.auth-tab').forEach((b,i)=>{b.classList.toggle('active',['login','signup','reset'][i]===tab);});
   document.getElementById('authError').style.display='none';
   document.getElementById('authSuccess').style.display='none';
+  document.getElementById('resendConfirmWrap').style.display='none';
+}
+function showUnconfirmedError(email){
+  showAuthError('Your email has not been confirmed. Check your inbox for a confirmation email and click the link to activate your account.');
+  // Show resend button and store email for resend
+  const wrap=document.getElementById('resendConfirmWrap');
+  wrap.style.display='block';
+  wrap._email=email;
+}
+async function doResendConfirm(){
+  const email=document.getElementById('loginEmail').value.trim()||document.getElementById('resendConfirmWrap')._email;
+  if(!email){showAuthError('Please enter your email address first.');return;}
+  const btn=document.getElementById('resendConfirmBtn');btn.disabled=true;btn.textContent='Sending...';
+  try{
+    // Supabase resend confirmation via signup endpoint — idempotent for existing unconfirmed users
+    await authPost('resend',{type:'signup',email});
+    showAuthSuccess('Confirmation email resent to '+email+'. Check your inbox and spam folder.');
+    document.getElementById('resendConfirmWrap').style.display='none';
+  }catch(e){
+    showAuthError('Could not resend confirmation. Please contact support@knowyourground.com.');
+  }
+  btn.disabled=false;btn.textContent='Resend Confirmation Email';
 }
 function showAuthError(msg){const el=document.getElementById('authError');el.textContent=msg;el.style.display='block';document.getElementById('authSuccess').style.display='none';}
 function showAuthSuccess(msg){const el=document.getElementById('authSuccess');el.textContent=msg;el.style.display='block';document.getElementById('authError').style.display='none';}
@@ -1148,10 +934,31 @@ async function doLogin(){
   const btn=document.getElementById('loginBtn');btn.disabled=true;btn.textContent='Signing in...';
   try {
     const data=await authPost('token?grant_type=password',{email,password});
-    if(data.error||data.error_description){showAuthError(data.error_description||data.error);btn.disabled=false;btn.textContent='Sign In';return;}
-    saveSession(data);currentUser=data.user;
+    if(!data){showAuthError('No response from server. Please try again.');btn.disabled=false;btn.textContent='Sign In';return;}
+    if(data.error||data.error_description||data.msg){
+      const msg=(data.error_description||data.msg||data.error||'').toLowerCase();
+      // Unconfirmed email — most common cause of login failure after signup
+      if(msg.includes('email not confirmed')||msg.includes('not confirmed')){
+        showUnconfirmedError(email);
+        btn.disabled=false;btn.textContent='Sign In';return;
+      }
+      // Wrong password or user not found
+      if(msg.includes('invalid login')||msg.includes('invalid credentials')||msg.includes('wrong password')){
+        showAuthError('Incorrect email or password. Please try again.');
+        btn.disabled=false;btn.textContent='Sign In';return;
+      }
+      // Generic fallback
+      showAuthError(data.error_description||data.msg||data.error||'Sign in failed. Please try again.');
+      btn.disabled=false;btn.textContent='Sign In';return;
+    }
+    if(!data.access_token||!data.user){
+      showAuthError('Sign in failed — unexpected server response. Please try again or contact support@knowyourground.com.');
+      btn.disabled=false;btn.textContent='Sign In';return;
+    }
+    saveSession(data);
+    currentUser=data.user;
     await bootApp();
-  } catch(e){showAuthError(e.message);}
+  } catch(e){showAuthError('Connection error: '+e.message+'. Please check your internet connection and try again.');}
   btn.disabled=false;btn.textContent='Sign In';
 }
 async function doSignup(){
@@ -1159,25 +966,56 @@ async function doSignup(){
   const email=document.getElementById('signupEmail').value.trim();
   const password=document.getElementById('signupPassword').value;
   if(!name||!email||!password){showAuthError('Please fill in all fields.');return;}
-  if(password.length<6){showAuthError('Password must be at least 6 characters.');return;}
-  if(!captchaToken){showAuthError('Please complete the captcha.');return;}
+  if(password.length<8){showAuthError('Password must be at least 8 characters.');return;}
+  // Basic email format check
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showAuthError('Please enter a valid email address.');return;}
   const btn=document.getElementById('signupBtn');btn.disabled=true;btn.textContent='Creating account...';
   try {
-    const data=await authPost('signup',{email,password,gotrue_meta_security:{captcha_token:captchaToken},data:{full_name:name}});
-    if(data.error||data.error_description){showAuthError(data.error_description||data.error);btn.disabled=false;btn.textContent='Create Account';return;}
-    if(data.access_token){saveSession(data);currentUser=data.user;await bootApp();}
-    else showAuthSuccess('Account created! You can now sign in.');
-  } catch(e){captchaToken=null;if(window.hcaptcha)window.hcaptcha.reset();showAuthError(e.message);}
+    const data=await authPost('signup',{email,password,data:{full_name:name}});
+    if(!data){showAuthError('No response from server. Please try again.');btn.disabled=false;btn.textContent='Create Account';return;}
+    // Handle known Supabase error responses
+    if(data.error||data.error_description||data.msg){
+      const msg=data.error_description||data.msg||data.error||'Account creation failed.';
+      // User already exists
+      if(msg.toLowerCase().includes('already registered')||msg.toLowerCase().includes('already exists')){
+        showAuthError('An account with this email already exists. Try signing in instead.');
+      } else {
+        showAuthError(msg);
+      }
+      btn.disabled=false;btn.textContent='Create Account';return;
+    }
+    // Email confirmation required — Supabase returns user but NO access_token
+    if(data.user && !data.access_token){
+      showAuthSuccess('✓ Account created! Check your email for a confirmation link. Click it to activate your account, then come back here to sign in.');
+      // Clear the form
+      document.getElementById('signupName').value='';
+      document.getElementById('signupEmail').value='';
+      document.getElementById('signupPassword').value='';
+      btn.disabled=false;btn.textContent='Create Account';
+      // Switch to login tab after 3 seconds so user knows where to go next
+      setTimeout(()=>showAuthTab('login'),3000);
+      return;
+    }
+    // Email confirmation OFF — instant access
+    if(data.access_token&&data.user){
+      saveSession(data);currentUser=data.user;await bootApp();return;
+    }
+    // Fallback — unexpected response
+    showAuthSuccess('Account created! Please sign in.');
+    setTimeout(()=>showAuthTab('login'),2000);
+  } catch(e){showAuthError('Connection error: '+e.message);}
   btn.disabled=false;btn.textContent='Create Account';
 }
 async function doReset(){
   const email=document.getElementById('resetEmail').value.trim();
-  if(!email){showAuthError('Please enter your email.');return;}
+  if(!email){showAuthError('Please enter your email address.');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showAuthError('Please enter a valid email address.');return;}
   const btn=document.getElementById('resetBtn');btn.disabled=true;btn.textContent='Sending...';
   try {
     await authPost('recover',{email});
-    showAuthSuccess('Reset link sent — check your email.');
-  } catch(e){showAuthError(e.message);}
+    // Always show success — don't reveal whether the email exists (security best practice)
+    showAuthSuccess('If an account exists for '+email+', a password reset link has been sent. Check your inbox and spam folder. The link expires in 1 hour.');
+  } catch(e){showAuthError('Could not send reset email. Please try again or contact support@knowyourground.com.');}
   btn.disabled=false;btn.textContent='Send Reset Link';
 }
 async function doSignOut(){
@@ -1204,7 +1042,6 @@ async function loadAllData(){
     yearEstablished:f.year_established||'',
     costs:f.costs||{},customCosts:f.custom_costs||[],offFarmIncome:f.off_farm_income||[],
     equipCombined:f.equip_combined||false,
-    insCustom:f.ins_custom||[],taxCustom:f.tax_custom||[],
     fields:(fieldsData||[]).filter(fld=>fld.farm_id===f.id).map(fld=>({
       id:fld.id,name:fld.name,acres:fld.acres||0,crop:fld.crop||'',legals:fld.legals||'',
       season:fld.season||'',yearPurchased:fld.year_purchased||'',
@@ -1216,7 +1053,6 @@ async function loadAllData(){
     }))
   }));
   if(farms.length>0)activeFarmId=farms[0].id;
-  syncMobileFarmSelect();
   renderElevatorWidget();
 }
 
@@ -1225,8 +1061,7 @@ async function dbSaveFarm(f){
   await rest('POST','farms',{
     id:f.id,user_id:currentUser.id,name:f.name,location:f.location,season:f.season,
     year_established:f.yearEstablished,costs:f.costs,custom_costs:f.customCosts,
-    off_farm_income:f.offFarmIncome,equip_combined:f.equipCombined,
-    ins_custom:f.insCustom||[],tax_custom:f.taxCustom||[]
+    off_farm_income:f.offFarmIncome,equip_combined:f.equipCombined
   },'on_conflict=id');showSaved();
 }
 async function dbSaveField(fld){
@@ -1255,8 +1090,7 @@ function switchTab(tab){
   document.querySelectorAll('.tab-content').forEach(el=>el.classList.add('hidden'));
   document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.remove('hidden');
-  const dt=document.querySelector(`[data-tab="${tab}"]`);if(dt)dt.classList.add('active');
-  updateMobNav(tab);
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
   if(tab==='overview')renderOverview();
   if(tab==='farm')renderFarmCosts();
   if(tab==='fields')renderFields();
@@ -1270,7 +1104,6 @@ function renderFarmSelect(){
   const sel=document.getElementById('farmSelect');
   sel.innerHTML=farms.length===0?'<option value="">No farms yet</option>':'';
   farms.forEach(f=>{const o=document.createElement('option');o.value=f.id;o.textContent=f.name;if(f.id===activeFarmId)o.selected=true;sel.appendChild(o);});
-  syncMobileFarmSelect();
 }
 function selectFarm(id){activeFarmId=id;activeFieldId=null;renderFarmSelect();renderOverview();renderFarmCosts();renderFields();renderSummary();}
 function openFarmModal(editing=false){
@@ -1343,102 +1176,6 @@ function renderOverview(){
   if(!f.fields?.length)strip.innerHTML='<div style="font-family:\'IBM Plex Mono\',monospace;font-size:12px;color:var(--muted);padding:10px 0;">No fields yet. Add fields in the Fields tab.</div>';
 }
 
-// ═══ TREE COMPONENTS ═══
-function toggleTree(id) {
-  const body = document.getElementById(id+'Body');
-  const icon = document.getElementById(id+'ToggleIcon');
-  const isOpen = body.classList.contains('open');
-  body.classList.toggle('open', !isOpen);
-  icon.classList.toggle('open', !isOpen);
-}
-
-function saveInsurance() {
-  const f = farm(); if(!f) return;
-  if(!f.costs) f.costs = {};
-  f.costs.ins_crop = parseFloat(document.getElementById('ins_crop').value)||0;
-  f.costs.ins_vehicle = parseFloat(document.getElementById('ins_vehicle').value)||0;
-  f.costs.ins_farm = parseFloat(document.getElementById('ins_farm').value)||0;
-  updateInsuranceTotal();
-  dbSaveFarm(f); updateFarmCostSummary();
-}
-
-function updateInsuranceTotal() {
-  const f = farm(); if(!f) return;
-  const c = f.costs||{};
-  let total = (c.ins_crop||0)+(c.ins_vehicle||0)+(c.ins_farm||0);
-  (f.insCustom||[]).forEach(i=>total+=parseFloat(i.value)||0);
-  document.getElementById('insuranceTotal').textContent = fmt(total);
-}
-
-function saveTaxes() {
-  const f = farm(); if(!f) return;
-  if(!f.costs) f.costs = {};
-  f.costs.tax_vehicle = parseFloat(document.getElementById('tax_vehicle').value)||0;
-  f.costs.tax_farm = parseFloat(document.getElementById('tax_farm').value)||0;
-  f.costs.tax_property = parseFloat(document.getElementById('tax_property').value)||0;
-  updateTaxesTotal();
-  dbSaveFarm(f); updateFarmCostSummary();
-}
-
-function updateTaxesTotal() {
-  const f = farm(); if(!f) return;
-  const c = f.costs||{};
-  let total = (c.tax_vehicle||0)+(c.tax_farm||0)+(c.tax_property||0);
-  (f.taxCustom||[]).forEach(i=>total+=parseFloat(i.value)||0);
-  document.getElementById('taxesTotal').textContent = fmt(total);
-}
-
-function addInsCustom() {
-  const f = farm(); if(!f) return;
-  const id = crypto.randomUUID();
-  if(!f.insCustom) f.insCustom = [];
-  f.insCustom.push({id,label:'',value:0});
-  renderInsCustomRow({id,label:'',value:0});
-  dbSaveFarm(f);
-}
-function renderInsCustomRow(item) {
-  const wrap = document.getElementById('insCustomRows');
-  const row = document.createElement('div');
-  row.className='tree-custom-row'; row.dataset.iid=item.id;
-  row.innerHTML=`<input class="cost-row-label editable" type="text" placeholder="Insurance name..." value="${item.label||''}" oninput="updateInsCustomLabel('${item.id}',this.value)"><input type="number" placeholder="$0.00" step="0.01" value="${item.value||''}" oninput="updateInsCustomValue('${item.id}',this.value)"><button class="remove-btn" onclick="removeInsCustom('${item.id}')">×</button>`;
-  wrap.appendChild(row);
-}
-async function updateInsCustomLabel(id,val){const f=farm();const i=(f.insCustom||[]).find(x=>x.id===id);if(i){i.label=val;await dbSaveFarm(f);}}
-async function updateInsCustomValue(id,val){const f=farm();const i=(f.insCustom||[]).find(x=>x.id===id);if(i){i.value=parseFloat(val)||0;await dbSaveFarm(f);updateInsuranceTotal();updateFarmCostSummary();}}
-async function removeInsCustom(id){const f=farm();f.insCustom=(f.insCustom||[]).filter(x=>x.id!==id);await dbSaveFarm(f);document.querySelector(`[data-iid="${id}"]`)?.remove();updateInsuranceTotal();updateFarmCostSummary();}
-
-function addTaxCustom() {
-  const f = farm(); if(!f) return;
-  const id = crypto.randomUUID();
-  if(!f.taxCustom) f.taxCustom = [];
-  f.taxCustom.push({id,label:'',value:0});
-  renderTaxCustomRow({id,label:'',value:0});
-  dbSaveFarm(f);
-}
-function renderTaxCustomRow(item) {
-  const wrap = document.getElementById('taxCustomRows');
-  const row = document.createElement('div');
-  row.className='tree-custom-row'; row.dataset.tid=item.id;
-  row.innerHTML=`<input class="cost-row-label editable" type="text" placeholder="Tax name..." value="${item.label||''}" oninput="updateTaxCustomLabel('${item.id}',this.value)"><input type="number" placeholder="$0.00" step="0.01" value="${item.value||''}" oninput="updateTaxCustomValue('${item.id}',this.value)"><button class="remove-btn" onclick="removeTaxCustom('${item.id}')">×</button>`;
-  wrap.appendChild(row);
-}
-async function updateTaxCustomLabel(id,val){const f=farm();const i=(f.taxCustom||[]).find(x=>x.id===id);if(i){i.label=val;await dbSaveFarm(f);}}
-async function updateTaxCustomValue(id,val){const f=farm();const i=(f.taxCustom||[]).find(x=>x.id===id);if(i){i.value=parseFloat(val)||0;await dbSaveFarm(f);updateTaxesTotal();updateFarmCostSummary();}}
-async function removeTaxCustom(id){const f=farm();f.taxCustom=(f.taxCustom||[]).filter(x=>x.id!==id);await dbSaveFarm(f);document.querySelector(`[data-tid="${id}"]`)?.remove();updateTaxesTotal();updateFarmCostSummary();}
-
-// ═══ MOBILE NAV SYNC ═══
-function updateMobNav(tab) {
-  document.querySelectorAll('.mob-nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
-}
-
-// Keep mobile farm select in sync
-function syncMobileFarmSelect() {
-  const mob = document.getElementById('mobileFarmSelect');
-  if(!mob) return;
-  mob.innerHTML = farms.length===0?'<option value="">No farms</option>':'';
-  farms.forEach(f=>{const o=document.createElement('option');o.value=f.id;o.textContent=f.name;if(f.id===activeFarmId)o.selected=true;mob.appendChild(o);});
-}
-
 // ═══ FARM COSTS ═══
 function renderFarmCosts(){
   const f=farm();
@@ -1452,21 +1189,6 @@ function renderFarmCosts(){
   ['fuel','depreciation','fuelEquipCombined','familyLiving','repairs','loans','labor','landPayments','equipPayments'].forEach(k=>{
     const el=document.getElementById('fc_'+k);if(el)el.value=c[k]||'';
   });
-  // Insurance tree
-  document.getElementById('ins_crop').value=c.ins_crop||'';
-  document.getElementById('ins_vehicle').value=c.ins_vehicle||'';
-  document.getElementById('ins_farm').value=c.ins_farm||'';
-  document.getElementById('insCustomRows').innerHTML='';
-  (f.insCustom||[]).forEach(i=>renderInsCustomRow(i));
-  updateInsuranceTotal();
-  // Taxes tree
-  document.getElementById('tax_vehicle').value=c.tax_vehicle||'';
-  document.getElementById('tax_farm').value=c.tax_farm||'';
-  document.getElementById('tax_property').value=c.tax_property||'';
-  document.getElementById('taxCustomRows').innerHTML='';
-  (f.taxCustom||[]).forEach(i=>renderTaxCustomRow(i));
-  updateTaxesTotal();
-  // Custom costs & off-farm
   document.getElementById('farmCustomCosts').innerHTML='';
   (f.customCosts||[]).forEach(c=>renderFarmCustomCostRow(c));
   document.getElementById('offFarmIncome').innerHTML='';
@@ -1483,15 +1205,8 @@ function calcFarmCostTotal(){
   const f=farm();if(!f)return 0;const c=f.costs||{};
   let total=f.equipCombined?(c.fuelEquipCombined||0):(c.fuel||0)+(c.depreciation||0);
   total+=(c.familyLiving||0)+(c.repairs||0)+(c.loans||0)+(c.labor||0)+(c.landPayments||0)+(c.equipPayments||0);
-  // Insurance
-  total+=(c.ins_crop||0)+(c.ins_vehicle||0)+(c.ins_farm||0);
-  (f.insCustom||[]).forEach(i=>total+=parseFloat(i.value)||0);
-  // Taxes
-  total+=(c.tax_vehicle||0)+(c.tax_farm||0)+(c.tax_property||0);
-  (f.taxCustom||[]).forEach(i=>total+=parseFloat(i.value)||0);
-  // Custom costs
   (f.customCosts||[]).forEach(cc=>total+=parseFloat(cc.value)||0);
-  // Farm-scoped field loans
+  // Add farm-scoped field loans
   (f.fields||[]).forEach(fld=>{if(fld.hasLoan&&fld.loanScope==='farm')total+=parseFloat(fld.loanPayment)||0;});
   return total;
 }
@@ -1855,13 +1570,8 @@ function renderFarmSummary(){
   addRow('Family Living',fcosts.familyLiving||0);addRow('Repairs & Maintenance',fcosts.repairs||0);
   addRow('Operating Loans',fcosts.loans||0);addRow('Labor',fcosts.labor||0);
   addRow('Land Payments',fcosts.landPayments||0);addRow('Equipment Payments',fcosts.equipPayments||0);
-  // Insurance
-  const insTotal=(fcosts.ins_crop||0)+(fcosts.ins_vehicle||0)+(fcosts.ins_farm||0)+(f.insCustom||[]).reduce((s,i)=>s+(parseFloat(i.value)||0),0);
-  if(insTotal>0)addRow('Insurance (Total)',insTotal);
-  // Taxes
-  const taxTotal=(fcosts.tax_vehicle||0)+(fcosts.tax_farm||0)+(fcosts.tax_property||0)+(f.taxCustom||[]).reduce((s,i)=>s+(parseFloat(i.value)||0),0);
-  if(taxTotal>0)addRow('Taxes (Total)',taxTotal);
   (f.customCosts||[]).forEach(cc=>addRow(cc.label||'Custom Cost',cc.value||0));
+  // Farm-scoped field loans
   (f.fields||[]).forEach(fld=>{if(fld.hasLoan&&fld.loanScope==='farm')addRow(`Loan: ${fld.name}`,fld.loanPayment||0);});
   addRow('Field Crop Inputs',totalFieldCosts);
   const tbody=document.getElementById('sumFarmBody');tbody.innerHTML='';
@@ -2085,7 +1795,7 @@ function fmt(n){const abs=Math.abs(n);const s=abs>=10000?'$'+(abs/1000).toFixed(
 
 // ═══ INIT ═══
 async function bootApp(){
-  document.getElementById('userEmail').textContent=currentUser.email.split('@')[0];
+  document.getElementById('userEmail').textContent=(currentUser?.email||'').split('@')[0];
   document.getElementById('loadingScreen').classList.add('hidden');
   document.getElementById('authScreen').classList.add('hidden');
   await loadAllData();
