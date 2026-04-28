@@ -548,6 +548,9 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
         <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email"></div>
         <div class="form-group"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"></div>
         <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px;" onclick="doLogin()" id="loginBtn">Sign In</button>
+        <div style="text-align:center;margin-top:12px;">
+          <button onclick="showAuthTab('reset')" style="background:none;border:none;font-family:'Barlow',sans-serif;font-size:13px;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px;" onmouseover="this.style.color='var(--orange)'" onmouseout="this.style.color='var(--muted)'">Forgot your password?</button>
+        </div>
       </div>
       <div id="authSignup" class="hidden">
         <div class="form-group"><label>Full Name</label><input type="text" id="signupName" placeholder="John Anderson"></div>
@@ -559,7 +562,55 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
         <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Enter your email and we'll send a reset link. Check spam if it doesn't arrive within 2 minutes.</p>
         <div class="form-group"><label>Email</label><input type="email" id="resetEmail" placeholder="you@example.com"></div>
         <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="doReset()" id="resetBtn">Send Reset Link</button>
+        <div style="text-align:center;margin-top:12px;">
+          <button onclick="showAuthTab('login')" style="background:none;border:none;font-family:'Barlow',sans-serif;font-size:13px;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px;" onmouseover="this.style.color='var(--orange)'" onmouseout="this.style.color='var(--muted)'">← Back to Sign In</button>
+        </div>
       </div>
+
+      <!-- SET NEW PASSWORD — shown after clicking reset email link -->
+      <div id="authNewPassword" class="hidden">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Enter and confirm your new password below.</p>
+        <div class="form-group"><label>New Password</label><input type="password" id="newPassword" placeholder="Min 8 characters"></div>
+        <div class="form-group"><label>Confirm New Password</label><input type="password" id="newPasswordConfirm" placeholder="Re-enter password"></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="doSetNewPassword()" id="newPasswordBtn">Set New Password</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ACCOUNT SETTINGS MODAL — change password, change email, delete account -->
+<div class="modal-overlay hidden" id="accountSettingsModal">
+  <div class="modal" style="max-width:460px;">
+    <h2>Account Settings</h2>
+    <div id="accountSettingsMsg" style="display:none;padding:10px 14px;font-size:13px;margin-bottom:14px;border-left:4px solid var(--orange);background:rgba(240,90,0,0.08);"></div>
+
+    <div style="margin-bottom:22px;">
+      <div class="sec-label">Change Password</div>
+      <div class="form-group"><label>Current Password</label><input type="password" id="as_currentPass" placeholder="••••••••"></div>
+      <div class="form-group"><label>New Password</label><input type="password" id="as_newPass" placeholder="Min 8 characters"></div>
+      <div class="form-group" style="margin:0;"><label>Confirm New Password</label><input type="password" id="as_newPassConfirm" placeholder="Re-enter new password"></div>
+      <button class="btn btn-outline btn-sm" style="margin-top:12px;" onclick="doChangePassword()" id="changePassBtn">Update Password</button>
+    </div>
+
+    <hr style="margin:20px 0;">
+
+    <div style="margin-bottom:22px;">
+      <div class="sec-label">Change Email Address</div>
+      <div class="form-group"><label>New Email Address</label><input type="email" id="as_newEmail" placeholder="new@example.com"></div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">A confirmation link will be sent to your new address before it takes effect.</p>
+      <button class="btn btn-outline btn-sm" onclick="doChangeEmail()" id="changeEmailBtn">Update Email</button>
+    </div>
+
+    <hr style="margin:20px 0;">
+
+    <div>
+      <div class="sec-label" style="color:var(--red);">Danger Zone</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Deleting your account permanently removes all farms, fields, and cost data. This cannot be undone. Export your data first.</p>
+      <button class="btn btn-danger btn-sm" onclick="doDeleteAccount()">Delete My Account</button>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeAccountSettings()">Close</button>
     </div>
   </div>
 </div>
@@ -651,6 +702,7 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
 
   <div class="sidebar-bottom">
     <span class="user-pill" id="userEmail"></span>
+    <button class="btn btn-ghost btn-sm" onclick="openAccountSettings()" style="width:100%;justify-content:center;margin-bottom:6px;">Account Settings</button>
     <button class="btn btn-danger btn-sm" onclick="doSignOut()" style="width:100%;justify-content:center;">Sign Out</button>
   </div>
 </div><!-- /sidebar -->
@@ -1365,10 +1417,159 @@ async function doReset(){
   const btn=document.getElementById('resetBtn');btn.disabled=true;btn.textContent='Sending...';
   try {
     await authPost('recover',{email});
-    // Always show success — don't reveal whether the email exists (security best practice)
-    showAuthSuccess('If an account exists for '+email+', a password reset link has been sent. Check your inbox and spam folder. The link expires in 1 hour.');
+    showAuthSuccess('If an account exists for '+email+', a reset link has been sent. Check your inbox and spam folder. The link expires in 1 hour.');
   } catch(e){showAuthError('Could not send reset email. Please try again or contact support@knowyourground.com.');}
   btn.disabled=false;btn.textContent='Send Reset Link';
+}
+
+// ─── URL HASH CALLBACK HANDLER ───
+// Supabase sends email links with #access_token=...&type=recovery or type=signup
+// This runs on page load and intercepts those links
+function handleAuthCallback(){
+  const hash = window.location.hash;
+  if(!hash||!hash.includes('access_token')) return false;
+  const params = new URLSearchParams(hash.replace('#',''));
+  const token = params.get('access_token');
+  const refresh = params.get('refresh_token');
+  const type = params.get('type');
+  if(!token) return false;
+  // Clear the hash from the URL without reload
+  window.history.replaceState(null,'',window.location.pathname);
+  if(type==='recovery'){
+    // Password reset link — store token temporarily and show new password form
+    window._recoveryToken = token;
+    document.getElementById('loadingScreen').classList.add('hidden');
+    document.getElementById('authScreen').classList.remove('hidden');
+    // Hide all auth panels, show new password panel
+    ['authLogin','authSignup','authReset','resendConfirmWrap'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.classList.add('hidden');
+    });
+    document.querySelectorAll('.auth-tab').forEach(b=>b.style.display='none');
+    document.getElementById('authNewPassword').classList.remove('hidden');
+    showAuthSuccess('Enter your new password below to complete the reset.');
+    return true;
+  }
+  if(type==='signup'||type==='email_confirmation'||type==='magiclink'){
+    // Email confirmed — log the user in automatically
+    if(refresh){
+      authPost('token?grant_type=refresh_token',{refresh_token:refresh})
+        .then(data=>{
+          if(data?.access_token&&data?.user){
+            saveSession(data);currentUser=data.user;
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('authScreen').classList.add('hidden');
+            bootApp();
+          }
+        }).catch(()=>{});
+    }
+    return true;
+  }
+  return false;
+}
+
+async function doSetNewPassword(){
+  const pw = document.getElementById('newPassword').value;
+  const pw2 = document.getElementById('newPasswordConfirm').value;
+  if(!pw||pw.length<8){showAuthError('Password must be at least 8 characters.');return;}
+  if(pw!==pw2){showAuthError('Passwords do not match.');return;}
+  const btn=document.getElementById('newPasswordBtn');btn.disabled=true;btn.textContent='Saving...';
+  try{
+    const token = window._recoveryToken;
+    if(!token){showAuthError('Reset session expired. Please request a new reset link.');btn.disabled=false;btn.textContent='Set New Password';return;}
+    const r = await fetch(SUPABASE_URL+'/auth/v1/user',{
+      method:'PUT',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON,'Authorization':'Bearer '+token},
+      body:JSON.stringify({password:pw})
+    });
+    const data=await r.json();
+    if(!r.ok)throw new Error(data?.message||data?.error_description||'Could not update password.');
+    window._recoveryToken=null;
+    showAuthSuccess('Password updated successfully. You can now sign in.');
+    // Restore auth tabs and show login
+    document.querySelectorAll('.auth-tab').forEach(b=>b.style.display='');
+    document.getElementById('authNewPassword').classList.add('hidden');
+    showAuthTab('login');
+  }catch(e){showAuthError(e.message);}
+  btn.disabled=false;btn.textContent='Set New Password';
+}
+
+// ─── ACCOUNT SETTINGS ───
+function openAccountSettings(){
+  document.getElementById('as_currentPass').value='';
+  document.getElementById('as_newPass').value='';
+  document.getElementById('as_newPassConfirm').value='';
+  document.getElementById('as_newEmail').value='';
+  document.getElementById('accountSettingsMsg').style.display='none';
+  document.getElementById('accountSettingsModal').classList.remove('hidden');
+}
+function closeAccountSettings(){document.getElementById('accountSettingsModal').classList.add('hidden');}
+function showSettingsMsg(msg,isError=false){
+  const el=document.getElementById('accountSettingsMsg');
+  el.textContent=msg;
+  el.style.display='block';
+  el.style.borderLeftColor=isError?'var(--red)':'var(--green-light)';
+  el.style.color=isError?'var(--red)':'var(--green-light)';
+  el.style.background=isError?'rgba(198,40,40,0.08)':'rgba(46,125,50,0.08)';
+}
+
+async function doChangePassword(){
+  const cur=document.getElementById('as_currentPass').value;
+  const nw=document.getElementById('as_newPass').value;
+  const nw2=document.getElementById('as_newPassConfirm').value;
+  if(!cur){showSettingsMsg('Please enter your current password.',true);return;}
+  if(!nw||nw.length<8){showSettingsMsg('New password must be at least 8 characters.',true);return;}
+  if(nw!==nw2){showSettingsMsg('New passwords do not match.',true);return;}
+  const btn=document.getElementById('changePassBtn');btn.disabled=true;btn.textContent='Updating...';
+  try{
+    // Re-authenticate first to verify current password
+    const check=await authPost('token?grant_type=password',{email:currentUser.email,password:cur});
+    if(!check?.access_token)throw new Error('Current password is incorrect.');
+    // Now update
+    const r=await fetch(SUPABASE_URL+'/auth/v1/user',{
+      method:'PUT',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON,'Authorization':'Bearer '+_authToken},
+      body:JSON.stringify({password:nw})
+    });
+    const data=await r.json();
+    if(!r.ok)throw new Error(data?.message||'Could not update password.');
+    showSettingsMsg('Password updated successfully.');
+    document.getElementById('as_currentPass').value='';
+    document.getElementById('as_newPass').value='';
+    document.getElementById('as_newPassConfirm').value='';
+  }catch(e){showSettingsMsg(e.message,true);}
+  btn.disabled=false;btn.textContent='Update Password';
+}
+
+async function doChangeEmail(){
+  const email=document.getElementById('as_newEmail').value.trim();
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showSettingsMsg('Please enter a valid email address.',true);return;}
+  const btn=document.getElementById('changeEmailBtn');btn.disabled=true;btn.textContent='Sending...';
+  try{
+    const r=await fetch(SUPABASE_URL+'/auth/v1/user',{
+      method:'PUT',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON,'Authorization':'Bearer '+_authToken},
+      body:JSON.stringify({email})
+    });
+    const data=await r.json();
+    if(!r.ok)throw new Error(data?.message||'Could not update email.');
+    showSettingsMsg('Confirmation sent to '+email+'. Click the link in that email to confirm the change.');
+    document.getElementById('as_newEmail').value='';
+  }catch(e){showSettingsMsg(e.message,true);}
+  btn.disabled=false;btn.textContent='Update Email';
+}
+
+async function doDeleteAccount(){
+  if(!confirm('This will permanently delete your account, all farms, fields, and cost data. This CANNOT be undone.\n\nAre you absolutely sure?'))return;
+  if(!confirm('Final confirmation: delete everything?'))return;
+  try{
+    // Delete all user data via RLS-scoped deletes
+    await rest('DELETE','fields','','user_id=eq.'+currentUser.id);
+    await rest('DELETE','farms','','user_id=eq.'+currentUser.id);
+    await rest('DELETE','crop_profiles','','user_id=eq.'+currentUser.id);
+    // Sign out — Supabase will cascade delete auth.users via triggers if configured
+    await doSignOut();
+    alert('Your account has been deleted. Contact support@knowyourground.com if you need any assistance.');
+  }catch(e){showSettingsMsg('Error deleting account: '+e.message+'. Contact support@knowyourground.com.',true);}
 }
 async function doSignOut(){
   try{await fetch(SUPABASE_URL+'/auth/v1/logout',{method:'POST',headers:authHeaders()});}catch(e){}
@@ -2168,6 +2369,8 @@ async function bootApp(){
 }
 
 (async()=>{
+  // Check for email link callbacks first (password reset, email confirmation)
+  if(handleAuthCallback()) return;
   const user = await checkSession();
   if(user){
     currentUser=user;
