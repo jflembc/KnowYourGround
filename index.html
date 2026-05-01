@@ -494,7 +494,13 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
   .btn-sm{min-height:36px;}
   .result-box .r-val{font-size:22px;}
 }
-@media(min-width:769px){#mobileTopBar,#mobileBottomNav{display:none!important;}}
+/* ── FEEDBACK ── */
+.fb-star{background:transparent;border:none;font-size:28px;cursor:pointer;color:#4A4A4A;transition:color 0.1s,transform 0.1s;line-height:1;padding:2px;}
+.fb-star:hover,.fb-star.active{color:#F05A00;transform:scale(1.15);}
+.fb-cat{background:transparent;border:1.5px solid var(--border);color:#A0A0A0;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;padding:7px 14px;cursor:pointer;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.3px;}
+.fb-cat:hover{border-color:var(--orange);color:var(--offwhite);}
+.fb-cat.active{background:var(--orange);border-color:var(--orange);color:#fff;}
+@media(max-width:768px){#feedbackBtn{bottom:76px!important;}}
 </style>
 </head>
 <body>
@@ -1334,6 +1340,77 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
   </button>
 </nav>
 
+<!-- FEEDBACK FLOATING BUTTON -->
+<button id="feedbackBtn" onclick="openFeedback()" class="hidden" style="
+  position:fixed;bottom:24px;right:20px;z-index:180;
+  background:var(--orange);color:#fff;border:none;
+  border-radius:24px;padding:10px 18px;
+  font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;
+  letter-spacing:0.3px;cursor:pointer;
+  box-shadow:0 4px 20px rgba(240,90,0,0.45);
+  display:none;align-items:center;gap:7px;
+  transition:transform 0.15s,box-shadow 0.15s;
+" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 26px rgba(240,90,0,0.55)'"
+   onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(240,90,0,0.45)'">
+  💬 Feedback
+</button>
+
+<!-- FEEDBACK MODAL -->
+<div class="modal-overlay hidden" id="feedbackModal" style="z-index:250;">
+  <div style="background:var(--charcoal);border:1px solid var(--border);border-top:4px solid var(--orange);width:100%;max-width:500px;box-shadow:0 24px 80px rgba(0,0,0,0.6);">
+
+    <!-- HEADER -->
+    <div style="padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:800;color:var(--offwhite);text-transform:uppercase;letter-spacing:0.5px;">Share Feedback</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#A0A0A0;letter-spacing:1.5px;margin-top:2px;">Know Your Ground — Help us improve</div>
+      </div>
+      <button onclick="closeFeedback()" style="background:transparent;border:none;color:#A0A0A0;font-size:22px;cursor:pointer;line-height:1;padding:0;" onmouseover="this.style.color='var(--offwhite)'" onmouseout="this.style.color='#A0A0A0'">×</button>
+    </div>
+
+    <div style="padding:20px 24px 24px;">
+
+      <!-- STAR RATING -->
+      <div style="margin-bottom:20px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--orange);margin-bottom:10px;">How are we doing?</div>
+        <div style="display:flex;gap:6px;align-items:center;" id="starRow">
+          <button class="fb-star" data-val="1" onclick="setRating(1)" title="Needs a lot of work">★</button>
+          <button class="fb-star" data-val="2" onclick="setRating(2)" title="Below expectations">★</button>
+          <button class="fb-star" data-val="3" onclick="setRating(3)" title="It's OK">★</button>
+          <button class="fb-star" data-val="4" onclick="setRating(4)" title="Pretty good">★</button>
+          <button class="fb-star" data-val="5" onclick="setRating(5)" title="Love it!">★</button>
+          <span id="ratingLabel" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#A0A0A0;margin-left:8px;"></span>
+        </div>
+      </div>
+
+      <!-- CATEGORY -->
+      <div style="margin-bottom:20px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--orange);margin-bottom:10px;">Category</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="fb-cat" data-cat="Bug Report" onclick="setCategory('Bug Report')">🐛 Bug Report</button>
+          <button class="fb-cat" data-cat="Feature Request" onclick="setCategory('Feature Request')">💡 Feature Request</button>
+          <button class="fb-cat" data-cat="General" onclick="setCategory('General')">💬 General</button>
+        </div>
+      </div>
+
+      <!-- MESSAGE -->
+      <div style="margin-bottom:16px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--orange);margin-bottom:10px;">Message</div>
+        <textarea id="feedbackMessage" rows="4" placeholder="Tell us what's on your mind — the more detail the better. If it's a bug, describe what you were doing when it happened." style="width:100%;background:var(--charcoal-mid);border:1.5px solid var(--border);color:var(--offwhite);font-family:'Barlow',sans-serif;font-size:14px;padding:10px 13px;outline:none;resize:vertical;line-height:1.6;" onfocus="this.style.borderColor='var(--orange)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+      </div>
+
+      <!-- ERROR -->
+      <div id="feedbackError" style="display:none;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#EF5350;margin-bottom:12px;padding:8px 12px;background:rgba(198,40,40,0.1);border-left:3px solid #EF5350;"></div>
+
+      <!-- ACTIONS -->
+      <div style="display:flex;justify-content:flex-end;gap:10px;">
+        <button onclick="closeFeedback()" class="btn btn-ghost btn-sm">Cancel</button>
+        <button onclick="submitFeedback()" class="btn btn-primary btn-sm" id="feedbackSubmitBtn">Send Feedback</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODALS -->
 <div class="modal-overlay hidden" id="farmModal">
   <div class="modal">
@@ -1737,6 +1814,7 @@ async function doDeleteAccount(){
 async function doSignOut(){
   try{await fetch(SUPABASE_URL+'/auth/v1/logout',{method:'POST',headers:authHeaders()});}catch(e){}
   clearSession();currentUser=null;farms=[];crops=[];activeFarmId=null;activeFieldId=null;activeCropId=null;
+  hideFeedbackBtn();
   document.getElementById('appWrapper').classList.add('hidden');
   document.getElementById('authScreen').classList.remove('hidden');
 }
@@ -3029,7 +3107,96 @@ function getElevatorPrice(cropName) {
 function fmt(n){const abs=Math.abs(n);const s=abs>=10000?'$'+(abs/1000).toFixed(0)+'k':abs>=1000?'$'+abs.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0}):'$'+abs.toFixed(2);return n<0?'-'+s:s;}
 
 // ═══════════════════════════════════════════════════════
-// CHANGELOG — update APP_VERSION and CHANGELOG_ENTRIES
+// FEEDBACK
+// ═══════════════════════════════════════════════════════
+let _fbRating = 0;
+let _fbCategory = '';
+
+function openFeedback(){
+  _fbRating=0;_fbCategory='';
+  document.getElementById('feedbackMessage').value='';
+  document.getElementById('feedbackError').style.display='none';
+  document.querySelectorAll('.fb-star').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.fb-cat').forEach(c=>c.classList.remove('active'));
+  document.getElementById('ratingLabel').textContent='';
+  document.getElementById('feedbackSubmitBtn').disabled=false;
+  document.getElementById('feedbackSubmitBtn').textContent='Send Feedback';
+  document.getElementById('feedbackModal').classList.remove('hidden');
+}
+
+function closeFeedback(){
+  document.getElementById('feedbackModal').classList.add('hidden');
+}
+
+const RATING_LABELS=['','Needs a lot of work','Below expectations','It\'s OK','Pretty good','Love it! 🎉'];
+
+function setRating(val){
+  _fbRating=val;
+  document.querySelectorAll('.fb-star').forEach(s=>{
+    s.classList.toggle('active',parseInt(s.dataset.val)<=val);
+  });
+  document.getElementById('ratingLabel').textContent=RATING_LABELS[val]||'';
+}
+
+function setCategory(cat){
+  _fbCategory=cat;
+  document.querySelectorAll('.fb-cat').forEach(c=>{
+    c.classList.toggle('active',c.dataset.cat===cat);
+  });
+}
+
+async function submitFeedback(){
+  const message=document.getElementById('feedbackMessage').value.trim();
+  const errEl=document.getElementById('feedbackError');
+  // Validate
+  if(!_fbRating){errEl.textContent='Please select a star rating.';errEl.style.display='block';return;}
+  if(!_fbCategory){errEl.textContent='Please select a category.';errEl.style.display='block';return;}
+  if(!message){errEl.textContent='Please enter a message.';errEl.style.display='block';return;}
+  errEl.style.display='none';
+  const btn=document.getElementById('feedbackSubmitBtn');
+  btn.disabled=true;btn.textContent='Sending...';
+  try{
+    const res=await fetch(SUPABASE_URL+'/rest/v1/feedback',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'apikey':SUPABASE_ANON,
+        'Authorization':'Bearer '+_authToken,
+        'Prefer':'return=minimal'
+      },
+      body:JSON.stringify({
+        user_id:currentUser.id,
+        email:currentUser.email,
+        rating:_fbRating,
+        category:_fbCategory,
+        message,
+        app_version:APP_VERSION
+      })
+    });
+    if(!res.ok){const e=await res.json();throw new Error(e?.message||'Submit failed.');}
+    // Success state
+    const modalBody=document.getElementById('feedbackModal').querySelector('[style*="padding:20px 24px 24px"]');
+    if(modalBody){
+      modalBody.innerHTML=`
+        <div style="text-align:center;padding:24px 0;">
+          <div style="font-size:44px;margin-bottom:14px;">🙏</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--offwhite);text-transform:uppercase;margin-bottom:8px;">Thank You!</div>
+          <div style="font-family:'Barlow',sans-serif;font-size:14px;color:#A0A0A0;line-height:1.6;margin-bottom:20px;">Your feedback goes straight to the team. We read every single one and use it to make Know Your Ground better.</div>
+          <button onclick="closeFeedback()" class="btn btn-primary">Close</button>
+        </div>`;
+    }
+  }catch(e){
+    errEl.textContent='Could not send feedback: '+e.message+'. Please try again.';
+    errEl.style.display='block';
+    btn.disabled=false;btn.textContent='Send Feedback';
+  }
+}
+
+// Show/hide feedback button with app visibility
+function showFeedbackBtn(){document.getElementById('feedbackBtn').style.display='flex';}
+function hideFeedbackBtn(){document.getElementById('feedbackBtn').style.display='none';}
+
+// ═══ CHANGELOG — update APP_VERSION and CHANGELOG_ENTRIES
 // when you ship new features. The modal shows once per
 // version per user (stored in localStorage).
 // ═══════════════════════════════════════════════════════
@@ -3142,6 +3309,7 @@ async function bootApp(){
   renderFarmSelect();renderOverview();
   document.getElementById('appWrapper').classList.remove('hidden');
   startTokenRefresh();
+  showFeedbackBtn();
   checkChangelog();
 }
 
