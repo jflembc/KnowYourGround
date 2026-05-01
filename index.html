@@ -728,6 +728,7 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
       <div class="flex-gap">
         <span class="badge" id="ovSeason">2025</span>
         <button class="btn btn-outline btn-sm" onclick="openFarmModal(true)">Edit Farm</button>
+        <button class="btn btn-sky btn-sm" onclick="switchTab('summary')">Full Report →</button>
       </div>
     </div>
     <div class="results-grid" style="margin-top:14px;">
@@ -1047,8 +1048,11 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
     <div class="flex-gap" style="margin-bottom:16px;">
       <button class="btn btn-primary btn-sm" id="sumBtnFarm" onclick="setSummaryLevel('farm')">Farm View</button>
       <button class="btn btn-outline btn-sm" id="sumBtnField" onclick="setSummaryLevel('field')">Field View</button>
+      <button class="btn btn-outline btn-sm" id="sumBtnContracts" onclick="setSummaryLevel('contracts')">Contracts</button>
       <div style="margin-left:auto;"><button class="btn btn-sky btn-sm" onclick="exportToCSV()">⬇ Export for Bank</button></div>
     </div>
+
+    <!-- FARM VIEW -->
     <div id="sumFarmView">
       <div class="sec-label">Farm-Level Summary</div>
       <div class="results-grid" style="margin-bottom:14px;">
@@ -1057,21 +1061,92 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
         <div class="result-box"><div class="r-label">Total Costs</div><div class="r-val" id="sum_costs">—</div></div>
         <div class="result-box" id="sum_plBox"><div class="r-label">Net P&L</div><div class="r-val" id="sum_pl">—</div></div>
       </div>
-      <div class="card-dark">
-        <table class="summary-table"><thead><tr><th>Category</th><th>Total ($)</th><th>Per Acre ($)</th><th>% of Cost</th></tr></thead><tbody id="sumFarmBody"></tbody></table>
+      <!-- INCOME / EXPENSE P&L TABLE -->
+      <div class="card-dark" id="sumPLTable">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);">
+          <!-- EXPENSES -->
+          <div style="background:var(--charcoal);padding:0;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:10px 14px 8px;border-bottom:2px solid #C62828;color:#EF9A9A;">Expenses</div>
+            <table class="summary-table" style="width:100%;">
+              <thead><tr><th>Item</th><th>Total</th><th>/Acre</th></tr></thead>
+              <tbody id="sumExpenseBody"></tbody>
+            </table>
+          </div>
+          <!-- INCOME -->
+          <div style="background:var(--charcoal);padding:0;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:10px 14px 8px;border-bottom:2px solid #2E7D32;color:#A5D6A7;">Income</div>
+            <table class="summary-table" style="width:100%;">
+              <thead><tr><th>Source</th><th>Total</th><th>/Acre</th></tr></thead>
+              <tbody id="sumIncomeBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- NET RESULT ROW -->
+        <div id="sumNetRow" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-top:2px solid var(--border);flex-wrap:wrap;gap:8px;"></div>
       </div>
-
       <!-- CROP SUMMARY WITH CONTRACTS -->
       <div class="sec-label" style="margin-top:20px;">Crop Summary &amp; Contracts</div>
       <p class="section-intro">Total bushels and contracts grouped by crop across all fields.</p>
       <div id="sumCropBlocks"></div>
     </div>
+
+    <!-- FIELD VIEW -->
     <div id="sumFieldView" class="hidden">
       <div class="sec-label">Field-Level Summary</div>
       <div class="card-dark">
         <table class="summary-table"><thead><tr><th>Field</th><th>Acres</th><th>Crop</th><th>Cost/Acre</th><th>Break-Even</th><th>Market</th><th>Profit/Acre</th><th>Total P&L</th></tr></thead><tbody id="sumFieldBody"></tbody></table>
       </div>
     </div>
+
+    <!-- CONTRACTS VIEW -->
+    <div id="sumContractsView" class="hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+        <div class="sec-label" style="margin:0;border:none;">All Grain Contracts</div>
+        <div class="flex-gap">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">Sort by:</span>
+          <select id="contractSortField" onchange="renderContractsView()" style="background:var(--charcoal-mid);border:1px solid var(--border);color:var(--offwhite);font-size:12px;padding:5px 10px;font-family:'Barlow',sans-serif;outline:none;">
+            <option value="date">Date</option>
+            <option value="field">Field Name</option>
+            <option value="crop">Grain Type</option>
+            <option value="bushels">Bushels</option>
+            <option value="price">Price/Bu</option>
+            <option value="revenue">Revenue</option>
+            <option value="elevator">Elevator</option>
+          </select>
+          <select id="contractSortDir" onchange="renderContractsView()" style="background:var(--charcoal-mid);border:1px solid var(--border);color:var(--offwhite);font-size:12px;padding:5px 10px;font-family:'Barlow',sans-serif;outline:none;">
+            <option value="asc">↑ Asc</option>
+            <option value="desc">↓ Desc</option>
+          </select>
+        </div>
+      </div>
+      <!-- SUMMARY STATS -->
+      <div class="results-grid" style="margin-bottom:14px;">
+        <div class="result-box is-wheat"><div class="r-label">Total Contracts</div><div class="r-val" id="cv_count">—</div></div>
+        <div class="result-box"><div class="r-label">Total Bushels</div><div class="r-val" id="cv_bushels">—</div></div>
+        <div class="result-box"><div class="r-label">Avg Price/Bu</div><div class="r-val" id="cv_avgPrice">—</div></div>
+        <div class="result-box is-profit"><div class="r-label">Total Revenue</div><div class="r-val" id="cv_revenue">—</div></div>
+      </div>
+      <div class="card-dark">
+        <table class="summary-table" id="contractsTable">
+          <thead>
+            <tr>
+              <th style="cursor:pointer;" onclick="sortContracts('field')">Field ↕</th>
+              <th style="cursor:pointer;" onclick="sortContracts('crop')">Grain ↕</th>
+              <th style="cursor:pointer;" onclick="sortContracts('date')">Date ↕</th>
+              <th style="cursor:pointer;" onclick="sortContracts('bushels')">Bushels ↕</th>
+              <th style="cursor:pointer;" onclick="sortContracts('price')">Price/Bu ↕</th>
+              <th style="cursor:pointer;" onclick="sortContracts('revenue')">Revenue ↕</th>
+              <th style="cursor:pointer;" onclick="sortContracts('elevator')">Elevator ↕</th>
+            </tr>
+          </thead>
+          <tbody id="contractsBody"></tbody>
+        </table>
+      </div>
+      <!-- UNCONTRACTED SUMMARY -->
+      <div class="sec-label" style="margin-top:20px;">Uncontracted Bushels by Crop</div>
+      <div id="uncontractedBlocks"></div>
+    </div>
+
   </div>
 </div>
 
@@ -2049,7 +2124,7 @@ function recalcField(){
   const profitPerAcre=revenuePerAcre-allIn;const totalPL=profitPerAcre*acres;
   document.getElementById('fd_fieldCostPerAcre').textContent=fmt(fieldCPA);
   document.getElementById('fd_allInCost').textContent=allIn>0?fmt(allIn):'—';
-  document.getElementById('fd_breakEven').textContent=breakEven>0?'$'+breakEven.toFixed(2):'—';
+  document.getElementById('fd_breakEven').textContent=breakEven>0?'$'+breakEven.toFixed(3):'—';
   const profitBox=document.getElementById('fd_profitBox'),totalBox=document.getElementById('fd_totalBox');
   const hasRevenue=(mkt>0||hasContracts)&&yld>0;
   if(hasRevenue){
@@ -2062,8 +2137,8 @@ function recalcField(){
     const margin=effectivePrice-breakEven,insight=document.getElementById('fd_insight');
     if(breakEven>0){
       insight.textContent=hasContracts
-        ?`Effective $${effectivePrice.toFixed(2)}/bu blended · ${margin>=0?'▲':'▼'} $${Math.abs(margin).toFixed(2)}/bu vs break-even`
-        :(margin>=0?`▲ $${Math.abs(margin).toFixed(2)}/bu above break-even`:`▼ $${Math.abs(margin).toFixed(2)}/bu below break-even`);
+        ?`Effective $${effectivePrice.toFixed(3)}/bu blended · ${margin>=0?'▲':'▼'} $${Math.abs(margin).toFixed(3)}/bu vs break-even`
+        :(margin>=0?`▲ $${Math.abs(margin).toFixed(3)}/bu above break-even`:`▼ $${Math.abs(margin).toFixed(3)}/bu below break-even`);
       insight.style.color=margin>=0?'#66BB6A':'#EF5350';
     }
   }else{
@@ -2196,11 +2271,18 @@ async function saveCropProfile(){
 // ═══ SUMMARY ═══
 function setSummaryLevel(level){
   summaryLevel=level;
-  document.getElementById('sumBtnFarm').className=level==='farm'?'btn btn-primary btn-sm':'btn btn-outline btn-sm';
-  document.getElementById('sumBtnField').className=level==='field'?'btn btn-primary btn-sm':'btn btn-outline btn-sm';
+  const btns={farm:'sumBtnFarm',field:'sumBtnField',contracts:'sumBtnContracts'};
+  Object.entries(btns).forEach(([k,id])=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.className=k===level?'btn btn-primary btn-sm':'btn btn-outline btn-sm';
+  });
   document.getElementById('sumFarmView').classList.toggle('hidden',level!=='farm');
   document.getElementById('sumFieldView').classList.toggle('hidden',level!=='field');
-  if(level==='farm')renderFarmSummary();else renderFieldSummary();
+  document.getElementById('sumContractsView').classList.toggle('hidden',level!=='contracts');
+  if(level==='farm')renderFarmSummary();
+  else if(level==='field')renderFieldSummary();
+  else if(level==='contracts')renderContractsView();
 }
 function renderSummary(){
   const f=farm();
@@ -2211,36 +2293,84 @@ function renderSummary(){
 function renderFarmSummary(){
   const f=farm();if(!f)return;
   const acres=farmTotalAcres(),farmCostTotal=calcFarmCostTotal(),farmCPA=acres>0?farmCostTotal/acres:0,offFarm=calcOffFarmTotal();
-  let totalRevenue=0,totalFieldCosts=0;const fcosts=f.costs||{};
+  let totalRevenue=0,totalFieldCosts=0,totalContractRevenue=0;const fcosts=f.costs||{};
   (f.fields||[]).forEach(fld=>{
     const a=parseFloat(fld.acres)||0;
     totalFieldCosts+=calcFieldCostPerAcre(fld)*a;
     const mkt=parseFloat(fld.marketPrice)||getElevatorPrice(fld.crop)||0;
     const contracts=fld.contracts||[];
     const hasContracts=contracts.length>0&&contracts.some(c=>parseFloat(c.bushels)>0);
-    totalRevenue+=hasContracts?calcFieldRevenuePerAcre(fld,mkt)*a:(mkt*(parseFloat(fld.yield)||0)*a);
+    const rev=hasContracts?calcFieldRevenuePerAcre(fld,mkt)*a:(mkt*(parseFloat(fld.yield)||0)*a);
+    totalRevenue+=rev;
+    if(hasContracts)totalContractRevenue+=contracts.reduce((s,c)=>s+(parseFloat(c.bushels)||0)*(parseFloat(c.price)||0),0);
   });
-  const totalCosts=farmCostTotal+totalFieldCosts,netPL=totalRevenue-totalCosts;
+  const totalCosts=farmCostTotal+totalFieldCosts,netPL=totalRevenue+offFarm-totalCosts;
   document.getElementById('sum_acres').textContent=acres||'—';
   document.getElementById('sum_revenue').textContent=fmt(totalRevenue);
   document.getElementById('sum_costs').textContent=fmt(totalCosts);
   document.getElementById('sum_pl').textContent=fmt(netPL);
   document.getElementById('sum_plBox').className='result-box '+(netPL>=0?'is-profit':'is-loss');
-  const rows=[];const addRow=(label,val)=>{if(val>0)rows.push({label,val});};
-  if(f.equipCombined)addRow('Fuel & Equipment',fcosts.fuelEquipCombined||0);
-  else{addRow('Fuel',fcosts.fuel||0);addRow('Equipment Depreciation',fcosts.depreciation||0);}
-  addRow('Family Living',fcosts.familyLiving||0);addRow('Repairs & Maintenance',fcosts.repairs||0);
-  addRow('Operating Loans',fcosts.loans||0);addRow('Labor',fcosts.labor||0);
-  addRow('Land Payments',fcosts.landPayments||0);addRow('Equipment Payments',fcosts.equipPayments||0);
-  (f.customCosts||[]).forEach(cc=>addRow(cc.label||'Custom Cost',cc.value||0));
-  // Farm-scoped field loans
-  (f.fields||[]).forEach(fld=>{if(fld.hasLoan&&fld.loanScope==='farm')addRow(`Loan: ${fld.name}`,fld.loanPayment||0);});
-  addRow('Field Crop Inputs',totalFieldCosts);
-  const tbody=document.getElementById('sumFarmBody');tbody.innerHTML='';
-  rows.forEach(r=>{const pct=totalCosts>0?((r.val/totalCosts)*100).toFixed(1):'—';const tr=document.createElement('tr');tr.innerHTML=`<td>${r.label}</td><td class="mono">${fmt(r.val)}</td><td class="mono">${acres>0?fmt(r.val/acres):'—'}</td><td class="mono">${pct}%</td>`;tbody.appendChild(tr);});
-  const tr=document.createElement('tr');tr.className='total-row';tr.innerHTML=`<td>TOTAL</td><td class="mono">${fmt(totalCosts)}</td><td class="mono">${acres>0?fmt(totalCosts/acres):'—'}</td><td class="mono">100%</td>`;tbody.appendChild(tr);
-  if(offFarm>0){const tr2=document.createElement('tr');tr2.style.color='#66BB6A';tr2.innerHTML=`<td>Off-Farm Income (offset)</td><td class="mono">${fmt(offFarm)}</td><td class="mono">${acres>0?fmt(offFarm/acres):'—'}</td><td class="mono">—</td>`;tbody.appendChild(tr2);}
-  // Render crop summary blocks below the cost table
+
+  // ── EXPENSE ROWS (red) ──
+  const expenseRows=[];
+  const addExp=(label,val,sub)=>{if(val>0)expenseRows.push({label,val,sub});};
+  if(f.equipCombined)addExp('Fuel & Equipment',fcosts.fuelEquipCombined||0,'operational');
+  else{addExp('Fuel',fcosts.fuel||0,'operational');addExp('Equipment Depreciation',fcosts.depreciation||0,'operational');}
+  addExp('Family Living',fcosts.familyLiving||0,'overhead');
+  addExp('Repairs & Maintenance',fcosts.repairs||0,'operational');
+  addExp('Operating Loans & Interest',fcosts.loans||0,'financial');
+  addExp('Labor',fcosts.labor||0,'overhead');
+  addExp('Land Payments / Rent',fcosts.landPayments||0,'land');
+  addExp('Equipment Loan Payments',fcosts.equipPayments||0,'financial');
+  // Insurance & Taxes
+  const ins=(fcosts.ins_crop||0)+(fcosts.ins_vehicle||0)+(fcosts.ins_farm||0)+(f.insCustom||[]).reduce((s,i)=>s+(parseFloat(i.value)||0),0);
+  const tax=(fcosts.tax_vehicle||0)+(fcosts.tax_farm||0)+(fcosts.tax_property||0)+(f.taxCustom||[]).reduce((s,i)=>s+(parseFloat(i.value)||0),0);
+  addExp('Insurance',ins,'overhead');
+  addExp('Taxes',tax,'overhead');
+  (f.customCosts||[]).forEach(cc=>addExp(cc.label||'Custom Cost',cc.value||0,'other'));
+  (f.fields||[]).forEach(fld=>{if(fld.hasLoan&&fld.loanScope==='farm')addExp(`Land Loan: ${fld.name}`,fld.loanPayment||0,'financial');});
+  addExp('Field Crop Inputs (Seed/Fert/Chem)',totalFieldCosts,'crop');
+
+  const tbody=document.getElementById('sumExpenseBody');tbody.innerHTML='';
+  expenseRows.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="color:#FFCDD2;">${r.label}<br><span style="font-size:10px;color:#EF9A9A;font-family:'IBM Plex Mono',monospace;">${r.sub}</span></td><td class="mono" style="color:#EF9A9A;">${fmt(r.val)}</td><td class="mono" style="color:#EF9A9A;">${acres>0?fmt(r.val/acres):'—'}</td>`;
+    tbody.appendChild(tr);
+  });
+  const totalTr=document.createElement('tr');totalTr.className='total-row';
+  totalTr.innerHTML=`<td style="color:#FFCDD2;">TOTAL EXPENSES</td><td class="mono" style="color:#EF9A9A;">${fmt(totalCosts)}</td><td class="mono" style="color:#EF9A9A;">${acres>0?fmt(totalCosts/acres):'—'}</td>`;
+  tbody.appendChild(totalTr);
+
+  // ── INCOME ROWS (green) ──
+  const incomeRows=[];
+  const addInc=(label,val,sub)=>{if(val>0)incomeRows.push({label,val,sub});};
+  // Grain revenue — split contracted vs uncontracted
+  const uncontractedRevenue=totalRevenue-totalContractRevenue;
+  addInc('Contracted Grain Revenue',totalContractRevenue,'from entered contracts');
+  addInc('Uncontracted Grain Revenue (est.)',uncontractedRevenue>0?uncontractedRevenue:0,'at market/elevator price');
+  addInc('Off-Farm Income',offFarm,'non-farm sources');
+  (f.offFarmIncome||[]).forEach(()=>{}); // already included in offFarm total
+
+  const tbody2=document.getElementById('sumIncomeBody');tbody2.innerHTML='';
+  incomeRows.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="color:#C8E6C9;">${r.label}<br><span style="font-size:10px;color:#A5D6A7;font-family:'IBM Plex Mono',monospace;">${r.sub}</span></td><td class="mono" style="color:#A5D6A7;">${fmt(r.val)}</td><td class="mono" style="color:#A5D6A7;">${acres>0?fmt(r.val/acres):'—'}</td>`;
+    tbody2.appendChild(tr);
+  });
+  const totalIncome=totalRevenue+offFarm;
+  const incTotalTr=document.createElement('tr');incTotalTr.className='total-row';
+  incTotalTr.innerHTML=`<td style="color:#C8E6C9;">TOTAL INCOME</td><td class="mono" style="color:#A5D6A7;">${fmt(totalIncome)}</td><td class="mono" style="color:#A5D6A7;">${acres>0?fmt(totalIncome/acres):'—'}</td>`;
+  tbody2.appendChild(incTotalTr);
+
+  // ── NET RESULT BAR ──
+  const netRow=document.getElementById('sumNetRow');
+  netRow.innerHTML=`
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#A0A0A0;">Net Farm P&L</div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:${netPL>=0?'#66BB6A':'#EF5350'};">${netPL>=0?'+':''}${fmt(netPL)}</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:${netPL>=0?'#66BB6A':'#EF5350'};">${acres>0?fmt(netPL/acres)+'/acre':''}</div>
+  `;
+
+  // Crop summary blocks below
   renderCropSummary();
 }
 function renderFieldSummary(){
@@ -2262,13 +2392,138 @@ function renderFieldSummary(){
     totalAcres+=acres;if(fieldPL!==null)totalPL+=fieldPL;
     const priceDisplay=hasContracts?`$${effectivePrice.toFixed(2)} <span style="font-size:10px;color:var(--orange);">blended</span>`:(mkt>0?'$'+mkt.toFixed(2):'—');
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${fld.name}</td><td class="mono">${acres}</td><td>${fld.crop||'—'}</td><td class="mono">${fmt(allIn)}</td><td class="mono">${be>0?'$'+be.toFixed(2):'—'}</td><td class="mono">${priceDisplay}</td><td class="mono" style="color:${profit===null?'var(--offwhite)':profit>=0?'#66BB6A':'#EF5350'}">${profit!==null?(profit>=0?'+':'')+fmt(profit):'—'}</td><td class="mono" style="color:${fieldPL===null?'var(--offwhite)':fieldPL>=0?'#66BB6A':'#EF5350'}">${fieldPL!==null?(fieldPL>=0?'+':'')+fmt(fieldPL):'—'}</td>`;
+    tr.innerHTML=`<td>${fld.name}</td><td class="mono">${acres}</td><td>${fld.crop||'—'}</td><td class="mono">${fmt(allIn)}</td><td class="mono">${be>0?'$'+be.toFixed(3):'—'}</td><td class="mono">${priceDisplay}</td><td class="mono" style="color:${profit===null?'var(--offwhite)':profit>=0?'#66BB6A':'#EF5350'}">${profit!==null?(profit>=0?'+':'')+fmt(profit):'—'}</td><td class="mono" style="color:${fieldPL===null?'var(--offwhite)':fieldPL>=0?'#66BB6A':'#EF5350'}">${fieldPL!==null?(fieldPL>=0?'+':'')+fmt(fieldPL):'—'}</td>`;
     tbody.appendChild(tr);
   });
   const tr=document.createElement('tr');tr.className='total-row';tr.innerHTML=`<td>TOTAL</td><td class="mono">${totalAcres}</td><td colspan="5"></td><td class="mono" style="color:${totalPL>=0?'#66BB6A':'#EF5350'}">${fmt(totalPL)}</td>`;tbody.appendChild(tr);
 }
 
-// ═══ GRAIN CONTRACTS — FIELD LEVEL ═══
+// ═══ CONTRACTS VIEW ═══
+let contractSortKey='date', contractSortDir='asc';
+
+function sortContracts(key){
+  if(contractSortKey===key){
+    contractSortDir=contractSortDir==='asc'?'desc':'asc';
+  } else {
+    contractSortKey=key;contractSortDir='asc';
+  }
+  document.getElementById('contractSortField').value=key;
+  document.getElementById('contractSortDir').value=contractSortDir;
+  renderContractsView();
+}
+
+function renderContractsView(){
+  const f=farm();if(!f)return;
+  const sortKey=document.getElementById('contractSortField')?.value||contractSortKey;
+  const sortDir=document.getElementById('contractSortDir')?.value||contractSortDir;
+
+  // Gather all contracts from all fields
+  const allContracts=[];
+  (f.fields||[]).forEach(fld=>{
+    (fld.contracts||[]).forEach(c=>{
+      if(parseFloat(c.bushels)>0){
+        allContracts.push({
+          fieldName:fld.name,
+          crop:fld.crop||'—',
+          date:c.date||'',
+          bushels:parseFloat(c.bushels)||0,
+          price:parseFloat(c.price)||0,
+          revenue:(parseFloat(c.bushels)||0)*(parseFloat(c.price)||0),
+          elevator:c.elevator||'—',
+          fieldId:fld.id
+        });
+      }
+    });
+  });
+
+  // Sort
+  allContracts.sort((a,b)=>{
+    let av=a[sortKey==='field'?'fieldName':sortKey==='grain'?'crop':sortKey];
+    let bv=b[sortKey==='field'?'fieldName':sortKey==='grain'?'crop':sortKey];
+    if(typeof av==='string')av=av.toLowerCase();
+    if(typeof bv==='string')bv=bv.toLowerCase();
+    if(av<bv)return sortDir==='asc'?-1:1;
+    if(av>bv)return sortDir==='asc'?1:-1;
+    return 0;
+  });
+
+  // Summary stats
+  const totalBu=allContracts.reduce((s,c)=>s+c.bushels,0);
+  const totalRev=allContracts.reduce((s,c)=>s+c.revenue,0);
+  const avgPrice=totalBu>0?totalRev/totalBu:0;
+  document.getElementById('cv_count').textContent=allContracts.length;
+  document.getElementById('cv_bushels').textContent=Math.round(totalBu).toLocaleString()+' bu';
+  document.getElementById('cv_avgPrice').textContent=avgPrice>0?'$'+avgPrice.toFixed(3):'—';
+  document.getElementById('cv_revenue').textContent=totalRev>0?fmt(totalRev):'—';
+
+  // Contracts table
+  const tbody=document.getElementById('contractsBody');tbody.innerHTML='';
+  if(allContracts.length===0){
+    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:28px;font-family:'IBM Plex Mono',monospace;font-size:12px;">No contracts entered yet. Add contracts from the Fields tab.</td></tr>`;
+  } else {
+    allContracts.forEach(c=>{
+      const tr=document.createElement('tr');
+      tr.style.cursor='pointer';
+      tr.title='Click to go to this field';
+      tr.onclick=()=>{switchTab('fields');setTimeout(()=>openFieldDetail(c.fieldId),50);};
+      tr.innerHTML=`
+        <td style="color:var(--orange);font-weight:600;">${c.fieldName}</td>
+        <td>${c.crop}</td>
+        <td class="mono">${c.date||'—'}</td>
+        <td class="mono">${Math.round(c.bushels).toLocaleString()}</td>
+        <td class="mono" style="color:#66BB6A;">$${c.price.toFixed(3)}</td>
+        <td class="mono" style="color:#66BB6A;">${fmt(c.revenue)}</td>
+        <td>${c.elevator}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+    // Totals row
+    const tr=document.createElement('tr');tr.className='total-row';
+    tr.innerHTML=`<td colspan="3">TOTAL (${allContracts.length} contracts)</td><td class="mono">${Math.round(totalBu).toLocaleString()} bu</td><td class="mono">$${avgPrice.toFixed(3)} avg</td><td class="mono" style="color:#66BB6A;">${fmt(totalRev)}</td><td></td>`;
+    tbody.appendChild(tr);
+  }
+
+  // Uncontracted by crop
+  const cropMap={};
+  (f.fields||[]).forEach(fld=>{
+    const crop=fld.crop||'Unknown';
+    if(!cropMap[crop])cropMap[crop]={totalBu:0,contractedBu:0};
+    const acres=parseFloat(fld.acres)||0;
+    const yld=parseFloat(fld.yield)||0;
+    cropMap[crop].totalBu+=acres*yld;
+    cropMap[crop].contractedBu+=(fld.contracts||[]).reduce((s,c)=>s+(parseFloat(c.bushels)||0),0);
+  });
+  const unBlock=document.getElementById('uncontractedBlocks');unBlock.innerHTML='';
+  Object.entries(cropMap).forEach(([crop,data])=>{
+    const rem=Math.max(0,data.totalBu-data.contractedBu);
+    const pct=data.totalBu>0?((data.contractedBu/data.totalBu)*100).toFixed(0):0;
+    const div=document.createElement('div');
+    div.style.cssText='background:var(--charcoal);border:1px solid var(--border);padding:14px 18px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;';
+    div.innerHTML=`
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--offwhite);text-transform:uppercase;">${crop}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#A0A0A0;margin-top:2px;">${Math.round(data.totalBu).toLocaleString()} total est. bu</div>
+      </div>
+      <div style="display:flex;gap:20px;text-align:right;flex-wrap:wrap;">
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#A0A0A0;">Contracted</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--orange);">${Math.round(data.contractedBu).toLocaleString()} bu</div>
+        </div>
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#A0A0A0;">Uncontracted</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:${rem===0?'#66BB6A':rem<data.totalBu*0.25?'#FFA726':'var(--offwhite)'};">${Math.round(rem).toLocaleString()} bu</div>
+        </div>
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#A0A0A0;">% Contracted</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:${pct>=75?'#66BB6A':pct>=50?'#FFA726':'#EF5350'};">${pct}%</div>
+        </div>
+      </div>
+    `;
+    unBlock.appendChild(div);
+  });
+}
+
+// ═══ EXISTING FARM/FIELD SUMMARY ═══
 
 function addFieldContract(data={}){
   const fld=field();if(!fld)return;
