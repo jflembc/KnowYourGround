@@ -1761,8 +1761,12 @@ function renderOverview(){
   let totalRevenue=0,totalFieldCost=0;
   (f.fields||[]).forEach(fld=>{
     const fca=calcFieldCostPerAcre(fld);const allIn=fca+farmCPA;
-    const rev=(parseFloat(fld.marketPrice)||0)*(parseFloat(fld.yield)||0);
-    const a=parseFloat(fld.acres)||0;totalRevenue+=rev*a;totalFieldCost+=allIn*a;
+    const a=parseFloat(fld.acres)||0;
+    const mkt=parseFloat(fld.marketPrice)||getElevatorPrice(fld.crop)||0;
+    const contracts=fld.contracts||[];
+    const hasContracts=contracts.length>0&&contracts.some(c=>parseFloat(c.bushels)>0);
+    const rev=hasContracts?calcFieldRevenuePerAcre(fld,mkt)*a:(mkt*(parseFloat(fld.yield)||0)*a);
+    totalRevenue+=rev;totalFieldCost+=allIn*a;
   });
   const netProfit=totalRevenue-totalFieldCost;
   document.getElementById('ovTotalAcres').textContent=acres||'—';
@@ -1777,8 +1781,11 @@ function renderOverview(){
   (f.fields||[]).forEach(fld=>{
     const fca=calcFieldCostPerAcre(fld);const allIn=fca+farmCPA;
     const effectivePrice=parseFloat(fld.marketPrice)||getElevatorPrice(fld.crop)||0;
-    const rev=effectivePrice*(parseFloat(fld.yield)||0);
-    const profit=rev-allIn;const hasData=effectivePrice>0&&parseFloat(fld.yield)>0;
+    const contracts=fld.contracts||[];
+    const hasContracts=contracts.length>0&&contracts.some(c=>parseFloat(c.bushels)>0);
+    const rev=hasContracts?calcFieldRevenuePerAcre(fld,effectivePrice):effectivePrice*(parseFloat(fld.yield)||0);
+    const profit=rev-allIn;
+    const hasData=(effectivePrice>0||hasContracts)&&parseFloat(fld.yield)>0;
     const div=document.createElement('div');div.className='field-card';
     div.innerHTML=`<div class="fc-name">${fld.name}</div><div class="fc-meta">${fld.acres} AC · ${fld.crop||'—'}${fld.yearPurchased?' · Est. '+fld.yearPurchased:''}</div><div class="fc-stat ${hasData?(profit>=0?'':'loss'):''}">${hasData?(profit>=0?'+':'')+fmt(profit)+'/ac':'No market price set'}</div>`;
     div.onclick=()=>{switchTab('fields');setTimeout(()=>openFieldDetail(fld.id),50);};
@@ -1856,8 +1863,11 @@ function renderFieldCards(){
   (f.fields||[]).forEach(fld=>{
     const fca=calcFieldCostPerAcre(fld);const allIn=fca+farmCPA;
     const effectivePrice=parseFloat(fld.marketPrice)||getElevatorPrice(fld.crop)||0;
-    const rev=effectivePrice*(parseFloat(fld.yield)||0);
-    const profit=rev-allIn;const hasData=effectivePrice>0&&parseFloat(fld.yield)>0;
+    const contracts=fld.contracts||[];
+    const hasContracts=contracts.length>0&&contracts.some(c=>parseFloat(c.bushels)>0);
+    const rev=hasContracts?calcFieldRevenuePerAcre(fld,effectivePrice):effectivePrice*(parseFloat(fld.yield)||0);
+    const profit=rev-allIn;
+    const hasData=(effectivePrice>0||hasContracts)&&parseFloat(fld.yield)>0;
     const div=document.createElement('div');div.className='field-card'+(fld.id===activeFieldId?' active':'');
     div.innerHTML=`<div class="fc-name">${fld.name}</div><div class="fc-meta">${fld.acres} AC · ${fld.crop||'—'}${fld.yearPurchased?' · '+fld.yearPurchased:''}</div><div class="fc-stat ${hasData?(profit>=0?'':'loss'):''}">${hasData?(profit>=0?'+':'')+fmt(profit)+'/ac':'Enter yield & price'}</div>`;
     div.onclick=()=>openFieldDetail(fld.id);grid.appendChild(div);
@@ -1999,30 +2009,63 @@ function resetToElevatorPrice(){
   saveFieldData();
 }
 
+// ─── BLENDED REVENUE HELPER ───
+// Returns revenue per acre accounting for grain contracts.
+// Contracted bushels use contract price; remaining uncontracted use market/elevator price.
+function calcFieldRevenuePerAcre(fld, mktOverride){
+  const acres = parseFloat(fld.acres)||0;
+  const yld   = parseFloat(fld.yield)||0;
+  if(acres<=0||yld<=0) return 0;
+  const totalBu = acres * yld;
+  const contracts = fld.contracts||[];
+  const contractedBu    = contracts.reduce((s,c)=>s+(parseFloat(c.bushels)||0),0);
+  const contractRevenue = contracts.reduce((s,c)=>s+(parseFloat(c.bushels)||0)*(parseFloat(c.price)||0),0);
+  const mkt = mktOverride ?? (parseFloat(fld.marketPrice)||getElevatorPrice(fld.crop)||0);
+  const uncontractedBu  = Math.max(0, totalBu - contractedBu);
+  const totalRevenue    = contractRevenue + (uncontractedBu * mkt);
+  return acres>0 ? totalRevenue/acres : 0;
+}
+// Returns blended effective price per bushel (for break-even comparisons)
+function calcFieldEffectivePrice(fld, mktOverride){
+  const yld = parseFloat(fld.yield)||0;
+  if(yld<=0) return 0;
+  return calcFieldRevenuePerAcre(fld, mktOverride) / yld;
+}
+
 function recalcField(){
   const fld=field();if(!fld)return;
   const farmCPA=farmTotalAcres()>0?calcFarmCostTotal()/farmTotalAcres():0;
   const fieldCPA=calcFieldCostPerAcre(fld);const allIn=fieldCPA+farmCPA;
   const acres=parseFloat(fld.acres)||0,yld=parseFloat(fld.yield)||0;
-  // Use field's manual price, fall back to elevator price if no override
   const elevatorPrice=fld.crop?getElevatorPrice(fld.crop):0;
   const displayedPrice=parseFloat(document.getElementById('fd_marketPrice')?.value)||0;
   const mkt=displayedPrice||elevatorPrice||0;
-  const breakEven=yld>0?allIn/yld:0;const revPerAcre=mkt*yld;
-  const profitPerAcre=revPerAcre-allIn;const totalPL=profitPerAcre*acres;
+  const contracts=fld.contracts||[];
+  const hasContracts=contracts.length>0&&contracts.some(c=>parseFloat(c.bushels)>0);
+  // Use blended revenue if contracts exist, otherwise straight market price
+  const revenuePerAcre = hasContracts ? calcFieldRevenuePerAcre(fld, mkt) : mkt*yld;
+  const effectivePrice = yld>0 ? revenuePerAcre/yld : 0;
+  const breakEven=yld>0?allIn/yld:0;
+  const profitPerAcre=revenuePerAcre-allIn;const totalPL=profitPerAcre*acres;
   document.getElementById('fd_fieldCostPerAcre').textContent=fmt(fieldCPA);
   document.getElementById('fd_allInCost').textContent=allIn>0?fmt(allIn):'—';
   document.getElementById('fd_breakEven').textContent=breakEven>0?'$'+breakEven.toFixed(2):'—';
   const profitBox=document.getElementById('fd_profitBox'),totalBox=document.getElementById('fd_totalBox');
-  if(mkt>0&&yld>0){
+  const hasRevenue=(mkt>0||hasContracts)&&yld>0;
+  if(hasRevenue){
     document.getElementById('fd_profitPerAcre').textContent=fmt(profitPerAcre);
     profitBox.className='result-box '+(profitPerAcre>=0?'is-profit':'is-loss');
-    document.getElementById('fd_profitSub').textContent=profitPerAcre>=0?'projected profit':'projected loss';
+    document.getElementById('fd_profitSub').textContent=hasContracts?'blended contract + market':(profitPerAcre>=0?'projected profit':'projected loss');
     document.getElementById('fd_totalPL').textContent=fmt(totalPL);
     totalBox.className='result-box '+(totalPL>=0?'is-profit':'is-loss');
     document.getElementById('fd_totalSub').textContent=`${acres} acres`;
-    const margin=mkt-breakEven,insight=document.getElementById('fd_insight');
-    if(breakEven>0){insight.textContent=margin>=0?`▲ $${Math.abs(margin).toFixed(2)}/bu above break-even`:`▼ $${Math.abs(margin).toFixed(2)}/bu below break-even`;insight.style.color=margin>=0?'#66BB6A':'#EF5350';}
+    const margin=effectivePrice-breakEven,insight=document.getElementById('fd_insight');
+    if(breakEven>0){
+      insight.textContent=hasContracts
+        ?`Effective $${effectivePrice.toFixed(2)}/bu blended · ${margin>=0?'▲':'▼'} $${Math.abs(margin).toFixed(2)}/bu vs break-even`
+        :(margin>=0?`▲ $${Math.abs(margin).toFixed(2)}/bu above break-even`:`▼ $${Math.abs(margin).toFixed(2)}/bu below break-even`);
+      insight.style.color=margin>=0?'#66BB6A':'#EF5350';
+    }
   }else{
     document.getElementById('fd_profitPerAcre').textContent='—';document.getElementById('fd_totalPL').textContent='—';
     profitBox.className='result-box';totalBox.className='result-box';
@@ -2170,8 +2213,12 @@ function renderFarmSummary(){
   const acres=farmTotalAcres(),farmCostTotal=calcFarmCostTotal(),farmCPA=acres>0?farmCostTotal/acres:0,offFarm=calcOffFarmTotal();
   let totalRevenue=0,totalFieldCosts=0;const fcosts=f.costs||{};
   (f.fields||[]).forEach(fld=>{
-    totalFieldCosts+=calcFieldCostPerAcre(fld)*(parseFloat(fld.acres)||0);
-    totalRevenue+=(parseFloat(fld.marketPrice)||0)*(parseFloat(fld.yield)||0)*(parseFloat(fld.acres)||0);
+    const a=parseFloat(fld.acres)||0;
+    totalFieldCosts+=calcFieldCostPerAcre(fld)*a;
+    const mkt=parseFloat(fld.marketPrice)||getElevatorPrice(fld.crop)||0;
+    const contracts=fld.contracts||[];
+    const hasContracts=contracts.length>0&&contracts.some(c=>parseFloat(c.bushels)>0);
+    totalRevenue+=hasContracts?calcFieldRevenuePerAcre(fld,mkt)*a:(mkt*(parseFloat(fld.yield)||0)*a);
   });
   const totalCosts=farmCostTotal+totalFieldCosts,netPL=totalRevenue-totalCosts;
   document.getElementById('sum_acres').textContent=acres||'—';
@@ -2203,12 +2250,19 @@ function renderFieldSummary(){
   let totalAcres=0,totalPL=0;
   (f.fields||[]).forEach(fld=>{
     const fca=calcFieldCostPerAcre(fld),allIn=fca+farmCPA;
-    const acres=parseFloat(fld.acres)||0,yld=parseFloat(fld.yield)||0,mkt=parseFloat(fld.marketPrice)||0;
-    const be=yld>0?allIn/yld:0;const profit=mkt>0&&yld>0?(mkt*yld-allIn):null;
+    const acres=parseFloat(fld.acres)||0,yld=parseFloat(fld.yield)||0;
+    const mkt=parseFloat(fld.marketPrice)||getElevatorPrice(fld.crop)||0;
+    const contracts=fld.contracts||[];
+    const hasContracts=contracts.length>0&&contracts.some(c=>parseFloat(c.bushels)>0);
+    const be=yld>0?allIn/yld:0;
+    const revenuePerAcre=hasContracts?calcFieldRevenuePerAcre(fld,mkt):mkt*yld;
+    const effectivePrice=yld>0?revenuePerAcre/yld:0;
+    const profit=(effectivePrice>0||hasContracts)&&yld>0?(revenuePerAcre-allIn):null;
     const fieldPL=profit!==null?profit*acres:null;
     totalAcres+=acres;if(fieldPL!==null)totalPL+=fieldPL;
+    const priceDisplay=hasContracts?`$${effectivePrice.toFixed(2)} <span style="font-size:10px;color:var(--orange);">blended</span>`:(mkt>0?'$'+mkt.toFixed(2):'—');
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${fld.name}</td><td class="mono">${acres}</td><td>${fld.crop||'—'}</td><td class="mono">${fmt(allIn)}</td><td class="mono">${be>0?'$'+be.toFixed(2):'—'}</td><td class="mono">${mkt>0?'$'+mkt.toFixed(2):'—'}</td><td class="mono" style="color:${profit===null?'var(--offwhite)':profit>=0?'#66BB6A':'#EF5350'}">${profit!==null?(profit>=0?'+':'')+fmt(profit):'—'}</td><td class="mono" style="color:${fieldPL===null?'var(--offwhite)':fieldPL>=0?'#66BB6A':'#EF5350'}">${fieldPL!==null?(fieldPL>=0?'+':'')+fmt(fieldPL):'—'}</td>`;
+    tr.innerHTML=`<td>${fld.name}</td><td class="mono">${acres}</td><td>${fld.crop||'—'}</td><td class="mono">${fmt(allIn)}</td><td class="mono">${be>0?'$'+be.toFixed(2):'—'}</td><td class="mono">${priceDisplay}</td><td class="mono" style="color:${profit===null?'var(--offwhite)':profit>=0?'#66BB6A':'#EF5350'}">${profit!==null?(profit>=0?'+':'')+fmt(profit):'—'}</td><td class="mono" style="color:${fieldPL===null?'var(--offwhite)':fieldPL>=0?'#66BB6A':'#EF5350'}">${fieldPL!==null?(fieldPL>=0?'+':'')+fmt(fieldPL):'—'}</td>`;
     tbody.appendChild(tr);
   });
   const tr=document.createElement('tr');tr.className='total-row';tr.innerHTML=`<td>TOTAL</td><td class="mono">${totalAcres}</td><td colspan="5"></td><td class="mono" style="color:${totalPL>=0?'#66BB6A':'#EF5350'}">${fmt(totalPL)}</td>`;tbody.appendChild(tr);
