@@ -1258,9 +1258,28 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
     </div>
 
     <!-- WINNER BANNER -->
-    <div id="wiBanner" class="card-dark hidden" style="margin-top:16px;text-align:center;">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;">BETTER SCENARIO</div>
-      <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;" id="wiBannerText">—</div>
+    <div id="wiBanner" class="hidden" style="margin-top:20px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:12px;">Comparison Result</div>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:0;border:2px solid var(--border);overflow:hidden;">
+        <!-- SCENARIO A SIDE -->
+        <div id="wiBannerA" style="padding:18px 20px;background:var(--charcoal);">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#A0A0A0;margin-bottom:6px;">Scenario A</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--offwhite);" id="wiBannerAVal">—</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#A0A0A0;margin-top:3px;" id="wiBannerACrop">—</div>
+        </div>
+        <!-- CENTER VERDICT -->
+        <div id="wiBannerCenter" style="padding:18px 24px;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:180px;border-left:1px solid var(--border);border-right:1px solid var(--border);">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#A0A0A0;margin-bottom:8px;">Difference</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;line-height:1;" id="wiBannerDiff">—</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;margin-top:6px;text-align:center;" id="wiBannerVerdict">—</div>
+        </div>
+        <!-- SCENARIO B SIDE -->
+        <div id="wiBannerB" style="padding:18px 20px;background:var(--charcoal);text-align:right;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#A0A0A0;margin-bottom:6px;">Scenario B</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--offwhite);" id="wiBannerBVal">—</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#A0A0A0;margin-top:3px;" id="wiBannerBCrop">—</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1268,6 +1287,33 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
 </div><!-- /appMain -->
 </div><!-- /appContent -->
 </div><!-- /appShell -->
+
+<!-- ═══ CHANGELOG MODAL ═══ -->
+<div class="modal-overlay hidden" id="changelogModal" style="z-index:300;">
+  <div style="background:var(--charcoal);border:1px solid var(--border);border-top:4px solid var(--orange);width:100%;max-width:560px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,0.6);">
+    <!-- HEADER -->
+    <div style="padding:22px 28px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect width="22" height="22" fill="#3A3A3A" stroke="#F05A00" stroke-width="1.5"/><line x1="0" y1="22" x2="22" y2="0" stroke="#F05A00" stroke-width="2"/><line x1="0" y1="14" x2="14" y2="0" stroke="#F05A00" stroke-width="2" opacity="0.6"/><line x1="8" y1="22" x2="22" y2="8" stroke="#F05A00" stroke-width="2" opacity="0.6"/></svg>
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--offwhite);text-transform:uppercase;letter-spacing:0.5px;">What's New</span>
+          <span id="changelogVersion" style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;background:var(--orange);color:#fff;padding:2px 8px;text-transform:uppercase;"></span>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#A0A0A0;letter-spacing:1px;">Know Your Ground — Release Notes</div>
+      </div>
+      <button onclick="dismissChangelog()" style="background:transparent;border:none;color:#A0A0A0;font-size:22px;cursor:pointer;line-height:1;padding:0;flex-shrink:0;" onmouseover="this.style.color='var(--offwhite)'" onmouseout="this.style.color='#A0A0A0'">×</button>
+    </div>
+    <!-- CHANGELOG CONTENT -->
+    <div style="overflow-y:auto;padding:0 28px;flex:1;" id="changelogContent"></div>
+    <!-- FOOTER -->
+    <div style="padding:16px 28px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#A0A0A0;">We ship updates regularly. Thank you for using Know Your Ground.</div>
+      <button onclick="dismissChangelog()" class="btn btn-primary btn-sm">Got It</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /appWrapper -->
 
 <!-- MOBILE BOTTOM NAV -->
 <nav id="mobileBottomNav">
@@ -1287,8 +1333,6 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
     <span class="mob-icon">📊</span>Summary
   </button>
 </nav>
-
-</div><!-- /appWrapper -->
 
 <!-- MODALS -->
 <div class="modal-overlay hidden" id="farmModal">
@@ -1943,8 +1987,20 @@ function renderFieldCards(){
     const rev=hasContracts?calcFieldRevenuePerAcre(fld,effectivePrice):effectivePrice*(parseFloat(fld.yield)||0);
     const profit=rev-allIn;
     const hasData=(effectivePrice>0||hasContracts)&&parseFloat(fld.yield)>0;
+    // Remaining bushels
+    const totalBu=(parseFloat(fld.acres)||0)*(parseFloat(fld.yield)||0);
+    const contractedBu=contracts.reduce((s,c)=>s+(parseFloat(c.bushels)||0),0);
+    const remainBu=Math.max(0,totalBu-contractedBu);
+    const showBu=totalBu>0&&parseFloat(fld.yield)>0;
+    const buColor=remainBu===0?'#66BB6A':remainBu<totalBu*0.25?'#FFA726':'#A0A0A0';
+    const buLabel=showBu?(remainBu===0?`✓ Fully contracted`:`${Math.round(remainBu).toLocaleString()} bu uncontracted`):'';
     const div=document.createElement('div');div.className='field-card'+(fld.id===activeFieldId?' active':'');
-    div.innerHTML=`<div class="fc-name">${fld.name}</div><div class="fc-meta">${fld.acres} AC · ${fld.crop||'—'}${fld.yearPurchased?' · '+fld.yearPurchased:''}</div><div class="fc-stat ${hasData?(profit>=0?'':'loss'):''}">${hasData?(profit>=0?'+':'')+fmt(profit)+'/ac':'Enter yield & price'}</div>`;
+    div.innerHTML=`
+      <div class="fc-name">${fld.name}</div>
+      <div class="fc-meta">${fld.acres} AC · ${fld.crop||'—'}${fld.yearPurchased?' · '+fld.yearPurchased:''}</div>
+      <div class="fc-stat ${hasData?(profit>=0?'':'loss'):''}">${hasData?(profit>=0?'+':'')+fmt(profit)+'/ac':'Enter yield & price'}</div>
+      ${showBu?`<div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:${buColor};margin-top:5px;">${buLabel}</div>`:''}
+    `;
     div.onclick=()=>openFieldDetail(fld.id);grid.appendChild(div);
   });
   const add=document.createElement('div');add.className='add-field-card';add.innerHTML='<span style="font-size:24px;">+</span><span>Add Field</span>';add.onclick=openFieldModal;grid.appendChild(add);
@@ -2566,6 +2622,8 @@ function updateFieldContract(id,key,val){
   c[key]=key==='bushels'||key==='price'?parseFloat(val)||0:val;
   dbSaveField(fld);
   recalcFieldContracts();
+  recalcField();      // ← updates Field Summary cards immediately
+  renderFieldCards(); // ← updates field card grid immediately
 }
 
 function removeFieldContract(id){
@@ -2580,6 +2638,8 @@ function removeFieldContract(id){
     else row.remove();
   }
   recalcFieldContracts();
+  recalcField();
+  renderFieldCards();
 }
 
 function recalcFieldContracts(){
@@ -2811,9 +2871,31 @@ function calcWhatIf(){
   if(A&&B&&A.yld>0&&A.price>0&&B.yld>0&&B.price>0){
     banner.classList.remove('hidden');
     const diff=Math.abs(A.totalPL-B.totalPL);
-    if(A.totalPL>B.totalPL){document.getElementById('wiBannerText').textContent=`Scenario A wins by ${fmt(diff)} total`;document.getElementById('wiBannerText').style.color='#66BB6A';}
-    else if(B.totalPL>A.totalPL){document.getElementById('wiBannerText').textContent=`Scenario B wins by ${fmt(diff)} total`;document.getElementById('wiBannerText').style.color='var(--wheat)';}
-    else{document.getElementById('wiBannerText').textContent='Dead even';document.getElementById('wiBannerText').style.color='var(--paper)';}
+    const aWins=A.totalPL>B.totalPL, bWins=B.totalPL>A.totalPL, tied=A.totalPL===B.totalPL;
+    // A side
+    const aEl=document.getElementById('wiBannerAVal');
+    aEl.textContent=fmt(A.totalPL);
+    aEl.style.color=aWins?'#66BB6A':(A.totalPL<0?'#EF5350':'var(--offwhite)');
+    document.getElementById('wiBannerA').style.background=aWins?'rgba(46,125,50,0.15)':'var(--charcoal)';
+    document.getElementById('wiBannerACrop').textContent=`${fmt(A.profit)}/ac · BE $${A.be.toFixed(3)}/bu`;
+    // B side
+    const bEl=document.getElementById('wiBannerBVal');
+    bEl.textContent=fmt(B.totalPL);
+    bEl.style.color=bWins?'#66BB6A':(B.totalPL<0?'#EF5350':'var(--offwhite)');
+    document.getElementById('wiBannerB').style.background=bWins?'rgba(46,125,50,0.15)':'var(--charcoal)';
+    document.getElementById('wiBannerBCrop').textContent=`${fmt(B.profit)}/ac · BE $${B.be.toFixed(3)}/bu`;
+    // Center verdict
+    const diffEl=document.getElementById('wiBannerDiff');
+    const verdictEl=document.getElementById('wiBannerVerdict');
+    if(tied){
+      diffEl.textContent='$0';diffEl.style.color='#A0A0A0';
+      verdictEl.textContent='Dead even';verdictEl.style.color='#A0A0A0';
+    } else {
+      diffEl.textContent=fmt(diff);
+      diffEl.style.color='#66BB6A';
+      const winner=aWins?'A':'B';
+      verdictEl.innerHTML=`<span style="color:#66BB6A;font-weight:700;">Scenario ${winner}</span><br><span style="color:#A0A0A0;">is better by</span>`;
+    }
   }else{banner.classList.add('hidden');}
 }
 
@@ -2946,6 +3028,111 @@ function getElevatorPrice(cropName) {
 // ═══ UTILS ═══
 function fmt(n){const abs=Math.abs(n);const s=abs>=10000?'$'+(abs/1000).toFixed(0)+'k':abs>=1000?'$'+abs.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0}):'$'+abs.toFixed(2);return n<0?'-'+s:s;}
 
+// ═══════════════════════════════════════════════════════
+// CHANGELOG — update APP_VERSION and CHANGELOG_ENTRIES
+// when you ship new features. The modal shows once per
+// version per user (stored in localStorage).
+// ═══════════════════════════════════════════════════════
+const APP_VERSION = '2025.04.30';
+
+const CHANGELOG_ENTRIES = [
+  {
+    version: '2025.04.30',
+    label: 'Latest',
+    sections: [
+      {
+        type: 'new',
+        title: 'Grain Contracts',
+        items: [
+          'Enter contracts per field — track bushels, price, date, and elevator',
+          'Field P&L instantly reflects blended contract + market revenue',
+          'Field cards show remaining uncontracted bushels in real time',
+          'New Contracts view in Summary — all contracts across all fields, fully sortable',
+          'Uncontracted bushels by crop with % contracted indicator',
+        ]
+      },
+      {
+        type: 'new',
+        title: 'Summary Tab Improvements',
+        items: [
+          'Farm View now splits into Expenses (red) and Income (green) columns',
+          'Contracted vs uncontracted grain revenue shown as separate income lines',
+          'New "Full Report →" button on Overview jumps directly to Summary',
+        ]
+      },
+      {
+        type: 'improved',
+        title: 'What-If Scenario Comparison',
+        items: [
+          'Comparison result rebuilt — shows both scenario totals side by side',
+          'Winner highlighted in green with exact dollar difference',
+          'Break-even now shown to 3 decimal places for precision contracting',
+        ]
+      },
+      {
+        type: 'fixed',
+        title: 'Bug Fixes',
+        items: [
+          'Break-even displayed to 3 decimal places — prevents confusion when contracting at the rounded price',
+          'Password reset and email confirmation links now work correctly',
+          'Account Settings modal readability fixed',
+          'All color contrast issues resolved across fields, summary, and overview tabs',
+        ]
+      }
+    ]
+  }
+];
+
+const TYPE_CONFIG = {
+  new:      { label: 'NEW',      color: '#66BB6A', bg: 'rgba(46,125,50,0.12)',  border: '#2E7D32' },
+  improved: { label: 'IMPROVED', color: '#FFA726', bg: 'rgba(230,81,0,0.10)',   border: '#E65100' },
+  fixed:    { label: 'FIXED',    color: '#64B5F6', bg: 'rgba(13,71,161,0.12)',  border: '#0D47A1' },
+};
+
+function showChangelog(){
+  const entry = CHANGELOG_ENTRIES[0];
+  if(!entry) return;
+  // Set version badge
+  document.getElementById('changelogVersion').textContent = entry.version;
+  // Build content
+  const content = document.getElementById('changelogContent');
+  content.innerHTML = '';
+  entry.sections.forEach((sec, idx) => {
+    const cfg = TYPE_CONFIG[sec.type] || TYPE_CONFIG.new;
+    const block = document.createElement('div');
+    block.style.cssText = `padding:16px 0;${idx < entry.sections.length-1 ? 'border-bottom:1px solid var(--border);' : ''}`;
+    block.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:2px;font-weight:700;padding:3px 8px;background:${cfg.bg};color:${cfg.color};border:1px solid ${cfg.border};text-transform:uppercase;">${cfg.label}</span>
+        <span style="font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;color:var(--offwhite);">${sec.title}</span>
+      </div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;">
+        ${sec.items.map(item => `
+          <li style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#C0B8B0;line-height:1.5;">
+            <span style="color:${cfg.color};flex-shrink:0;margin-top:2px;">›</span>
+            <span>${item}</span>
+          </li>
+        `).join('')}
+      </ul>
+    `;
+    content.appendChild(block);
+  });
+  document.getElementById('changelogModal').classList.remove('hidden');
+}
+
+function dismissChangelog(){
+  localStorage.setItem('kyg_version_seen', APP_VERSION);
+  document.getElementById('changelogModal').classList.add('hidden');
+}
+
+function checkChangelog(){
+  const seen = localStorage.getItem('kyg_version_seen');
+  if(seen !== APP_VERSION){
+    // Small delay so the app loads visually before the modal appears
+    setTimeout(showChangelog, 800);
+  }
+}
+
 // ═══ INIT ═══
 async function bootApp(){
   document.getElementById('userEmail').textContent=(currentUser?.email||'').split('@')[0];
@@ -2955,6 +3142,7 @@ async function bootApp(){
   renderFarmSelect();renderOverview();
   document.getElementById('appWrapper').classList.remove('hidden');
   startTokenRefresh();
+  checkChangelog();
 }
 
 (async()=>{
