@@ -457,9 +457,22 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
 /* ── MOBILE ── */
 #mobileTopBar{display:none;}
 #mobileBottomNav{display:none;}
-.mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 2px;background:transparent;border:none;cursor:pointer;color:#808080;font-family:'Barlow',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;transition:all 0.15s;border-top:3px solid transparent;}
-.mob-nav-btn .mob-icon{font-size:18px;line-height:1;}
+.mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:14px 4px;background:transparent;border:none;cursor:pointer;color:#808080;font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;transition:all 0.15s;border-top:3px solid transparent;min-height:64px;}
+.mob-nav-btn .mob-icon{font-size:24px;line-height:1;}
 .mob-nav-btn.active{color:var(--orange);border-top-color:var(--orange);}
+
+/* ── TOOLTIPS ── */
+[data-tip]{position:relative;}
+[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--charcoal);color:var(--offwhite);font-family:'Barlow',sans-serif;font-size:12px;padding:6px 10px;border:1px solid var(--border);pointer-events:none;z-index:200;max-width:260px;white-space:normal;text-align:center;line-height:1.4;}
+[data-tip]:hover::before{content:'';position:absolute;bottom:calc(100% + 3px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--charcoal);pointer-events:none;z-index:200;}
+
+/* ── TOAST ── */
+#toastWrap{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:500;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;}
+.toast{padding:10px 20px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.5px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,0.4);opacity:0;transform:translateY(-8px);transition:opacity 0.25s,transform 0.25s;pointer-events:auto;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast-success{background:#1B5E20;color:#C8E6C9;border:1px solid #2E7D32;}
+.toast-error{background:#B71C1C;color:#FFCDD2;border:1px solid #C62828;}
+.toast-info{background:var(--charcoal);color:var(--offwhite);border:1px solid var(--border);}
 
 @media(max-width:768px){
   body{font-size:15px;}
@@ -471,6 +484,17 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
   #appShell{flex-direction:column;}
   /* Stack income/expense tables vertically on mobile */
   #sumPLGrid{grid-template-columns:1fr!important;}
+  /* Fix horizontal overflow on mobile */
+  #appMain{overflow-x:hidden;padding:16px 12px 110px;}
+  .summary-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .card-dark table{min-width:auto;}
+  /* Crop summary wraps properly */
+  #sumCropBlocks .card{overflow:hidden;}
+  #sumCropBlocks [style*="display:flex"]{flex-wrap:wrap!important;}
+  /* Field view and contracts table scroll horizontally */
+  #sumFieldView .card-dark,#sumContractsView .card-dark{overflow-x:auto;}
+  /* Feedback btn above nav */
+  #feedbackBtn{bottom:82px!important;}
   #mobileTopBar{
     display:flex;align-items:center;justify-content:space-between;
     background:var(--charcoal);border-bottom:3px solid var(--orange);
@@ -506,8 +530,8 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
 </style>
 </head>
 <body>
-
-<!-- LOADING -->
+<!-- TOAST NOTIFICATIONS -->
+<div id="toastWrap"></div>
 <div id="loadingScreen">
   <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect width="48" height="48" fill="#3A3A3A" stroke="#F05A00" stroke-width="2"/>
@@ -741,10 +765,10 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
       </div>
     </div>
     <div class="results-grid" style="margin-top:14px;">
-      <div class="result-box is-wheat"><div class="r-label">Total Acres</div><div class="r-val" id="ovTotalAcres">—</div><div class="r-sub">all fields</div></div>
-      <div class="result-box"><div class="r-label">Total Input Cost</div><div class="r-val" id="ovTotalCost">—</div><div class="r-sub">farm + fields</div></div>
-      <div class="result-box"><div class="r-label">Cost / Acre</div><div class="r-val" id="ovCostPerAcre">—</div><div class="r-sub">blended all-in</div></div>
-      <div class="result-box" id="ovProfitBox"><div class="r-label">Est. Net Profit</div><div class="r-val" id="ovProfit">—</div><div class="r-sub">all fields + farm</div></div>
+      <div class="result-box is-wheat" data-tip="Sum of all field acres across this farm."><div class="r-label">Total Acres</div><div class="r-val" id="ovTotalAcres">—</div><div class="r-sub">all fields</div></div>
+      <div class="result-box" data-tip="Total farm overhead + all field input costs combined."><div class="r-label">Total Input Cost</div><div class="r-val" id="ovTotalCost">—</div><div class="r-sub">farm + fields</div></div>
+      <div class="result-box" data-tip="Total input cost divided by total farm acres. Your blended all-in cost per acre."><div class="r-label">Cost / Acre</div><div class="r-val" id="ovCostPerAcre">—</div><div class="r-sub">blended all-in</div></div>
+      <div class="result-box" id="ovProfitBox" data-tip="Total estimated revenue from all fields minus all costs. Uses contract prices where entered."><div class="r-label">Est. Net Profit</div><div class="r-val" id="ovProfit">—</div><div class="r-sub">all fields + farm</div></div>
     </div>
     <div class="card-dark" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
       <div>
@@ -971,10 +995,10 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
       <!-- FIELD RESULTS -->
       <div class="sec-label">Field Summary</div>
       <div class="results-grid">
-        <div class="result-box"><div class="r-label">All-In Cost/Acre</div><div class="r-val" id="fd_allInCost">—</div><div class="r-sub">field + farm overhead</div></div>
-        <div class="result-box is-wheat"><div class="r-label">Break-Even / Bu</div><div class="r-val" id="fd_breakEven">—</div><div class="r-sub">all-in ÷ yield</div></div>
-        <div class="result-box" id="fd_profitBox"><div class="r-label">Profit / Acre</div><div class="r-val" id="fd_profitPerAcre">—</div><div class="r-sub" id="fd_profitSub">at market price</div></div>
-        <div class="result-box" id="fd_totalBox"><div class="r-label">Total Field P&L</div><div class="r-val" id="fd_totalPL">—</div><div class="r-sub" id="fd_totalSub">—</div></div>
+        <div class="result-box" data-tip="Field input costs per acre + farm overhead allocated per acre"><div class="r-label">All-In Cost/Acre</div><div class="r-val" id="fd_allInCost">—</div><div class="r-sub">field + farm overhead</div></div>
+        <div class="result-box is-wheat" data-tip="All-in cost ÷ expected yield. The price per bushel you must sell at to cover all costs."><div class="r-label">Break-Even / Bu</div><div class="r-val" id="fd_breakEven">—</div><div class="r-sub">all-in ÷ yield</div></div>
+        <div class="result-box" id="fd_profitBox" data-tip="Revenue per acre minus all-in cost per acre. Uses blended contract prices if contracts are entered."><div class="r-label">Profit / Acre</div><div class="r-val" id="fd_profitPerAcre">—</div><div class="r-sub" id="fd_profitSub">at market price</div></div>
+        <div class="result-box" id="fd_totalBox" data-tip="Profit per acre × total field acres = total estimated P&L for this field."><div class="r-label">Total Field P&L</div><div class="r-val" id="fd_totalPL">—</div><div class="r-sub" id="fd_totalSub">—</div></div>
       </div>
     </div>
   </div>
@@ -1850,22 +1874,28 @@ async function loadAllData(){
 
 // ═══ DB HELPERS ═══
 async function dbSaveFarm(f){
-  await rest('POST','farms',{
-    id:f.id,user_id:currentUser.id,name:f.name,location:f.location,season:f.season,
-    year_established:f.yearEstablished,costs:f.costs,custom_costs:f.customCosts,
-    off_farm_income:f.offFarmIncome,equip_combined:f.equipCombined,
-    crop_contracts:f.cropContracts||{}
-  },'on_conflict=id');showSaved();
+  try{
+    await rest('POST','farms',{
+      id:f.id,user_id:currentUser.id,name:f.name,location:f.location,season:f.season,
+      year_established:f.yearEstablished,costs:f.costs,custom_costs:f.customCosts,
+      off_farm_income:f.offFarmIncome,equip_combined:f.equipCombined,
+      crop_contracts:f.cropContracts||{}
+    },'on_conflict=id');
+    showSaved();
+  }catch(e){toastError('Farm could not be saved.');}
 }
 async function dbSaveField(fld){
-  await rest('POST','fields',{
-    id:fld.id,farm_id:activeFarmId,user_id:currentUser.id,name:fld.name,acres:fld.acres,
-    crop:fld.crop,legals:fld.legals,season:fld.season,year_purchased:fld.yearPurchased,
-    field_costs:fld.fieldCosts,custom_costs:fld.customCosts,yield_per_acre:fld.yield,
-    market_price:fld.marketPrice,has_loan:fld.hasLoan,loan_scope:fld.loanScope,
-    loan_amount:fld.loanAmount,loan_rate:fld.loanRate,loan_maturity:fld.loanMaturity,
-    loan_payment:fld.loanPayment,contracts:fld.contracts||[]
-  },'on_conflict=id');showSaved();
+  try{
+    await rest('POST','fields',{
+      id:fld.id,farm_id:activeFarmId,user_id:currentUser.id,name:fld.name,acres:fld.acres,
+      crop:fld.crop,legals:fld.legals,season:fld.season,year_purchased:fld.yearPurchased,
+      field_costs:fld.fieldCosts,custom_costs:fld.customCosts,yield_per_acre:fld.yield,
+      market_price:fld.marketPrice,has_loan:fld.hasLoan,loan_scope:fld.loanScope,
+      loan_amount:fld.loanAmount,loan_rate:fld.loanRate,loan_maturity:fld.loanMaturity,
+      loan_payment:fld.loanPayment,contracts:fld.contracts||[]
+    },'on_conflict=id');
+    showSaved();
+  }catch(e){toastError('Field could not be saved.');}
 }
 async function dbSaveCrop(c){
   await rest('POST','crop_profiles',{
@@ -1937,6 +1967,7 @@ async function saveFarm(){
     farms.push(nf);activeFarmId=nf.id;await dbSaveFarm(nf);
   }
   closeFarmModal();renderFarmSelect();renderOverview();renderFarmCosts();renderSummary();
+  toastSuccess(editingFarm?'Farm updated.':'Farm created. Add your fields next.');
 }
 
 // ═══ OVERVIEW ═══
@@ -2326,11 +2357,15 @@ async function saveField(){
     if(!f.fields)f.fields=[];f.fields.push(nf);activeFieldId=nf.id;await dbSaveField(nf);
   }
   closeFieldModal();renderFieldCards();if(activeFieldId)openFieldDetail(activeFieldId);updateFarmCostSummary();renderOverview();
+  toastSuccess(editingField?'Field updated.':'Field added.');
 }
 async function deleteCurrentField(){
   const f=farm();if(!f)return;if(!confirm('Delete this field and all its data?'))return;
-  await dbDeleteField(activeFieldId);f.fields=(f.fields||[]).filter(x=>x.id!==activeFieldId);
-  activeFieldId=null;closeFieldDetail();renderOverview();updateFarmCostSummary();
+  try{
+    await dbDeleteField(activeFieldId);f.fields=(f.fields||[]).filter(x=>x.id!==activeFieldId);
+    activeFieldId=null;closeFieldDetail();renderOverview();updateFarmCostSummary();
+    toastSuccess('Field deleted.');
+  }catch(e){toastError('Field could not be deleted.');}
 }
 
 // ═══ CROP PROFILES ═══
@@ -2932,31 +2967,44 @@ function checkCCMBushels(){
   else{err.style.display='none';}
 }
 async function saveCropContractModal(){
-  const fieldId=document.getElementById('ccm_field').value;
-  const bushels=parseFloat(document.getElementById('ccm_bushels').value)||0;
-  const price=parseFloat(document.getElementById('ccm_price').value)||0;
-  const date=document.getElementById('ccm_date').value;
-  const elevator=document.getElementById('ccm_elevator').value.trim();
+  const fieldId=document.getElementById('ccm_field')?.value;
+  const bushels=parseFloat(document.getElementById('ccm_bushels')?.value)||0;
+  const price=parseFloat(document.getElementById('ccm_price')?.value)||0;
+  const date=document.getElementById('ccm_date')?.value||'';
+  const elevator=(document.getElementById('ccm_elevator')?.value||'').trim();
   const err=document.getElementById('ccm_error');
   if(!fieldId){err.textContent='Please select a field.';err.style.display='block';return;}
   if(!bushels||bushels<=0){err.textContent='Please enter a valid bushel amount.';err.style.display='block';return;}
   if(!price||price<=0){err.textContent='Please enter a valid price per bushel.';err.style.display='block';return;}
   err.style.display='none';
-  // Find the field in state and add contract to it
-  const f=farm();if(!f)return;
+  const f=farm();if(!f){toastError('No farm selected.');return;}
+  // Find field directly in farm state — no reliance on activeFieldId
   const fld=(f.fields||[]).find(x=>x.id===fieldId);
-  if(!fld){err.textContent='Field not found.';err.style.display='block';return;}
-  if(!fld.contracts)fld.contracts=[];
-  const newContract={id:crypto.randomUUID(),date,bushels,price,elevator};
-  fld.contracts.push(newContract);
-  await dbSaveField(fld);
-  closeCropContractModal();
-  // Refresh all affected views
-  renderCropSummary();
-  recalcFieldContracts();
-  recalcField();
-  renderFieldCards();
-  renderOverview();
+  if(!fld){err.textContent='Field not found in current farm.';err.style.display='block';return;}
+  const saveBtn=document.querySelector('#cropContractModal .btn-primary');
+  if(saveBtn){saveBtn.disabled=true;saveBtn.textContent='Saving...';}
+  try{
+    if(!fld.contracts)fld.contracts=[];
+    fld.contracts.push({id:crypto.randomUUID(),date,bushels,price,elevator});
+    await dbSaveField(fld);
+    closeCropContractModal();
+    // Refresh all views that show contract data — don't call recalcField since no field is active in this context
+    renderCropSummary();
+    renderFieldCards();
+    renderOverview();
+    // If the contracted field happens to be the active one, refresh it too
+    if(activeFieldId===fieldId){
+      document.getElementById('fd_contractRows').innerHTML='';
+      (fld.contracts||[]).forEach(c=>renderFieldContractRow(c));
+      recalcFieldContracts();
+      recalcField();
+    }
+    toastSuccess(`Contract saved to ${fld.name} — ${Math.round(bushels).toLocaleString()} bu @ $${price.toFixed(3)}/bu`);
+  }catch(e){
+    console.error('Contract save error:',e);
+    toastError('Contract could not be saved: '+e.message);
+    if(saveBtn){saveBtn.disabled=false;saveBtn.textContent='Save Contract';}
+  }
 }
 
 function updateCropContract(cropName,id,key,val){
@@ -3199,7 +3247,10 @@ function getElevatorPrice(cropName) {
 function fmt(n){
   if(n===null||n===undefined||isNaN(n))return '—';
   const abs=Math.abs(n);
-  const s=abs>=1?'$'+abs.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'$'+abs.toFixed(2);
+  // Show 2 decimal places but strip trailing zeros
+  let s='$'+abs.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  // Remove .00 at end but keep .50 etc
+  s=s.replace(/\.00$/,'');
   return n<0?'-'+s:s;
 }
 
@@ -3292,6 +3343,71 @@ async function submitFeedback(){
 // Show/hide feedback button with app visibility
 function showFeedbackBtn(){document.getElementById('feedbackBtn').style.display='flex';}
 function hideFeedbackBtn(){document.getElementById('feedbackBtn').style.display='none';}
+
+// ═══════════════════════════════════════════════════════
+// TOAST NOTIFICATION SYSTEM
+// ═══════════════════════════════════════════════════════
+function toast(msg, type='success', duration=3000){
+  const wrap=document.getElementById('toastWrap');
+  if(!wrap)return;
+  const t=document.createElement('div');
+  t.className=`toast toast-${type}`;
+  t.textContent=msg;
+  // Add dismiss on click
+  t.onclick=()=>dismissToast(t);
+  wrap.appendChild(t);
+  // Animate in
+  requestAnimationFrame(()=>{requestAnimationFrame(()=>{t.classList.add('show');});});
+  // Auto dismiss
+  setTimeout(()=>dismissToast(t), duration);
+}
+function dismissToast(t){
+  t.classList.remove('show');
+  setTimeout(()=>t.remove(), 300);
+}
+function toastSuccess(msg){toast(msg,'success');}
+function toastError(msg){toast('Sorry, I ran into an error. '+msg+' Please send feedback to support.','error',6000);}
+function toastInfo(msg){toast(msg,'info',2500);}
+
+// ═══════════════════════════════════════════════════════
+// PULL TO REFRESH (mobile)
+// ═══════════════════════════════════════════════════════
+(function initPullToRefresh(){
+  let startY=0,pulling=false,indicator=null;
+  const THRESHOLD=80;
+  function getIndicator(){
+    if(!indicator){
+      indicator=document.createElement('div');
+      indicator.style.cssText='position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:center;height:0;overflow:hidden;background:var(--charcoal);z-index:999;transition:height 0.2s;font-family:\'IBM Plex Mono\',monospace;font-size:11px;color:var(--orange);letter-spacing:2px;';
+      indicator.textContent='↓ PULL TO REFRESH';
+      document.body.appendChild(indicator);
+    }
+    return indicator;
+  }
+  document.addEventListener('touchstart',e=>{
+    if(window.scrollY===0&&e.touches.length===1){startY=e.touches[0].clientY;pulling=true;}
+  },{passive:true});
+  document.addEventListener('touchmove',e=>{
+    if(!pulling)return;
+    const dy=e.touches[0].clientY-startY;
+    if(dy>0&&window.scrollY===0){
+      const ind=getIndicator();
+      ind.style.height=Math.min(dy/2,THRESHOLD)+'px';
+      ind.textContent=dy>THRESHOLD*2?'↑ RELEASE TO REFRESH':'↓ PULL TO REFRESH';
+    }
+  },{passive:true});
+  document.addEventListener('touchend',e=>{
+    if(!pulling)return;
+    pulling=false;
+    const dy=e.changedTouches[0].clientY-startY;
+    const ind=getIndicator();
+    ind.style.height='0';
+    if(dy>THRESHOLD*2){
+      toastInfo('Refreshing...');
+      setTimeout(()=>location.reload(),400);
+    }
+  },{passive:true});
+})();
 
 // ═══ CHANGELOG — update APP_VERSION and CHANGELOG_ENTRIES
 // when you ship new features. The modal shows once per
