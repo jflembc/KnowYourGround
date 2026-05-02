@@ -543,6 +543,7 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
   </svg>
   <div class="spinner" style="margin-top:8px;"></div>
   <span>Loading</span>
+  <span id="loadingVersion" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#505050;letter-spacing:1px;margin-top:4px;"></span>
 </div>
 
 <!-- AUTH -->
@@ -606,6 +607,10 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
         <div class="form-group"><label>Confirm New Password</label><input type="password" id="newPasswordConfirm" placeholder="Re-enter password"></div>
         <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="doSetNewPassword()" id="newPasswordBtn">Set New Password</button>
       </div>
+    </div>
+    <!-- BUILD VERSION on auth screen -->
+    <div style="padding:10px 0 14px;text-align:center;border-top:1px solid var(--offwhite-mid);">
+      <span id="authScreenVersion" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#B0A898;letter-spacing:1px;cursor:pointer;" onclick="showChangelog()" title="View release notes">Know Your Ground · v<span id="authBuildVersion"></span></span>
     </div>
   </div>
 </div>
@@ -736,7 +741,10 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
     <span class="user-pill" id="userEmail"></span>
     <button class="btn btn-ghost btn-sm" onclick="openAccountSettings()" style="width:100%;justify-content:center;margin-bottom:6px;">Account Settings</button>
     <button class="btn btn-danger btn-sm" onclick="doSignOut()" style="width:100%;justify-content:center;">Sign Out</button>
-    <div style="margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#505050;letter-spacing:1px;text-align:center;cursor:pointer;" onclick="showChangelog()" title="View release notes">v<span id="buildVersionDisplay"></span></div>
+    <div style="margin-top:10px;padding:6px;background:rgba(240,90,0,0.08);border:1px solid rgba(240,90,0,0.2);text-align:center;cursor:pointer;" onclick="showChangelog()" title="View what's new" onmouseover="this.style.background='rgba(240,90,0,0.15)'" onmouseout="this.style.background='rgba(240,90,0,0.08)'">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--orange);margin-bottom:2px;">Build</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--offwhite);letter-spacing:0.5px;">v<span id="buildVersionDisplay"></span></div>
+    </div>
   </div>
 </div><!-- /sidebar -->
 
@@ -3413,50 +3421,182 @@ function toastInfo(msg){toast(msg,'info',2500);}
 // when you ship new features. The modal shows once per
 // version per user (stored in localStorage).
 // ═══════════════════════════════════════════════════════
-const APP_VERSION = '2025.04.30';
+const APP_VERSION = '2025.05.02';
 
 const CHANGELOG_ENTRIES = [
   {
-    version: '2025.04.30',
+    version: '2025.05.02',
     label: 'Latest',
     sections: [
       {
         type: 'new',
-        title: 'Grain Contracts',
+        title: 'Grain Contracts — Field Level',
         items: [
-          'Enter contracts per field — track bushels, price, date, and elevator',
-          'Field P&L instantly reflects blended contract + market revenue',
-          'Field cards show remaining uncontracted bushels in real time',
-          'New Contracts view in Summary — all contracts across all fields, fully sortable',
-          'Uncontracted bushels by crop with % contracted indicator',
+          'Enter contracts directly on each field — track bushels, price per bushel, date, and elevator',
+          'Field P&L automatically blends contracted bushels at contract price with remaining bushels at market price',
+          'Total estimated bushels banner shows instantly when yield and acres are entered',
+          'Uncontracted bushels update in real time as you add or remove contracts',
+          'Contract summary bar shows contracted bushels, average price, and total contract revenue',
         ]
       },
       {
         type: 'new',
-        title: 'Summary Tab Improvements',
+        title: 'Grain Contracts — Crop Summary',
         items: [
-          'Farm View now splits into Expenses (red) and Income (green) columns',
-          'Contracted vs uncontracted grain revenue shown as separate income lines',
-          'New "Full Report →" button on Overview jumps directly to Summary',
+          'New Contracts view in Summary tab — every contract across all fields in one sortable table',
+          'Sort by field, grain type, date, bushels, price, revenue, or elevator with one tap',
+          'Add a contract from Crop Summary — only shows fields where that crop grows and bushels remain',
+          'Contracts added from Crop Summary save directly to the field and appear in the field detail view',
+          'Uncontracted bushels by crop show % contracted with green/amber/red color coding',
+        ]
+      },
+      {
+        type: 'new',
+        title: 'Farm Summary — Income vs Expense View',
+        items: [
+          'Farm View now splits into Expenses (red) and Income (green) side-by-side columns',
+          'Expenses labeled by category: operational, financial, land, crop, overhead',
+          'Income shows contracted grain revenue and uncontracted estimated revenue as separate lines',
+          'Net P&L bar spans the bottom in green or red — instant farm health snapshot',
+          '"Full Report →" button on Overview jumps directly to Summary',
+        ]
+      },
+      {
+        type: 'new',
+        title: 'What-If Scenario Comparison',
+        items: [
+          'Three-panel comparison shows both scenarios and the dollar difference simultaneously',
+          'Winning scenario gets a green border drawn completely around its card',
+          'Winner panel highlighted green, loser panel stays neutral',
+          'Break-even shown to 3 decimal places so you see the exact price before contracting',
+          'Blended effective price shows in the insight bar when contracts exist',
+        ]
+      },
+      {
+        type: 'new',
+        title: 'SprayLog Pro Integration',
+        items: [
+          'Know Your Ground and SprayLog Pro now share one database and one login',
+          'Fields created in Know Your Ground appear automatically in SprayLog Pro — no retyping',
+          'Selecting a field in SprayLog auto-fills acres, legal description, and commodity',
+          'One email and password for both apps',
+        ]
+      },
+      {
+        type: 'new',
+        title: 'Feedback System',
+        items: [
+          'Orange 💬 Feedback button floats in the bottom-right corner when logged in',
+          'Star rating (1–5), category (Bug Report, Feature Request, General), and message',
+          'Feedback goes directly to the team — we read every one',
+          'Button stays out of the way and hides on the login screen',
         ]
       },
       {
         type: 'improved',
-        title: 'What-If Scenario Comparison',
+        title: 'Field Cards',
         items: [
-          'Comparison result rebuilt — shows both scenario totals side by side',
-          'Winner highlighted in green with exact dollar difference',
-          'Break-even now shown to 3 decimal places for precision contracting',
+          'Fields with uncontracted bushels show bold red text with the remaining amount',
+          'Fully contracted fields show green "✓ Fully contracted" text',
+          'Hovering over any result box shows a tooltip explaining the calculation',
+          'Crop profile label on field detail links directly to the Crops tab',
+        ]
+      },
+      {
+        type: 'improved',
+        title: 'Mobile Experience',
+        items: [
+          'Bottom navigation bar enlarged — larger icons, bigger tap targets for iPhone',
+          'Farm Summary income/expense columns stack vertically on mobile instead of cutting off',
+          'Summary tables scroll horizontally instead of overflowing off screen',
+          'Crop Summary text and contract info no longer runs off the right edge',
+          'Pull down from the top of any page to refresh',
+          'Feedback button floats above the mobile navigation bar',
+        ]
+      },
+      {
+        type: 'improved',
+        title: 'Numbers & Display',
+        items: [
+          'All dollar amounts show full numbers — no more K or M abbreviations',
+          'Trailing zeros removed — $14,400 instead of $14,400.00',
+          'Break-even precision increased to 3 decimal places throughout the app',
+        ]
+      },
+      {
+        type: 'new',
+        title: 'Toast Notifications',
+        items: [
+          'Every action now confirms what happened — green for success, red for errors',
+          'Error messages say exactly what went wrong and invite you to send feedback',
+          'Toasts auto-dismiss after 3 seconds or tap to close immediately',
+          'Farm saved, field added, contract saved, field deleted — all confirmed',
+        ]
+      },
+      {
+        type: 'fixed',
+        title: 'Auth & Account',
+        items: [
+          'Password reset email links now work — clicking the link shows a Set New Password form',
+          'Email confirmation links now log you in automatically after clicking',
+          'Forgot password link added below the Sign In button',
+          'Account Settings added — change password, change email, or delete account',
+          'Token auto-refresh prevents session expiry while the app is open',
+          'Resend confirmation email button appears when an unconfirmed account tries to log in',
         ]
       },
       {
         type: 'fixed',
         title: 'Bug Fixes',
         items: [
-          'Break-even displayed to 3 decimal places — prevents confusion when contracting at the rounded price',
-          'Password reset and email confirmation links now work correctly',
-          'Account Settings modal readability fixed',
-          'All color contrast issues resolved across fields, summary, and overview tabs',
+          'Contract save from Crop Summary now works correctly — was silently failing',
+          'Summary Farm View income/expense columns no longer cut off on mobile',
+          'Field P&L now correctly uses contract prices when contracts are entered',
+          'Existing color contrast issues resolved across fields, summary, and overview tabs',
+          'What-If banner no longer uses undefined color variables',
+        ]
+      }
+    ]
+  },
+  {
+    version: '2025.04.30',
+    label: 'Previous',
+    sections: [
+      {
+        type: 'new',
+        title: 'Grain Contracts (First Release)',
+        items: [
+          'Enter contracts per field — track bushels, price, date, and elevator',
+          'Field P&L reflects blended contract and market revenue',
+          'Contracts view in Summary — all contracts sortable by field, crop, date, and price',
+        ]
+      },
+      {
+        type: 'improved',
+        title: 'Design Overhaul',
+        items: [
+          'New brand identity — charcoal, orange, and off-white throughout',
+          'Barlow Condensed headline font for industrial clarity',
+          'Mobile bottom navigation with icons',
+          'Off-white app background improves readability for all age groups',
+        ]
+      },
+      {
+        type: 'new',
+        title: 'Insurance & Tax Trees',
+        items: [
+          'Insurance: expandable tree with Crop, Vehicle, Farm, and custom lines',
+          'Taxes: expandable tree with Vehicle, Farm/Real Estate, Property, and custom lines',
+          'Both trees roll up to a total shown on the collapsed header',
+        ]
+      },
+      {
+        type: 'fixed',
+        title: 'Fixes',
+        items: [
+          'JWT token expiry no longer crashes the app — silently refreshes in the background',
+          'Password reset flow hardened with clear error messages',
+          'Captcha verification issue resolved',
         ]
       }
     ]
@@ -3529,6 +3669,11 @@ async function bootApp(){
 }
 
 (async()=>{
+  // Show build version on auth screen immediately — visible before login
+  const authBv=document.getElementById('authBuildVersion');
+  if(authBv)authBv.textContent=APP_VERSION;
+  const loadBv=document.getElementById('loadingVersion');
+  if(loadBv)loadBv.textContent='v'+APP_VERSION;
   // Check for email link callbacks first (password reset, email confirmation)
   if(handleAuthCallback()) return;
   const user = await checkSession();
