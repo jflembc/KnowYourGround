@@ -469,6 +469,8 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
   .whatif-grid{grid-template-columns:1fr;}
   #appSidebar{display:none;}
   #appShell{flex-direction:column;}
+  /* Stack income/expense tables vertically on mobile */
+  #sumPLGrid{grid-template-columns:1fr!important;}
   #mobileTopBar{
     display:flex;align-items:center;justify-content:space-between;
     background:var(--charcoal);border-bottom:3px solid var(--orange);
@@ -710,6 +712,7 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
     <span class="user-pill" id="userEmail"></span>
     <button class="btn btn-ghost btn-sm" onclick="openAccountSettings()" style="width:100%;justify-content:center;margin-bottom:6px;">Account Settings</button>
     <button class="btn btn-danger btn-sm" onclick="doSignOut()" style="width:100%;justify-content:center;">Sign Out</button>
+    <div style="margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#505050;letter-spacing:1px;text-align:center;cursor:pointer;" onclick="showChangelog()" title="View release notes">v<span id="buildVersionDisplay"></span></div>
   </div>
 </div><!-- /sidebar -->
 
@@ -1069,25 +1072,18 @@ hr{border:none;border-top:1px solid var(--offwhite-mid);margin:14px 0;}
       </div>
       <!-- INCOME / EXPENSE P&L TABLE -->
       <div class="card-dark" id="sumPLTable">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);">
+        <div id="sumPLGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);">
           <!-- EXPENSES -->
           <div style="background:var(--charcoal);padding:0;">
             <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:10px 14px 8px;border-bottom:2px solid #C62828;color:#EF9A9A;">Expenses</div>
-            <table class="summary-table" style="width:100%;">
-              <thead><tr><th>Item</th><th>Total</th><th>/Acre</th></tr></thead>
-              <tbody id="sumExpenseBody"></tbody>
-            </table>
+            <table class="summary-table" style="width:100%;"><thead><tr><th>Item</th><th>Total</th><th>/Acre</th></tr></thead><tbody id="sumExpenseBody"></tbody></table>
           </div>
           <!-- INCOME -->
           <div style="background:var(--charcoal);padding:0;">
             <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:10px 14px 8px;border-bottom:2px solid #2E7D32;color:#A5D6A7;">Income</div>
-            <table class="summary-table" style="width:100%;">
-              <thead><tr><th>Source</th><th>Total</th><th>/Acre</th></tr></thead>
-              <tbody id="sumIncomeBody"></tbody>
-            </table>
+            <table class="summary-table" style="width:100%;"><thead><tr><th>Source</th><th>Total</th><th>/Acre</th></tr></thead><tbody id="sumIncomeBody"></tbody></table>
           </div>
         </div>
-        <!-- NET RESULT ROW -->
         <div id="sumNetRow" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-top:2px solid var(--border);flex-wrap:wrap;gap:8px;"></div>
       </div>
       <!-- CROP SUMMARY WITH CONTRACTS -->
@@ -2070,14 +2066,19 @@ function renderFieldCards(){
     const contractedBu=contracts.reduce((s,c)=>s+(parseFloat(c.bushels)||0),0);
     const remainBu=Math.max(0,totalBu-contractedBu);
     const showBu=totalBu>0&&parseFloat(fld.yield)>0;
-    const buColor=remainBu===0?'#66BB6A':remainBu<totalBu*0.25?'#FFA726':'#A0A0A0';
-    const buLabel=showBu?(remainBu===0?`✓ Fully contracted`:`${Math.round(remainBu).toLocaleString()} bu uncontracted`):'';
+    // Bold red = bushels remaining; green = fully contracted
+    const buStyle=showBu?(remainBu===0
+      ?'color:#66BB6A;font-weight:600;'
+      :'color:#EF5350;font-weight:700;'):'';
+    const buLabel=showBu?(remainBu===0
+      ?`✓ Fully contracted`
+      :`${Math.round(remainBu).toLocaleString()} bu uncontracted`):'';
     const div=document.createElement('div');div.className='field-card'+(fld.id===activeFieldId?' active':'');
     div.innerHTML=`
       <div class="fc-name">${fld.name}</div>
       <div class="fc-meta">${fld.acres} AC · ${fld.crop||'—'}${fld.yearPurchased?' · '+fld.yearPurchased:''}</div>
       <div class="fc-stat ${hasData?(profit>=0?'':'loss'):''}">${hasData?(profit>=0?'+':'')+fmt(profit)+'/ac':'Enter yield & price'}</div>
-      ${showBu?`<div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:${buColor};margin-top:5px;">${buLabel}</div>`:''}
+      ${showBu?`<div style="font-family:'IBM Plex Mono',monospace;font-size:10px;margin-top:5px;${buStyle}">${buLabel}</div>`:''}
     `;
     div.onclick=()=>openFieldDetail(fld.id);grid.appendChild(div);
   });
@@ -2114,7 +2115,7 @@ function openFieldDetail(id){
     }
   }
   document.getElementById('fd_yield').value=fld.yield||'';
-  document.getElementById('fdCropSource').textContent=fld.crop?`Profile: ${fld.crop}`:'';
+  document.getElementById('fdCropSource').innerHTML=fld.crop?`Profile: <a onclick="switchTab('crops');" style="color:var(--orange);cursor:pointer;text-decoration:underline;text-underline-offset:2px;">${fld.crop}</a>`:'';
   const costs=fld.fieldCosts||{};
   ['seed','fertilizer','chemicals','cropInsurance','irrigation','other'].forEach(k=>{document.getElementById('fd_'+k).value=costs[k]||'';});
   // Loan
@@ -2771,105 +2772,191 @@ function renderCropSummary(){
   if(!container||!f)return;
   container.innerHTML='';
 
-  // Group fields by crop
   const cropMap={};
   (f.fields||[]).forEach(fld=>{
     const crop=fld.crop||'Unknown';
     if(!cropMap[crop])cropMap[crop]={fields:[],totalAcres:0,totalBu:0,contracts:[]};
-    const acres=parseFloat(fld.acres)||0;
-    const yld=parseFloat(fld.yield)||0;
+    const acres=parseFloat(fld.acres)||0,yld=parseFloat(fld.yield)||0;
     cropMap[crop].fields.push(fld);
     cropMap[crop].totalAcres+=acres;
     cropMap[crop].totalBu+=acres*yld;
-    // Aggregate field-level contracts into crop level
-    (fld.contracts||[]).forEach(c=>cropMap[crop].contracts.push({...c,_fieldName:fld.name}));
+    (fld.contracts||[]).forEach(c=>cropMap[crop].contracts.push({...c,_fieldName:fld.name,_fieldId:fld.id,_source:'field'}));
   });
 
   Object.entries(cropMap).forEach(([cropName,data])=>{
-    const contractedBu=data.contracts.reduce((s,c)=>s+(parseFloat(c.bushels)||0),0);
-    const contractRevenue=data.contracts.reduce((s,c)=>s+(parseFloat(c.bushels)||0)*(parseFloat(c.price)||0),0);
+    const fieldContracts=data.contracts;
+    const cropContracts=(f.cropContracts||{})[cropName]||[];
+    const allContracts=[...fieldContracts,...cropContracts.map(c=>({...c,_source:'crop'}))];
+    const contractedBu=allContracts.reduce((s,c)=>s+(parseFloat(c.bushels)||0),0);
+    const contractRevenue=allContracts.reduce((s,c)=>s+(parseFloat(c.bushels)||0)*(parseFloat(c.price)||0),0);
     const avgPrice=contractedBu>0?contractRevenue/contractedBu:0;
-    const remaining=data.totalBu-contractedBu;
+    const remaining=Math.max(0,data.totalBu-contractedBu);
     const contractKey='sum_contracts_'+cropName.replace(/\s+/g,'_');
 
+    // Fields that still have bushels to contract (for the smart add button)
+    const fieldsWithRemaining=data.fields.filter(fld=>{
+      const totalBu=(parseFloat(fld.acres)||0)*(parseFloat(fld.yield)||0);
+      const contracted=(fld.contracts||[]).reduce((s,c)=>s+(parseFloat(c.bushels)||0),0);
+      return totalBu-contracted>0;
+    });
+
     const block=document.createElement('div');
-    block.className='card';
-    block.style.marginBottom='16px';
+    block.className='card';block.style.marginBottom='16px';
+
+    // Header
     block.innerHTML=`
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
         <div>
           <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--ink);text-transform:uppercase;">${cropName}</div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">${data.fields.length} field${data.fields.length!==1?'s':''} · ${data.totalAcres.toLocaleString()} acres</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">
+            ${data.fields.map(fld=>`<a onclick="switchTab('fields');setTimeout(()=>openFieldDetail('${fld.id}'),50);" style="color:var(--orange);cursor:pointer;text-decoration:underline;text-underline-offset:2px;margin-right:8px;">${fld.name}</a>`).join('')}
+          </div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">${data.fields.length} field${data.fields.length!==1?'s':''} · ${data.totalAcres.toLocaleString()} acres</div>
         </div>
         <div style="display:flex;gap:16px;text-align:right;flex-wrap:wrap;">
           <div>
             <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">Est. Bushels</div>
             <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--ink);">${Math.round(data.totalBu).toLocaleString()}</div>
           </div>
-          ${contractedBu>0?`
           <div>
             <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">Contracted</div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--orange);">${Math.round(contractedBu).toLocaleString()}</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:${contractedBu>0?'var(--orange)':'var(--muted)'};">${Math.round(contractedBu).toLocaleString()}</div>
           </div>
           <div>
             <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">Remaining</div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:${remaining<=0?'#66BB6A':remaining<data.totalBu*0.25?'#FFA726':'var(--ink)'}">${Math.round(remaining).toLocaleString()}</div>
-          </div>`:''
-        }
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:${remaining<=0?'#66BB6A':remaining<data.totalBu*0.25?'#FFA726':'var(--ink)'};">${Math.round(remaining).toLocaleString()}</div>
+          </div>
         </div>
       </div>
       ${contractedBu>0?`
-      <div style="background:var(--offwhite-dark);padding:10px 14px;margin-bottom:12px;display:flex;gap:20px;flex-wrap:wrap;">
-        <div><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">Avg Contract Price: </span><strong style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);">$${avgPrice.toFixed(2)}/bu</strong></div>
+      <div style="background:var(--offwhite-dark);padding:10px 14px;margin-bottom:14px;display:flex;gap:20px;flex-wrap:wrap;">
+        <div><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">Avg Contract Price: </span><strong style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);">$${avgPrice.toFixed(3)}/bu</strong></div>
         <div><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">Contract Revenue: </span><strong style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--orange);">${fmt(contractRevenue)}</strong></div>
-      </div>`:''
-      }
-      <div id="${contractKey}_rows"></div>
-      <button class="btn btn-ghost btn-sm" onclick="addCropSummaryContract('${cropName}')" style="margin-top:6px;">+ Add Contract</button>
-      <div id="${contractKey}_summary" style="display:none;margin-top:10px;padding:10px 14px;background:var(--offwhite-dark);border-left:3px solid var(--orange);">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">New contracts added here are saved to the crop group and reflected in the totals above.</div>
-      </div>
+      </div>`:''}
     `;
-    container.appendChild(block);
 
-    // Re-render any existing crop-level contracts
-    const cropContracts=f.cropContracts||{};
-    (cropContracts[cropName]||[]).forEach(c=>renderCropContractRow(cropName,c));
+    // Contracts table — ALL contracts (field-level + crop-level)
+    if(allContracts.length>0){
+      const tbl=document.createElement('table');
+      tbl.className='summary-table';tbl.style.marginBottom='12px';
+      tbl.innerHTML=`<thead><tr><th>Field</th><th>Date</th><th>Bushels</th><th>Price/Bu</th><th>Revenue</th><th>Elevator</th></tr></thead>`;
+      const tbody=document.createElement('tbody');
+      allContracts.filter(c=>parseFloat(c.bushels)>0).forEach(c=>{
+        const rev=(parseFloat(c.bushels)||0)*(parseFloat(c.price)||0);
+        const tr=document.createElement('tr');
+        const fieldLink=c._fieldId
+          ?`<a onclick="switchTab('fields');setTimeout(()=>openFieldDetail('${c._fieldId}'),50);" style="color:var(--orange);cursor:pointer;text-decoration:underline;text-underline-offset:2px;">${c._fieldName||'Crop-level'}</a>`
+          :`<span style="color:var(--muted);font-style:italic;">Crop-level</span>`;
+        tr.innerHTML=`<td>${fieldLink}</td><td class="mono">${c.date||'—'}</td><td class="mono">${Math.round(parseFloat(c.bushels)||0).toLocaleString()}</td><td class="mono" style="color:#66BB6A;">$${(parseFloat(c.price)||0).toFixed(3)}</td><td class="mono">${fmt(rev)}</td><td>${c.elevator||'—'}</td>`;
+        tbody.appendChild(tr);
+      });
+      tbl.appendChild(tbody);
+      block.appendChild(tbl);
+    }
+
+    // Add Contract button — only shows if fields have remaining bushels
+    const addBtn=document.createElement('button');
+    addBtn.className='btn btn-ghost btn-sm';
+    addBtn.style.marginTop='4px';
+    if(fieldsWithRemaining.length===0){
+      addBtn.textContent='✓ All bushels contracted';
+      addBtn.disabled=true;
+      addBtn.style.color='#66BB6A';addBtn.style.borderColor='#66BB6A';
+    } else {
+      addBtn.textContent=`+ Add Contract (${fieldsWithRemaining.length} field${fieldsWithRemaining.length!==1?'s':''} have remaining bushels)`;
+      addBtn.onclick=()=>openCropContractModal(cropName,fieldsWithRemaining);
+    }
+    block.appendChild(addBtn);
+    container.appendChild(block);
   });
 }
 
-function addCropSummaryContract(cropName){
-  const f=farm();if(!f)return;
-  if(!f.cropContracts)f.cropContracts={};
-  if(!f.cropContracts[cropName])f.cropContracts[cropName]=[];
-  const id=crypto.randomUUID();
-  f.cropContracts[cropName].push({id,date:'',bushels:0,price:0,elevator:''});
-  dbSaveFarm(f);
-  renderCropContractRow(cropName,{id,date:'',bushels:'',price:'',elevator:''});
-}
-
-function renderCropContractRow(cropName,c){
-  const key='sum_contracts_'+cropName.replace(/\s+/g,'_')+'_rows';
-  const wrap=document.getElementById(key);
-  if(!wrap)return;
-  // Add header once
-  if(wrap.children.length===0){
-    const hdr=document.createElement('div');
-    hdr.style.cssText='display:grid;grid-template-columns:130px 1fr 1fr 1fr 40px;gap:8px;margin-bottom:4px;';
-    hdr.innerHTML='<span style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">Date</span><span style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">Bushels</span><span style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">Price/Bu</span><span style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">Elevator</span><span></span>';
-    wrap.appendChild(hdr);
+// Smart crop contract modal — only shows fields with remaining bushels
+let _ccModalCrop='';
+function openCropContractModal(cropName,fieldsWithRemaining){
+  _ccModalCrop=cropName;
+  let modal=document.getElementById('cropContractModal');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='cropContractModal';
+    modal.className='modal-overlay';
+    modal.style.zIndex='280';
+    document.body.appendChild(modal);
   }
-  const row=document.createElement('div');
-  row.dataset.ccid=c.id;
-  row.style.cssText='display:grid;grid-template-columns:130px 1fr 1fr 1fr 40px;gap:8px;align-items:center;margin-bottom:8px;';
-  row.innerHTML=`
-    <input type="date" value="${c.date||''}" style="background:#fff;border:1.5px solid var(--border-light);padding:8px 10px;font-family:'Barlow',sans-serif;font-size:13px;color:var(--ink);outline:none;" oninput="updateCropContract('${cropName}','${c.id}','date',this.value)">
-    <input type="number" value="${c.bushels||''}" placeholder="Bushels" style="background:#fff;border:1.5px solid var(--border-light);padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);outline:none;" oninput="updateCropContract('${cropName}','${c.id}','bushels',this.value)">
-    <input type="number" value="${c.price||''}" placeholder="Price/Bu" step="0.01" style="background:#fff;border:1.5px solid var(--border-light);padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);outline:none;" oninput="updateCropContract('${cropName}','${c.id}','price',this.value)">
-    <input type="text" value="${c.elevator||''}" placeholder="Elevator" style="background:#fff;border:1.5px solid var(--border-light);padding:8px 10px;font-family:'Barlow',sans-serif;font-size:13px;color:var(--ink);outline:none;" oninput="updateCropContract('${cropName}','${c.id}','elevator',this.value)">
-    <button onclick="removeCropContract('${cropName}','${c.id}')" style="background:transparent;border:1.5px solid var(--border-light);color:var(--red);font-size:18px;height:38px;cursor:pointer;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.background='var(--red)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='var(--red)'">×</button>
-  `;
-  wrap.appendChild(row);
+  const fieldOptions=fieldsWithRemaining.map(fld=>{
+    const totalBu=(parseFloat(fld.acres)||0)*(parseFloat(fld.yield)||0);
+    const contracted=(fld.contracts||[]).reduce((s,c)=>s+(parseFloat(c.bushels)||0),0);
+    const remain=Math.round(totalBu-contracted);
+    return `<option value="${fld.id}" data-remain="${remain}">${fld.name} (${remain.toLocaleString()} bu remaining)</option>`;
+  }).join('');
+  modal.innerHTML=`
+    <div style="background:var(--offwhite);border-top:4px solid var(--orange);border-radius:2px;padding:28px;width:100%;max-width:480px;box-shadow:0 24px 80px rgba(0,0,0,0.5);">
+      <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;text-transform:uppercase;color:var(--charcoal);margin-bottom:4px;">Add ${cropName} Contract</h2>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">Contract will be saved to the selected field.</p>
+      <div class="form-group"><label>Field <span style="color:var(--red);">*</span></label>
+        <select id="ccm_field" onchange="updateCCMRemain(this)"><option value="">— Select Field —</option>${fieldOptions}</select>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px;" id="ccm_remain"></div>
+      </div>
+      <div class="form-row cols-2">
+        <div class="form-group" style="margin:0"><label>Date</label><input type="date" id="ccm_date"></div>
+        <div class="form-group" style="margin:0"><label>Bushels <span style="color:var(--red);">*</span></label><input type="number" id="ccm_bushels" placeholder="0" oninput="checkCCMBushels()"></div>
+      </div>
+      <div class="form-row cols-2">
+        <div class="form-group" style="margin:0"><label>Price / Bu <span style="color:var(--red);">*</span></label><input type="number" id="ccm_price" placeholder="0.000" step="0.001"></div>
+        <div class="form-group" style="margin:0"><label>Elevator</label><input type="text" id="ccm_elevator" placeholder="FA Elevator"></div>
+      </div>
+      <div id="ccm_error" style="display:none;font-size:12px;color:var(--red);margin-bottom:10px;"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;">
+        <button class="btn btn-ghost btn-sm" onclick="closeCropContractModal()">Cancel</button>
+        <button class="btn btn-primary btn-sm" onclick="saveCropContractModal()">Save Contract</button>
+      </div>
+    </div>`;
+  modal.classList.remove('hidden');
+}
+function closeCropContractModal(){
+  const m=document.getElementById('cropContractModal');if(m)m.classList.add('hidden');
+}
+function updateCCMRemain(sel){
+  const opt=sel.options[sel.selectedIndex];
+  const remain=opt?.dataset?.remain;
+  const el=document.getElementById('ccm_remain');
+  if(el)el.textContent=remain?`${parseInt(remain).toLocaleString()} bu remaining to contract`:'';
+}
+function checkCCMBushels(){
+  const sel=document.getElementById('ccm_field');
+  const opt=sel?.options[sel.selectedIndex];
+  const remain=parseInt(opt?.dataset?.remain)||0;
+  const bu=parseFloat(document.getElementById('ccm_bushels')?.value)||0;
+  const err=document.getElementById('ccm_error');
+  if(bu>remain&&remain>0){err.textContent=`Warning: ${bu.toLocaleString()} bu exceeds ${remain.toLocaleString()} bu remaining on this field.`;err.style.display='block';}
+  else{err.style.display='none';}
+}
+async function saveCropContractModal(){
+  const fieldId=document.getElementById('ccm_field').value;
+  const bushels=parseFloat(document.getElementById('ccm_bushels').value)||0;
+  const price=parseFloat(document.getElementById('ccm_price').value)||0;
+  const date=document.getElementById('ccm_date').value;
+  const elevator=document.getElementById('ccm_elevator').value.trim();
+  const err=document.getElementById('ccm_error');
+  if(!fieldId){err.textContent='Please select a field.';err.style.display='block';return;}
+  if(!bushels||bushels<=0){err.textContent='Please enter a valid bushel amount.';err.style.display='block';return;}
+  if(!price||price<=0){err.textContent='Please enter a valid price per bushel.';err.style.display='block';return;}
+  err.style.display='none';
+  // Find the field in state and add contract to it
+  const f=farm();if(!f)return;
+  const fld=(f.fields||[]).find(x=>x.id===fieldId);
+  if(!fld){err.textContent='Field not found.';err.style.display='block';return;}
+  if(!fld.contracts)fld.contracts=[];
+  const newContract={id:crypto.randomUUID(),date,bushels,price,elevator};
+  fld.contracts.push(newContract);
+  await dbSaveField(fld);
+  closeCropContractModal();
+  // Refresh all affected views
+  renderCropSummary();
+  recalcFieldContracts();
+  recalcField();
+  renderFieldCards();
+  renderOverview();
 }
 
 function updateCropContract(cropName,id,key,val){
@@ -2962,6 +3049,11 @@ function calcWhatIf(){
     bEl.style.color=bWins?'#66BB6A':(B.totalPL<0?'#EF5350':'var(--offwhite)');
     document.getElementById('wiBannerB').style.background=bWins?'rgba(46,125,50,0.15)':'var(--charcoal)';
     document.getElementById('wiBannerBCrop').textContent=`${fmt(B.profit)}/ac · BE $${B.be.toFixed(3)}/bu`;
+    // Green border on winning scenario card
+    const cardA=document.querySelector('.whatif-col:first-child');
+    const cardB=document.querySelector('.whatif-col:last-child');
+    if(cardA)cardA.style.outline=aWins?'2px solid #66BB6A':'none';
+    if(cardB)cardB.style.outline=bWins?'2px solid #66BB6A':'none';
     // Center verdict
     const diffEl=document.getElementById('wiBannerDiff');
     const verdictEl=document.getElementById('wiBannerVerdict');
@@ -3104,7 +3196,12 @@ function getElevatorPrice(cropName) {
 }
 
 // ═══ UTILS ═══
-function fmt(n){const abs=Math.abs(n);const s=abs>=10000?'$'+(abs/1000).toFixed(0)+'k':abs>=1000?'$'+abs.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0}):'$'+abs.toFixed(2);return n<0?'-'+s:s;}
+function fmt(n){
+  if(n===null||n===undefined||isNaN(n))return '—';
+  const abs=Math.abs(n);
+  const s=abs>=1?'$'+abs.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'$'+abs.toFixed(2);
+  return n<0?'-'+s:s;
+}
 
 // ═══════════════════════════════════════════════════════
 // FEEDBACK
@@ -3303,6 +3400,8 @@ function checkChangelog(){
 // ═══ INIT ═══
 async function bootApp(){
   document.getElementById('userEmail').textContent=(currentUser?.email||'').split('@')[0];
+  const bv=document.getElementById('buildVersionDisplay');
+  if(bv)bv.textContent=APP_VERSION;
   document.getElementById('loadingScreen').classList.add('hidden');
   document.getElementById('authScreen').classList.add('hidden');
   await loadAllData();
